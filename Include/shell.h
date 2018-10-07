@@ -15,6 +15,7 @@
 
 # define MINISHELL_H
 
+
 # include <unistd.h>
 # include <sys/wait.h>
 # include <sys/types.h>
@@ -24,8 +25,8 @@
 
 typedef struct				s_cmd
 {
-	char 				*arg;
-	int 				sep; // && ou ||(2) ou ; ou |(1) ou 0
+	char 				**args;
+	int 				sep;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
 }							t_cmd;
@@ -39,14 +40,14 @@ typedef struct				s_shell
 
 typedef enum 				e_sepcmd
 {
-	DBL_SPRLU = 1 << 0,
-	SPL_PIPE = 1 << 1,
-	DBL_PIPE = 1 << 2,
-	PTN_VRGL = 1 << 3,
-	SPL_REDI_G = 1 << 4,
-	DBL_REDI_G = 1 << 5,
-	SPL_REDI_D = 1 << 6,
-	DBL_REDI_D = 1 << 7,
+	SPL_REDI_D = 1,
+	SPL_PIPE = 2,
+	SPL_REDI_G = 3,
+	PTN_VRGL = 4,
+	DBL_PIPE = 50,
+	DBL_REDI_G = 60,
+	DBL_SPRLU = 70,
+	DBL_REDI_D = 80,
 }							t_sepcmd;
 
 char	*path_cmd(char *cmd, char *envp_path);
@@ -58,7 +59,7 @@ char	**rmv_key_env(char **envp, char *key);
 void	builtin_env(char ***envp, char *key);
 void	builtin_echo(char **cmd);
 
-int		shell_error(char *type);
+int		shell_error(char *type, int n, ...);
 
 void	ft_arrdel(char **arr);
 char	*check_builtin(char **cmd, char ***envp);
@@ -69,6 +70,7 @@ void	ft_strdelchar(char **str, char c);
 char	*get_cur_dir(void);
 int		ft_arrlen(char **arr);
 int		shell_argsub_env(char **arg, int i, char **envp);
+int		shell_error(char *type, int n, ...);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -81,16 +83,19 @@ int		prompt(int multi);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-**┃                               split_mnshl                                  ┃
+**┃                               split_shell                                  ┃
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-void	clean_cmd(t_cmd **cmd);
 t_cmd	*shell_split(char *line, char **envp);
-int		shell_argsub_env(char **arg, int i, char **envp);
-
-
+char 	**get_args(char **line, char **envp);
+void	shell_envpsub(char **arg, char **envp);
 void 	shell_process(t_cmd *cmd, t_shell *shell);
+
+void	clean_cmd(t_cmd **cmd);
+char	*shell_trim(char **str);
+int		check_last_quote(char *arg, char quote);
+
 
 /*
 ** Hard test
@@ -112,8 +117,8 @@ void 	shell_process(t_cmd *cmd, t_shell *shell);
 ** </> && <~> && </Users>
 ** ./minishell && ./minishell && ./minishell && CtrC && CtrlD && exit
 ** echo `ls\` --> ` && echo `ls\``
-** echo "text">file;<file cat
-** cat > file << EOF \n line \n EOF
+** echo "text" > file ; < file cat
+** <cat > file << EOF> \n <line> <\n> <EOF>
 */
 
 #endif

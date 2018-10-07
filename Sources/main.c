@@ -13,21 +13,6 @@
 
 #include "../Include/shell.h"
 
-int		shell_error(char *type)
-{
-	if (ft_strcmp(type, "setenv usage") == 0)
-		ft_printf("minishell: setenv: invalid argument\n"
-					"usage: setenv VAR VALUE\n");
-	else if (ft_strcmp(type, "unsetenv usage") == 0)
-		ft_printf("minishell: unsetenv: invalid argument\n"
-					"usage: unsetenv VAR\n");
-	else if (ft_strcmp(type, "env usage") == 0)
-		ft_printf("minishell: env: invalid argument\nusage: env VAR\n");
-	else if (ft_strcmp(type, "$HOME env not set") == 0)
-		ft_printf("minishell: cd ~: $HOME env not set\n");
-	return (0);
-}
-
 /*
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
@@ -35,17 +20,12 @@ int		shell_error(char *type)
 char	*readline(t_shell *shell)
 {
 	char	*line;
-	int 	gnl;
+	int		gnl;
 
 	line = NULL;
 	gnl = get_next_line(0, &line);
-	if (gnl == -1 || line == NULL)
-	{
-		ft_arrdel(shell->envp);
-		ft_strdel(&shell->str);
-		write(1, "\n", 1);
-		exit(1);
-	}
+	if (gnl == -1 || line == NULL) //NULL pour Ctrl-D
+		shell_error("gnl", 2, &shell->str, shell->envp);
 	if (shell->str)
 		shell->str = ft_strjoin_mltp(3, shell->str, "\n", line);
 	else
@@ -63,6 +43,16 @@ int		prompt(int multi)
 	return (1);
 }
 
+void	read_array(char **str)
+{
+	int i;
+
+	i = -1;
+	printf("Read array : \n");
+	while (str[i++])
+		printf("arg[%i]=<%s> - ", i, str[i]);
+}
+
 int		main(int ac, char **av, char **envp)
 {
 	t_cmd	*cmd;
@@ -71,10 +61,23 @@ int		main(int ac, char **av, char **envp)
 	shell = init_shell(envp);
 	while (prompt(shell->mltline) && (shell->str = readline(shell)))
 	{
+		printf("start <%s> et [0] %c\n", shell->str, shell->str[1]);
 		if (!(cmd = shell_split(shell->str, shell->envp)))
+		{
+			printf("multiline\n");
 			shell->mltline = 1;
+		}
 		else
+		{
+			printf("ici\n");
+			while (cmd->next_cmd)
+			{
+				read_array(cmd->args);
+				printf("et sep %d\n", cmd->sep);
+				cmd = cmd->next_cmd;
+			}
 			shell_process(cmd, shell);
+		}
 	}
 	return (1);
 }

@@ -61,7 +61,7 @@ int		cd_move(char ***envp, char *cur_dir, char *dir)
 	char	*tmp;
 
 	if (ft_strchr(dir, '~') && !get_envp(*envp, "HOME"))
-		return (shell_error("$HOME env not set"));
+		return (shell_error("env $HOME not set", 0));
 	else if (dir[0] == '~')
 		tmp = ft_strjoin_mltp(3, get_envp(*envp, "HOME"), dir + 1, "/");
 	else if (dir[0] == '/')

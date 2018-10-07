@@ -13,15 +13,12 @@
 
 #include "../Include/shell.h"
 
-void 	shell_process(t_cmd *cmd, t_shell *shell)
+void	shell_process(t_cmd *cmd, t_shell *shell)
 {
-	shell->mltline = 0;
-	clean_cmd(&cmd);
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{
 		ft_strdel(&shell->str);
 		ft_arrdel(shell->envp);
 		exit(1);
 	}
-	ft_strdel(&shell->str);
 }

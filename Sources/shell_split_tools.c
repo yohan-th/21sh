@@ -15,43 +15,37 @@
 
 void	clean_cmd(t_cmd **cmd)
 {
-	t_cmd *tmp;
+	t_cmd	*tmp;
+	int		i;
 
+	i = 0;
 	while (*cmd)
 	{
-		printf("delete %s\n", (*cmd)->arg);
-		ft_strdel(&(*cmd)->arg);
+		while (((*cmd)->args)[i])
+			ft_strdel(&((*cmd)->args)[i++]);
 		tmp = (*cmd);
 		*cmd = (*cmd)->next_cmd;
 		free(tmp);
 	}
 }
 
-int		shell_argsub_env(char **arg, int i, char **envp)
+char	*shell_trim(char **str)
 {
-	char	*tmp;
-	char	*var;
-	size_t	len;
+	int i;
 
-	tmp = *arg + i;
-	len = 1;
-	while (tmp[len] && (ft_isalnum(tmp[len]) || tmp[len] == '_'))
-		len++;
-	if (len == 1)
-		return (i);
-	tmp[0] = '\0';
-	tmp = ft_strsub(tmp, 1, len - 1);
-	var = get_envp(envp, tmp);
-	free(tmp);
-	if (var == NULL)
-		tmp = ft_strjoin_mltp(2, *arg, *arg + i + len);
-	else
-		tmp = ft_strjoin_mltp(3, *arg, var, *arg + i + len);
-	free(*arg);
-	*arg = ft_strdup(tmp);
-	free(tmp);
-	if (var == NULL)
-		return (i - 1);
-	else
-		return (i + ft_strlen(var) - 1);
+	i  = 0;
+	while (*str && ft_isspace((*str)[i]))
+		i++;
+	*str = *str + i;
+	return (*str);
 }
+
+int		check_last_quote(char *arg, char quote)
+{
+	if (quote != ' ' && *arg != quote)
+		return (0);
+	else if (quote != ' ' && *arg == quote)
+		ft_strdelchar(&arg, quote);
+	return (1);
+}
+
