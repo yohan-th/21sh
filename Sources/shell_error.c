@@ -17,10 +17,10 @@ int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
 		ft_printf("shell: setenv: invalid argument\n"
-						  "usage: setenv VAR VALUE\n");
+						"usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
 		ft_printf("shell: unsetenv: invalid argument\n"
-						  "usage: unsetenv VAR\n");
+						"usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
 		ft_printf("shell: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)
@@ -43,12 +43,12 @@ int		shell_error_env(char *msg)
 int		shell_error(char *type, int n, ...)
 {
 	va_list	ap;
-	char 	*str;
-	char 	*str2;
+	char	*str;
+	char	*str2;
 
 	va_start(ap, n);
 	if (type[0] == 'e' && type[1] == 'n' && type[2] == 'v')
-		return(shell_error_env(type));
+		return (shell_error_env(type));
 	else if (type[0] == 'g' && type[1] == 'n' && type[2] == 'l')
 	{
 		ft_strdel(va_arg(ap, char **));

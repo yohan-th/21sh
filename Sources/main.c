@@ -21,13 +21,18 @@ char	*readline(t_shell *shell)
 {
 	char	*line;
 	int		gnl;
+	char	*tmp;
 
 	line = NULL;
 	gnl = get_next_line(0, &line);
-	if (gnl == -1 || line == NULL) //NULL pour Ctrl-D
+	if (gnl == -1 || line == NULL)
 		shell_error("gnl", 2, &shell->str, shell->envp);
 	if (shell->str)
+	{
+		tmp = shell->str;
 		shell->str = ft_strjoin_mltp(3, shell->str, "\n", line);
+		ft_strdel(&tmp);
+	}
 	else
 		shell->str = ft_strdup(line);
 	ft_strdel(&line);
@@ -47,10 +52,13 @@ void	read_array(char **str)
 {
 	int i;
 
-	i = -1;
-	printf("Read array : \n");
-	while (str[i++])
-		printf("arg[%i]=<%s> - ", i, str[i]);
+	i = 0;
+	printf("Read array : ");
+	while (str[i])
+	{
+		printf("arg[%i]=<%s>", i, str[i]);
+		i++;
+	}
 }
 
 int		main(int ac, char **av, char **envp)
@@ -61,7 +69,6 @@ int		main(int ac, char **av, char **envp)
 	shell = init_shell(envp);
 	while (prompt(shell->mltline) && (shell->str = readline(shell)))
 	{
-		printf("start <%s> et [0] %c\n", shell->str, shell->str[1]);
 		if (!(cmd = shell_split(shell->str, shell->envp)))
 		{
 			printf("multiline\n");
@@ -69,13 +76,7 @@ int		main(int ac, char **av, char **envp)
 		}
 		else
 		{
-			printf("ici\n");
-			while (cmd->next_cmd)
-			{
-				read_array(cmd->args);
-				printf("et sep %d\n", cmd->sep);
-				cmd = cmd->next_cmd;
-			}
+			shell->mltline = 0;
 			shell_process(cmd, shell);
 		}
 	}

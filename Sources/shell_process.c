@@ -15,10 +15,22 @@
 
 void	shell_process(t_cmd *cmd, t_shell *shell)
 {
+	t_cmd *save;
+
+	save = cmd;
+	printf("process\n");
+	while ((cmd = cmd->next_cmd))
+	{
+		read_array(cmd->args);
+		printf(" et sep %d\n", cmd->sep);
+	}
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{
-		ft_strdel(&shell->str);
-		ft_arrdel(shell->envp);
+		clean_shell(&shell);
+		clean_cmd(&save);
 		exit(1);
 	}
+	clean_cmd(&save);
+	ft_strdel(&shell->str);
+	//clean_shell(&shell);
 }

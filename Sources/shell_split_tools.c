@@ -16,24 +16,24 @@
 void	clean_cmd(t_cmd **cmd)
 {
 	t_cmd	*tmp;
-	int		i;
 
-	i = 0;
-	while (*cmd)
+	*cmd = (*cmd)->start;
+	tmp = *cmd;
+	while ((*cmd = (*cmd)->next_cmd))
 	{
-		while (((*cmd)->args)[i])
-			ft_strdel(&((*cmd)->args)[i++]);
-		tmp = (*cmd);
-		*cmd = (*cmd)->next_cmd;
+		ft_arrdel((*cmd)->args);
 		free(tmp);
+		tmp = *cmd;
 	}
+	free(tmp);
+	*cmd = NULL;
 }
 
 char	*shell_trim(char **str)
 {
 	int i;
 
-	i  = 0;
+	i = 0;
 	while (*str && ft_isspace((*str)[i]))
 		i++;
 	*str = *str + i;
@@ -48,4 +48,3 @@ int		check_last_quote(char *arg, char quote)
 		ft_strdelchar(&arg, quote);
 	return (1);
 }
-

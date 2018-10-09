@@ -13,7 +13,7 @@
 
 #include "../Include/shell.h"
 
-int 	get_sep(char **str)
+int		get_sep(char **str)
 {
 	int		sep;
 
@@ -34,32 +34,34 @@ int 	get_sep(char **str)
 	return (sep);
 }
 
+/*
+** Split line jusqu'au prochain delimiteur
+*/
+
 t_cmd	*shell_split(char *line, char **envp)
 {
 	t_cmd	*cmd;
 	t_cmd	*prev;
-	char 	**args;
+	char	**args;
 
-	prev = NULL;
 	if (!(cmd = ft_memalloc(sizeof(t_cmd))))
 		shell_error("mlc", 3, &line, envp, sizeof(t_cmd));
+	cmd->start = cmd;
 	while ((args = get_args(&line, envp)))
 	{
-		printf("getargs <%s>\n", args[0]);
+		if (!(cmd->next_cmd = ft_memalloc(sizeof(t_cmd))))
+			shell_error("mlc", 3, &line, envp, sizeof(t_cmd));
+		(cmd->next_cmd)->start = cmd->start;
+		cmd = cmd->next_cmd;
 		cmd->args = args;
 		cmd->sep = get_sep(&line);
-		cmd->start = (prev) ? prev->start : cmd;
-		prev = cmd;
-		cmd->next_cmd = ft_memalloc(sizeof(t_cmd));
-		cmd = cmd->next_cmd;
+		cmd->next_cmd = NULL;
 	}
-	printf("prev <%p> et prev->start et strlen %d\n", prev, ft_strlen(line));
 	if (ft_strlen(line) > 0)
 	{
-		printf("on clean cmd\n");
 		clean_cmd(&cmd);
 		return (NULL);
 	}
 	else
-		return (prev ? prev->start : NULL);
+		return (cmd->start);
 }

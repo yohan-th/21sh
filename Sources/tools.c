@@ -13,6 +13,15 @@
 
 #include "../Include/shell.h"
 
+void	clean_shell(t_shell **shell)
+{
+	ft_arrdel((*shell)->envp);
+	if ((*shell)->str)
+		ft_strdel(&(*shell)->str);
+	free(*shell);
+	*shell = NULL;
+}
+
 t_shell	*init_shell(char **envp)
 {
 	t_shell *shell;

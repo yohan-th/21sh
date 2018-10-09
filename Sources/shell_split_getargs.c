@@ -17,7 +17,7 @@ int		shl_quotesub(char *arg)
 {
 	char	quote;
 
-	quote = ft_strchr("'\"`", *arg) ? *arg : (char)' ';
+	quote = ft_strchr("'\"", *arg) ? *arg : (char)' ';
 	if (quote != ' ')
 		ft_strdelchar(&arg, quote);
 	while (*arg)
@@ -27,7 +27,7 @@ int		shl_quotesub(char *arg)
 			ft_strdelchar(&arg, *arg);
 			arg++;
 		}
-		else if (ft_strchr("'\"`", *arg) && quote == ' ')
+		else if (ft_strchr("'\"", *arg) && quote == ' ')
 			ft_strdelchar(&arg, quote = *arg);
 		else if (*arg == quote && quote != ' ')
 		{
@@ -59,7 +59,7 @@ size_t	len_arg(char *str, char quote)
 		i++;
 		if (str[i - 1] == '\\' && str[i] == quote && quote != '\'')
 			i++;
-		if (ft_strchr("'\"`", str[i]) && quote == ' ')
+		if (ft_strchr("'\"", str[i]) && quote == ' ')
 			quote = str[i++];
 		if (str[i] == quote && quote != ' ' && (!ft_strchr("\0 ", str[i + 1])))
 			quote = ' ';
@@ -82,7 +82,7 @@ int 	get_nb_args(char *str)
 	while (*str && !ft_strchr(";|&><", *str))
 	{
 		str = shell_trim(&str);
-		quote = ft_strchr("'\"`", *str) ? *str : (char)' ';
+		quote = ft_strchr("'\"", *str) ? *str : (char)' ';
 		str += len_arg(str, quote);
 		nb_args += 1;
 		str = shell_trim(&str);
@@ -91,8 +91,9 @@ int 	get_nb_args(char *str)
 }
 
 /*
-** subtitue le premier args de str et avance str de la len
+** subtitue le premier args de str et avance str de len de args
 ** On profite d'avoir les quotes pour remplacer les var env
+** On laisse les backquotes pour les éxecuter après
 */
 
 char	*get_arg(char **str, char **envp)
@@ -105,8 +106,8 @@ char	*get_arg(char **str, char **envp)
 	while (*str && ft_isspace((*str)[i]))
 		i++;
 	if (!(*str) || (*str)[i] == '\0')
-		return (0);
-	quote = ft_strchr("'\"`", (*str)[i]) ? (*str)[i] : (char)' ';
+		return (NULL);
+	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 	if ((arg)[0] == '~' && arg[1] == '\0')
 	{
@@ -140,5 +141,10 @@ char 	**get_args(char **line, char **envp)
 	i = 0;
 	while (i < nb_args)
 		args[i++] = get_arg(line, envp);
+	if (nb_args > 0 && args[nb_args - 1] == NULL)
+	{
+		ft_arrdel(args);
+		return (NULL);
+	}
 	return (args);
 }

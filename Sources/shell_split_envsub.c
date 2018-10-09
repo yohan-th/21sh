@@ -48,12 +48,12 @@ void	shell_envpsub(char **arg, char **envp)
 	int		i;
 
 	i = 0;
-	quote = ft_strchr("'\"`", (*arg)[i]) ? (*arg)[i] : (char)' ';
+	quote = ft_strchr("'\"", (*arg)[i]) ? (*arg)[i] : (char)' ';
 	while ((*arg)[i])
 	{
 		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2))
 			i += 2;
-		if (ft_strchr("`'\"", (*arg)[i]) && quote == ' ')
+		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
 			quote = (*arg)[i];
 		else if ((*arg)[i] == quote && quote != ' ')
 			quote = ' ';
