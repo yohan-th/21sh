@@ -42,13 +42,29 @@ int		shell_argsub_env(char **arg, int i, char **envp)
 		return (i + ft_strlen(var) - 1);
 }
 
-void	shell_envpsub(char **arg, char **envp)
+void	shell_check_tilde(char **arg, char **envp)
 {
-	char	quote;
+	if ((*arg)[0] == '~' && (*arg)[1] == '\0')
+	{
+		ft_strdel(arg);
+		if (get_envp(envp, "HOME") == NULL)
+			*arg = ft_strnew(0);
+		else
+			*arg = ft_strdup(get_envp(envp, "HOME"));
+	}
+}
+
+/*
+** Remplace le tilde si existant
+** Remplace les var d'environnements
+*/
+
+void	shell_envpsub(char **arg, char **envp, char quote)
+{
 	int		i;
 
-	i = 0;
-	quote = ft_strchr("'\"", (*arg)[i]) ? (*arg)[i] : (char)' ';
+	shell_check_tilde(arg, envp);
+	i = (quote == ' ') ? 0 : 1;
 	while ((*arg)[i])
 	{
 		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2))
@@ -62,3 +78,5 @@ void	shell_envpsub(char **arg, char **envp)
 		i++;
 	}
 }
+
+

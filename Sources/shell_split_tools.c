@@ -13,6 +13,57 @@
 
 #include "../Include/shell.h"
 
+int		check_last_quote(char *arg, char quote)
+{
+	if (quote != ' ' && *arg != quote)
+		return (0);
+	else if (quote != ' ' && *arg == quote)
+		ft_strdelchar(&arg, quote);
+	return (1);
+}
+
+int		shl_quotesub(char *arg)
+{
+	char	quote;
+
+	quote = ft_strchr("'\"", *arg) ? *arg : (char)' ';
+	if (quote != ' ')
+		ft_strdelchar(&arg, quote);
+	while (*arg)
+	{
+		if (*arg == '\\' && quote != '\'')
+		{
+			ft_strdelchar(&arg, *arg);
+			arg++;
+		}
+		else if (ft_strchr("'\"", *arg) && quote == ' ')
+			ft_strdelchar(&arg, quote = *arg);
+		else if (*arg == quote && quote != ' ')
+		{
+			ft_strdelchar(&arg, quote);
+			quote = ' ';
+		}
+		else
+			arg++;
+	}
+	return (check_last_quote(arg, quote));
+}
+
+void	clean_redi(t_redi **redi)
+{
+	t_redi	*tmp;
+
+	while ((*redi)->next != NULL)
+	{
+		tmp = *redi;
+		(*redi) = (*redi)->next;
+		ft_strdel(&tmp->to);
+		free(tmp);
+	}
+	ft_strdel(&(*redi)->to);
+	free(*redi);
+}
+
 void	clean_cmd(t_cmd **cmd)
 {
 	t_cmd	*tmp;
@@ -21,7 +72,9 @@ void	clean_cmd(t_cmd **cmd)
 	tmp = *cmd;
 	while ((*cmd = (*cmd)->next_cmd))
 	{
-		ft_arrdel((*cmd)->args);
+		ft_arrdel(((*cmd)->args)->args);
+		clean_redi(&((*cmd)->args)->redi);
+		free((*cmd)->args);
 		free(tmp);
 		tmp = *cmd;
 	}
@@ -38,13 +91,4 @@ char	*shell_trim(char **str)
 		i++;
 	*str = *str + i;
 	return (*str);
-}
-
-int		check_last_quote(char *arg, char quote)
-{
-	if (quote != ' ' && *arg != quote)
-		return (0);
-	else if (quote != ' ' && *arg == quote)
-		ft_strdelchar(&arg, quote);
-	return (1);
 }

@@ -15,22 +15,31 @@
 
 void	shell_process(t_cmd *cmd, t_shell *shell)
 {
-	t_cmd *save;
+	t_cmd	*save;
+	t_redi	*read;
 
 	save = cmd;
-	printf("process\n");
 	while ((cmd = cmd->next_cmd))
 	{
-		read_array(cmd->args);
-		printf(" et sep %d\n", cmd->sep);
+		read_array((cmd->args)->args);
+		printf("\nRead redir : ");
+		read = (cmd->args)->redi;
+		while (read != NULL)
+		{
+			printf("from %d to <%s> - ", read->from, read->to);
+			read = read->next;
+		}
+		printf("Et sep %d\n", cmd->sep);
 	}
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{
 		clean_shell(&shell);
-		clean_cmd(&save);
+		//clean_cmd(&save);
 		exit(1);
 	}
-	clean_cmd(&save);
+	printf("clean %p\n", save);
+	//clean_cmd(&save);
+	printf("ok\n");
 	ft_strdel(&shell->str);
 	//clean_shell(&shell);
 }

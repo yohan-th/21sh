@@ -53,10 +53,10 @@ void	read_array(char **str)
 	int i;
 
 	i = 0;
-	printf("Read array : ");
+	ft_printf("Read array : ");
 	while (str[i])
 	{
-		printf("arg[%i]=<%s>", i, str[i]);
+		ft_printf("arg[%i]=<%s> ", i, str[i]);
 		i++;
 	}
 }

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   shell_error.c                                    .::    .:/ .      .::   */
+/*   shell_err.c                                    .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
@@ -31,7 +31,7 @@ int		shell_error_env(char *msg)
 }
 
 /*
-** Print un message d'erreur ou/et exit proprement.
+** Print un message d'erreur ou/et exit le plus proprement possible.
 ** {type} commence par un code suivant :
 **      - env : erreur lié aux variable environement
 **		- mlc : erreur de malloc. Récupère les {n} var à free avec ap puis exit
@@ -43,8 +43,6 @@ int		shell_error_env(char *msg)
 int		shell_error(char *type, int n, ...)
 {
 	va_list	ap;
-	char	*str;
-	char	*str2;
 
 	va_start(ap, n);
 	if (type[0] == 'e' && type[1] == 'n' && type[2] == 'v')
@@ -62,9 +60,32 @@ int		shell_error(char *type, int n, ...)
 		ft_strdel(va_arg(ap, char **));
 		ft_arrdel(va_arg(ap, char **));
 		ft_printf("Fatal: failed to allocate %zu bytes\n", va_arg(ap, size_t));
+
 		va_end(ap);
 		exit(EXIT_FAILURE);
 	}
 	va_end(ap);
 	return (0);
+}
+
+void	*shl_mlc(char *type, int n, ...)
+{
+	va_list	ap;
+	void	*ret;
+
+	va_start(ap, n);
+	if (type[0] == 'c' && type[1] == 'm' && type[2] == 'd' &&
+			!(ret = (void *)ft_memalloc(sizeof(t_cmd))))
+		shell_error("mlc", 3, va_arg(ap, char **), va_arg(ap, char **),
+					va_arg(ap, size_t));
+	if (type[0] == 'a' && type[1] == 'r' && type[2] == 'g' &&
+		!(ret = (void *)ft_memalloc(sizeof(t_cmd))))
+		shell_error("mlc", 3, va_arg(ap, char **), va_arg(ap, char **),
+					va_arg(ap, size_t));
+	if (type[0] == 'a' && type[1] == 'r' && type[2] == 'g' && type[3] == 's' &&
+			!(ret = (void *)ft_memalloc(va_arg(ap, size_t))))
+		shell_error("mlc", 3, va_arg(ap, char **), va_arg(ap, char **),
+					va_arg(ap, size_t));
+	va_end(ap);
+	return (ret);
 }
