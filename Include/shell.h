@@ -23,9 +23,21 @@
 
 # include "../Libft/Includes/libft.h"
 
+typedef struct				s_redi
+{
+	BOOL				append;
+	int 				from;
+	char 				*to;
+	char 				**std_in;
+	struct s_redi		*next;
+	struct s_redi		*start;
+}							t_redi;
+
 typedef struct				s_cmd
 {
 	char 				**args;
+	t_redi				*redi;
+	char 				*eof;
 	int 				sep;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
@@ -38,17 +50,13 @@ typedef struct				s_shell
 	char 				*str;
 }							t_shell;
 
-typedef enum 				e_sepcmd
+typedef enum 				e_sep
 {
-	SPL_REDI_D = 1,
-	SPL_PIPE = 2,
-	SPL_REDI_G = 3,
-	PTN_VRGL = 4,
-	DBL_PIPE = 50,
-	DBL_REDI_G = 60,
-	DBL_SPRLU = 70,
-	DBL_REDI_D = 80,
-}							t_sepcmd;
+	SPL_PIPE = 1,
+	PTN_VRGL = 2,
+	DBL_PIPE = 3,
+	DBL_SPRLU = 4,
+}							t_sep;
 
 char	*path_cmd(char *cmd, char *envp_path);
 void	builtin_cd(char **cmd, char ***envp);
@@ -71,6 +79,7 @@ char	*get_cur_dir(void);
 int		ft_arrlen(char **arr);
 int		shell_argsub_env(char **arg, int i, char **envp);
 int		shell_error(char *type, int n, ...);
+void	*shl_mlc(char *type, int n, ...);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -79,7 +88,8 @@ int		shell_error(char *type, int n, ...);
 */
 
 t_shell	*init_shell(char **envp);
-int		prompt(int multi);
+void	clean_shell(t_shell **shell);
+void	read_array(char **str);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -88,13 +98,15 @@ int		prompt(int multi);
 */
 
 t_cmd	*shell_split(char *line, char **envp);
-char 	**get_args(char **line, char **envp);
-void	shell_envpsub(char **arg, char **envp);
+t_cmd 	*get_args(char **line, char **envp);
+void	shell_envpsub(char **arg, char **envp, char quote);
 void 	shell_process(t_cmd *cmd, t_shell *shell);
+t_redi	*shell_redi(char **arg, t_redi **first_redi, char quote);
 
 void	clean_cmd(t_cmd **cmd);
 char	*shell_trim(char **str);
 int		check_last_quote(char *arg, char quote);
+int		shl_quotesub(char *arg);
 
 
 /*
@@ -103,11 +115,13 @@ int		check_last_quote(char *arg, char quote);
 ** <echo "test>
 ** <echo test\>
 ** <echo 'test\'
+** echo tes't $USER te'st
+** echo tes"t $USER te"st
 ** lancer minishell et <cd -> bash: cd: OLDPWD not set
 ** path qui contient un lien et <cd -L -L -P -L .> && <cd -L -P .>
 ** <mkdir test1> && <chmod 666 test1> && <cd test> --> Fail
 ** <mkdir test2> && <chmod 111 test2> && <cd test2> --> OK
-** <cd \./> && pwd
+** <cd \./> && pwd --> PWD et OLDPWD devrait avoir la meme valeur
 ** <cd \/.///> && env PWD && cd ..
 ** <cd ~///./folder//.//>
 ** cat * | ./minishell
@@ -119,6 +133,16 @@ int		check_last_quote(char *arg, char quote);
 ** echo `ls\` --> ` && echo `ls\``
 ** echo "text" > file ; < file cat
 ** <cat > file << EOF> \n <line> <\n> <EOF>
+** {echo test 1>/dev/ttys001 1>&2} --> la derniere redi est prit en compte et print test
+** {cat missing 2>&1 1>/dev/ttys001} --> les redis sont save
+** cat << EOF {ENTER} word1 {ENTER} word2 EOF {ENTER} EOF {ENTER}
+** cat << EOF existing_file {ENTER} word1 {ENTER} EOF {ENTER}
+** echo test >'&2'
+** echo file > '&'
+** {export tty=/dev/ttys001} {echo test > $tty} et car ttys001 recoit
+** {echo test > "/dev/ttys001\""} --> error avec {/dev/ttys001"}
+** echo test > file > /dev/ttys001 (le dernier est prix en compte
 */
+
 
 #endif

@@ -72,9 +72,9 @@ void	clean_cmd(t_cmd **cmd)
 	tmp = *cmd;
 	while ((*cmd = (*cmd)->next_cmd))
 	{
-		ft_arrdel(((*cmd)->args)->args);
-		clean_redi(&((*cmd)->args)->redi);
-		free((*cmd)->args);
+		ft_arrdel((*cmd)->args);
+		if ((*cmd)->redi)
+			clean_redi(&((*cmd)->redi));
 		free(tmp);
 		tmp = *cmd;
 	}

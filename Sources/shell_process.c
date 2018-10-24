@@ -21,9 +21,9 @@ void	shell_process(t_cmd *cmd, t_shell *shell)
 	save = cmd;
 	while ((cmd = cmd->next_cmd))
 	{
-		read_array((cmd->args)->args);
+		read_array(cmd->args);
 		printf("\nRead redir : ");
-		read = (cmd->args)->redi;
+		read = cmd->redi;
 		while (read != NULL)
 		{
 			printf("from %d to <%s> - ", read->from, read->to);
@@ -34,12 +34,10 @@ void	shell_process(t_cmd *cmd, t_shell *shell)
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{
 		clean_shell(&shell);
-		//clean_cmd(&save);
+		clean_cmd(&save);
 		exit(1);
 	}
-	printf("clean %p\n", save);
-	//clean_cmd(&save);
-	printf("ok\n");
+	clean_cmd(&save);
 	ft_strdel(&shell->str);
 	//clean_shell(&shell);
 }

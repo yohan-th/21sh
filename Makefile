@@ -32,6 +32,8 @@ SRCS =  main.c \
         shell_split_getargs.c \
         shell_split_envsub.c \
 		shell_split_tools.c \
+		shell_split_redi.c \
+		shell_split_redi_tools.c \
         builtin.c \
         shell_error.c \
         shell_process.c

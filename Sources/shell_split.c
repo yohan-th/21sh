@@ -34,25 +34,19 @@ int		get_sep(char **str)
 /*
 ** Split line jusqu'au prochain delimiteur
 ** Le premier maillon start pointé par tous les autres est vide.
-** ça permet de garder la logique du dernier maillon qui est rempli et pointe
-** next_cmd sur NULL sinon c'est le dernier maillon qui sera vide
 */
 
 t_cmd	*shell_split(char *line, char **envp)
 {
 	t_cmd	*cmd;
-	t_args	*args;
 
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 	cmd->start = cmd;
-	while ((args = get_args(&line, envp)))
+	while ((cmd->next_cmd = get_args(&line, envp)))
 	{
-		cmd->next_cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
-		cmd->args = args;
 		cmd->sep = get_sep(&line);
-		cmd->next_cmd = NULL;
 	}
 
 	if (ft_strlen(line) > 0)

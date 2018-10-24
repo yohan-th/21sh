@@ -59,7 +59,7 @@ char 	*get_redi_to(char *redi, int pos)
 }
 
 /*
-** tronque arg si from n'a pas que des digits
+** tronque {arg} si {from} n'a pas que des digits
 */
 
 void 	shell_redi_sub(char **arg, int i, t_redi *redi)
@@ -81,7 +81,7 @@ void 	shell_redi_sub(char **arg, int i, t_redi *redi)
 		*arg[0] = '\0';
 }
 
-t_redi	*add_redi(t_args *first_redi)
+t_redi	*add_redi(t_redi **first_redi)
 {
 	t_redi	*new_redi;
 	t_redi	*t_next;
@@ -93,15 +93,15 @@ t_redi	*add_redi(t_args *first_redi)
 	new_redi->to = ft_strdup("&1");
 	new_redi->std_in = NULL;
 	new_redi->next = NULL;
-	if (!(first_redi->redi))
+	if (!(*first_redi))
 	{
 		new_redi->start = new_redi;
-		first_redi->redi = new_redi;
+		*first_redi = new_redi;
 	}
 	else
 	{
-		new_redi->start = first_redi->redi;
-		t_next = first_redi->redi;
+		new_redi->start = *first_redi;
+		t_next = *first_redi;
 		while (t_next->next != NULL)
 			t_next = t_next->next;
 		t_next->next = new_redi;
@@ -113,11 +113,12 @@ t_redi	*add_redi(t_args *first_redi)
 ** shell redi peut renvoyer 0 si malloc fail. On effectue alors un exit propre
 */
 
-int		shell_redi(char **arg, t_args *st_args, char quote)
+t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
 {
 	int		i;
 	t_redi	*redi;
 
+	redi = NULL;
 	i = (quote == ' ') ? 0 : 1;
 	while ((*arg)[i])
 	{
@@ -129,12 +130,12 @@ int		shell_redi(char **arg, t_args *st_args, char quote)
 			quote = ' ';
 		if ((*arg)[i] == '>' && quote == ' ')
 		{
-			if (!(redi = add_redi(st_args)))
-				return (0);
+			if (!(redi = add_redi(first_redi)))
+				return (NULL);
 			shell_redi_sub(arg, i, redi);
 			break ;
 		}
 		i++;
 	}
-	return (1);
+	return (redi);
 }

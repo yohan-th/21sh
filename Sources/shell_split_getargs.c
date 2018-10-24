@@ -97,14 +97,14 @@ int 	shl_clean_arg(char *arg, char quote)
 ** subtitue le premier args_tab de str et avance str de len de args_tab
 ** On profite d'avoir les quotes pour remplacer les var env et redi
 ** On laisse les backquotes pour les executer après
+** /!\ shell_redi n'est pas safe sur son malloc fail
 */
 
-char	*get_arg(char **str, char **envp, t_args *t_args)
+char	*get_arg(char **str, char **envp, t_redi **first_redi)
 {
 	unsigned int	i;
 	char			quote;
 	char			*arg;
-	int 			iyt;
 
 	i = 0;
 	while (*str && ft_isspace((*str)[i]))
@@ -114,8 +114,7 @@ char	*get_arg(char **str, char **envp, t_args *t_args)
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 	shell_envpsub(&arg, envp, quote);
-	if (!(shell_redi(&arg, t_args, quote)))
-		shell_error("mlc", 3, str, envp, sizeof(t_redi));
+	shell_redi(&arg, first_redi, quote);
 	if (!shl_clean_arg(arg, quote))
 		ft_strdel(&arg);
 	else
@@ -123,30 +122,30 @@ char	*get_arg(char **str, char **envp, t_args *t_args)
 	return (arg);
 }
 
-t_args 	*get_args(char **line, char **envp)
+t_cmd 	*get_args(char **line, char **envp)
 {
-	t_args 	*ts_args;
 	int		i;
 	int 	nb_args;
-	int 	nb_redi;
+	t_cmd	*cmd;
 
-	ts_args = (t_args *)shl_mlc("arg", 3, line, envp, sizeof(t_args));
 	if (!(*line) || (*line)[0] == '\0')
 		return (NULL);
+	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 	nb_args = get_nb_args(*line);
-	ts_args->args = (char **)malloc(sizeof(char *) * (nb_args + 1));
-	ts_args->args[nb_args] = NULL;
-	ts_args->redi = NULL;
+	cmd->args = (char **)malloc(sizeof(char *) * (nb_args + 1));
+	cmd->args[nb_args] = NULL;
+	cmd->redi = NULL;
 
 	i = 0;
 	while (i < nb_args)
-		ts_args->args[i++] = get_arg(line, envp, ts_args);
-	if (nb_args > 0 && ts_args->args[nb_args - 1] == NULL) //ou parsing redi error
+		cmd->args[i++] = get_arg(line, envp, &cmd->redi);
+	if (nb_args > 0 && cmd->args[nb_args - 1] == NULL) //ou parsing redi error
 	{
+		//clean_cmd(&cmd);
 		//clean args avec args->args_tab
-		ft_arrdel(ts_args->args);
+		ft_arrdel(cmd->args);
 		return (NULL);
 	}
 	//prepare redi (erase or create files)
-	return (ts_args);
+	return (cmd);
 }
