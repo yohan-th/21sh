@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/06/05 18:47:21 by ythollet    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/10/29 23:19:17 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -17,34 +17,57 @@ CFLAGS = -g #-Wall -Wextra -Werror
 
 NAME = 21sh
 
-DIR_LIB = Libft
-DIR_INC = Include
-DIR_SRC = Sources
-DIR_OBJ = Objects
+DIR_LIB = ./Libft/
+DIR_INC = ./Include/
+DIR_SRC = ./Sources/
+DIR_OBJ = ./Objects/
 
-SRCS =  main.c \
-        get_path.c \
-        tools.c \
-        builtin_cd.c \
-        builtin_allenv.c \
-        builtin_echo.c \
-        shell_split.c \
-        shell_split_getargs.c \
-        shell_split_envsub.c \
-		shell_split_tools.c \
-		shell_split_redi.c \
-		shell_split_redi_tools.c \
-        builtin.c \
-        shell_error.c \
-        shell_process.c
+SRCS =  shell/main.c \
+        shell/get_path.c \
+        shell/tools.c \
+        shell/shell_split.c \
+        shell/shell_split_getargs.c \
+        shell/shell_split_envsub.c \
+		shell/shell_split_tools.c \
+		shell/shell_split_redi.c \
+		shell/shell_split_redi_tools.c \
+		shell/shell_error.c \
+        shell/shell_process.c \
+		builtins/builtin_cd.c \
+        builtins/builtin_allenv.c \
+        builtins/builtin_echo.c \
+        builtins/builtin.c \
+        editor/get_stdin.c \
+		editor/prompt.c \
+		editor/cursor_position.c \
+		editor/backspace.c \
+		editor/go_to_of_line.c \
+		editor/move.c \
+		editor/move_cursor.c \
+		editor/move_word.c \
+		editor/add_char.c \
+		editor/paste_line.c \
+		editor/term_init.c \
+		editor/ft_putfreshstr.c \
+		editor/find_env_var.c \
+		editor/prompt_git.c \
+		editor/move_to_previous_new_line.c \
+		editor/window_resize.c \
+		editor/insert_del_line.c \
+		editor/delete_from_cursor_to_end.c \
+		editor/clear_window.c \
+		editor/end_of_text.c \
+		editor/paste_clipboard.c \
 
 INCLUDES_FILE = shell.h
 
-OBJS = $(addprefix $(DIR_OBJ)/,$(SRCS:.c=.o))
+OBJS_FOLDERS = builtins editor shell
+OBJS = $(addprefix $(DIR_OBJ),$(SRCS:.c=.o))
+OBJS_FOLDERS_BIS = $(addprefix $(DIR_OBJ),$(OBJS_FOLDERS))
 
 all: lib $(NAME)
 
-lib: 
+lib:
 		@if !(make -q -C $(DIR_LIB)); then \
 			rm -f $(OBJ); \
 			rm -f $(NAME); \
@@ -53,11 +76,11 @@ lib:
 
 $(NAME): $(OBJS)
 	@make -C $(DIR_LIB)
-	@gcc -o $(NAME) $(OBJS) -L $(DIR_LIB) -lft
+	@gcc -o $(NAME) $(OBJS) -L $(DIR_LIB) -lft -ltermcap
 
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c  $(DIR_INC)/$(INCLUDES_FILE)
-	@mkdir -p $(DIR_OBJ)
-	gcc -o $@ -c $< -I $(DIR_INC) $(CFLAGS)
+$(DIR_OBJ)%.o: $(DIR_SRC)%.c  $(DIR_INC)/$(INCLUDES_FILE)
+	@mkdir -p $(DIR_OBJ) $(OBJS_FOLDERS_BIS)
+	@gcc -o $@ -c $< -I $(DIR_INC) $(CFLAGS)
 
 clean:
 	@rm -rf $(DIR_OBJ)

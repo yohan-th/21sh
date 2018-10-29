@@ -1,26 +1,45 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   minishell.h                                      .::    .:/ .      .::   */
+/*   shell.h                                          .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
+/*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/05/04 20:58:23 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/06/11 12:20:02 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/10/24 21:34:32 by dewalter     #+#   ##    ##    #+#       */
+/*   Updated: 2018/10/29 21:54:46 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
 
-# define MINISHELL_H
+#ifndef SHELL_H
+# define SHELL_H
 
+# define BUFF_SIZE 4096
 
 # include <unistd.h>
-# include <sys/wait.h>
+//# include <stdlib.h>
+//# include <signal.h>
+# define BOOL char
+# include <term.h>
+# include <termios.h>
+# include <sys/ioctl.h>
+//# include <sys/ioctl.h>
 # include <sys/types.h>
+//# include <sys/utsname.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
+//# include <time.h>
 
+//# include <stdio.h>
+//# include <curses.h>
+//# include <fcntl.h>
+//# include <dirent.h>
+//# include <pwd.h>
+//# include <limits.h>
+#include <stdbool.h>
+
+# include "editor.h"
 # include "../Libft/Includes/libft.h"
 
 typedef struct				s_redi

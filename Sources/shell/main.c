@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/05/04 19:23:25 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/29 23:03:16 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,28 +16,6 @@
 /*
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
-
-char	*readline(t_shell *shell)
-{
-	char	*line;
-	int		gnl;
-	char	*tmp;
-
-	line = NULL;
-	gnl = get_next_line(0, &line);
-	if (gnl == -1 || line == NULL)
-		shell_error("gnl", 2, &shell->str, shell->envp);
-	if (shell->str)
-	{
-		tmp = shell->str;
-		shell->str = ft_strjoin_mltp(3, shell->str, "\n", line);
-		ft_strdel(&tmp);
-	}
-	else
-		shell->str = ft_strdup(line);
-	ft_strdel(&line);
-	return (shell->str);
-}
 
 int		prompt(int multi)
 {
@@ -61,24 +39,60 @@ void	read_array(char **str)
 	}
 }
 
+int		init_terminal_data(void)
+{
+	static char term_buffer[2048];
+	char *termtype = getenv ("TERM");
+	int success;
+
+	if (termtype == 0)
+	{
+		ft_putstr("Specify a terminal type with `setenv TERM <yourtype>'.\n");
+		return (EXIT_FAILURE);
+	}
+	success = tgetent(term_buffer, termtype);
+	if (success < 0)
+	{
+		ft_putstr("Could not access the termcap data base.\n");
+		return (EXIT_FAILURE);
+	}
+	if (success == 0)
+	{
+		ft_putstr("Terminal type `");
+		ft_putstr(termtype);
+		ft_putendl("' is not defined.");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
 int		main(int ac, char **av, char **envp)
 {
+	e_prompt prompt;
 	t_cmd	*cmd;
 	t_shell	*shell;
 
+	init_terminal_data();
 	shell = init_shell(envp);
-	while (prompt(shell->mltline) && (shell->str = readline(shell)))
+	prompt = PROMPT;
+	shell->str = NULL;
+	while (get_stdin(&shell->str, &prompt) != -2)
 	{
-		if (!(cmd = shell_split(shell->str, shell->envp)))
+		dprintf(2, "OKKKKKK\n");
+		if (shell->str && !(cmd = shell_split(shell->str, shell->envp)))
 		{
 			printf("multiline\n");
 			shell->mltline = 1;
 		}
 		else
 		{
-			shell->mltline = 0;
-			shell_process(cmd, shell);
+			if (shell->str)
+			{
+				shell->mltline = 0;
+				shell_process(cmd, shell);
+			}
 		}
+		ft_strdel(&shell->str);
 	}
 	return (1);
 }

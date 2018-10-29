@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   builtin_echo.c                                   .::    .:/ .      .::   */
+/*   ft_putfreshstr.c                                 .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
+/*   By: gmadec <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/05/07 19:56:27 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/05/07 19:56:27 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/09/25 03:50:17 by gmadec       #+#   ##    ##    #+#       */
+/*   Updated: 2018/10/06 20:53:47 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "shell.h"
 
-void	builtin_echo(char **cmd)
+void		ft_putfreshstr(char *str)
 {
 	int		i;
-	BOOL	newline;
 
-	newline = 1;
-	i = 1;
-	if (ft_strcmp(cmd[1], "-e") == 0)
+	i = 0;
+	if (str)
 	{
-		newline = 0;
-		i = 2;
+		while (str[i])
+		{
+			tputs(tgetstr("ce", NULL), 1, ft_putchar);
+			write(1, &str[i++], 1);
+		}
 	}
-	while (cmd[i] != NULL || cmd[i])
-	{
-		if (ft_strcmp(cmd[i], "") != 0)
-			ft_printf("%s ", cmd[i]);
-		i++;
-	}
-	if (newline)
-		write(1, "\n", 1);
 }
