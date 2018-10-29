@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 23:03:16 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/29 23:48:48 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -78,21 +78,16 @@ int		main(int ac, char **av, char **envp)
 	shell->str = NULL;
 	while (get_stdin(&shell->str, &prompt) != -2)
 	{
-		dprintf(2, "OKKKKKK\n");
-		if (shell->str && !(cmd = shell_split(shell->str, shell->envp)))
+		if (!(cmd = shell_split(shell->str, shell->envp)))
 		{
 			printf("multiline\n");
 			shell->mltline = 1;
 		}
 		else
 		{
-			if (shell->str)
-			{
-				shell->mltline = 0;
-				shell_process(cmd, shell);
-			}
+			shell->mltline = 0;
+			shell_process(cmd, shell);
 		}
-		ft_strdel(&shell->str);
 	}
 	return (1);
 }

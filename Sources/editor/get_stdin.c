@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 22:57:28 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/29 23:48:15 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,16 +20,9 @@ static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt)
 		ed->last_row - ed->cur_row), 1, ft_putchar);
 	ft_putchar('\n');
 	if (*prompt != PROMPT && *prompt != E_PIPE)
-	{
-		dprintf(2, "YEAH!!!!!!\n");
 		*line = ed->line == NULL ? *line : ft_strjoin_free(*line, ed->line);
-	}
 	else
-	{
-		dprintf(2, "NOOOOOOOOO!!1!!\n");
 		*line = ft_strdup(ed->line);
-		dprintf(2, "YESSSSSSSSSSS!!1!!\n");
-	}
 }
 
 static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
@@ -79,7 +72,6 @@ int				get_stdin(char **line, e_prompt *prompt)
 
 	ed = NULL;
 	get_term_raw_mode(1);
-	//display_prompt(*prompt);
 	if ((ed = line_editor_init(line, *prompt, display_prompt(*prompt))) == NULL)
 		return (-2);
 	term_size(ed);
@@ -95,15 +87,9 @@ int				get_stdin(char **line, e_prompt *prompt)
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||
 			(ed->ret == -2 && !ed->line) || (ed->ret == -3 && *prompt == E_HDOC))))
-		{
-			dprintf(2, "OKKKKKKKK1111111111\n");
 			break ;
-		}
 	}
-	dprintf(2, "OKKKKKKKK2222222222\n");
 	get_stdin_next(line, ed, prompt);
-	dprintf(2, "OKKKKKKKK33333333333\n");
 	get_term_raw_mode(0);
-	dprintf(2, "OKKKKKKKK4444444444444\n");
 	return (line_editor_delete(&ed));
 }

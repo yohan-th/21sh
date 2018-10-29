@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 10:42:22 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 22:37:09 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/29 23:47:22 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -91,7 +91,6 @@ void			add_char_into_line(char key, t_editor *ed)
 
 void			add_char_to_line(char key, t_editor *ed)
 {
-		dprintf(2, "OKKKKKKKK222222222\n");
 	ed->cursor_str_pos++;
 	tputs(tgetstr("im", NULL), 1, ft_putchar);
 	if (ed->cur_col == ed->ws_col && ed->cur_row != ed->ws_row)
@@ -123,10 +122,8 @@ int				print_key(t_editor **ed)
 {
 	if (ft_strlen((*ed)->key) == 1)
 	{
-		dprintf(2, "OKKKKKKKK\n");
 		if ((*ed)->cursor_str_pos == ft_strlen((*ed)->line))
 		{
-		dprintf(2, "OKKKKKKKK11111111\n");
 			add_char_to_line((*ed)->key[0], *ed);
 			return (1);
 		}
