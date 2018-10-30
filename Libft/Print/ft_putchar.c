@@ -6,15 +6,14 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/19 18:27:31 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/19 18:27:31 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:35:47 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "../Includes/print.h"
 
-int	ft_putchar(char c)
+int	ft_putchar(int c)
 {
-	write(1, &c, 1);
-	return (1);
+	return (write(1, &c, 1));
 }

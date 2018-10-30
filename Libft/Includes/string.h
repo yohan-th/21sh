@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/03/13 19:41:55 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/04/24 02:40:13 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:34:29 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,7 +54,7 @@ wchar_t		*ft_wstrsub_free(wchar_t *s, unsigned int start, size_t len);
 char		*ft_strjoin_mltp(int n, ...);
 char		*ft_rmvpath(char *str);
 void		ft_strdelchar(char **str, char c);
-
+char		*ft_strjoin_free(char *s1, char *s2);
 int			ft_strnbr(const char *str);
 
 #endif

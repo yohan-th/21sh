@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/03/13 19:33:28 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/03/13 19:33:28 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:35:59 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,7 +16,7 @@
 
 # include "libft.h"
 
-int		ft_putchar(char c);
+int		ft_putchar(int c);
 void	ft_putchar_fd(char c, int fd);
 int		ft_putnbr_signed(intmax_t nb);
 int		ft_putnbr_unsigned(uintmax_t nb);
