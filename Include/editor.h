@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 21:54:30 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:42:48 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -86,7 +86,7 @@ typedef struct		s_editor
 	size_t			cursor_str_pos;
 	size_t			prompt_size;
 	char			*clipboard;
-	char			key[BUFF_SIZE];
+	char			key[BUFF_READ];
 	char			*line;
 	char			*tmp_line;
 	t_tab			t;

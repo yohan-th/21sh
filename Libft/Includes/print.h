@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/03/13 19:33:28 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/30 19:35:59 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:43:48 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -25,5 +25,6 @@ void	ft_putstr_fd(char const *s, int fd);
 int		ft_putwchar(wchar_t c);
 int		ft_putwstr(wchar_t const *s);
 int		ft_putchar_dup(char c, int i);
+void	ft_putendl(const char *s);
 
 #endif

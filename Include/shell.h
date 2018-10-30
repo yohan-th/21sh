@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/24 21:34:32 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 21:54:46 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/10/30 19:41:26 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 #ifndef SHELL_H
 # define SHELL_H
 
-# define BUFF_SIZE 4096
+# define BUFF_READ 4096
 
 # include <unistd.h>
 //# include <stdlib.h>
