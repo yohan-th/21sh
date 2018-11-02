@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 int		shell_argsub_env(char **arg, int i, char **envp)
 {

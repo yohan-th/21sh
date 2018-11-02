@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 void	clean_shell(t_shell **shell)
 {

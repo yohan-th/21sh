@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 
 int		get_sep(char **str)
@@ -49,6 +49,7 @@ t_cmd	*shell_split(char *line, char **envp)
 		cmd->sep = get_sep(&line);
 	}
 
+	printf("line <%s>\n", line);
 	if (ft_strlen(line) > 0)
 	{
 		clean_cmd(&cmd);

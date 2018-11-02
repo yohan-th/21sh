@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 void	shell_process(t_cmd *cmd, t_shell *shell)
 {

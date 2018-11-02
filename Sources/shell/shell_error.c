@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 int		shell_error_env(char *msg)
 {

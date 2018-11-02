@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 /*
 ** Calcul la longueur de l'argument
@@ -69,8 +69,7 @@ int 	get_nb_args(char *str)
 
 int 	shl_clean_arg(char *arg, char quote)
 {
-	if (quote != ' ')
-		arg++;
+	arg += (quote == ' ') ? 0 : 1;
 	while (*arg)
 	{
 		if (*arg == '\\' && quote != '\'')
@@ -85,7 +84,7 @@ int 	shl_clean_arg(char *arg, char quote)
 			ft_strdelchar(&arg, quote);
 			quote = ' ';
 		}
-		else if (*arg == quote && quote != ' ' && *(arg + 1) == '\0')
+		else if (quote != ' ' && *arg == quote && *(arg + 1) == '\0')
 			return (1);
 		else
 			arg++;
@@ -94,10 +93,11 @@ int 	shl_clean_arg(char *arg, char quote)
 }
 
 /*
-** subtitue le premier args_tab de str et avance str de len de args_tab
-** On profite d'avoir les quotes pour remplacer les var env et redi
-** On laisse les backquotes pour les executer après
-** /!\ shell_redi n'est pas safe sur son malloc fail
+** subtitue le premier {args_tab} de {str} et avance de {len} de {args_tab}.
+** {arg} garde les quotes pour {shell_envsub} au moment du [process].
+** C'est donc juste un check qu'on fait avec [shl_clean_arg].
+** Le vrai [shl_clean_arg] se fera au niveau du [process].
+** /!\ shell_redi n'est pas safe si son malloc fail
 */
 
 char	*get_arg(char **str, char **envp, t_redi **first_redi)
@@ -105,6 +105,7 @@ char	*get_arg(char **str, char **envp, t_redi **first_redi)
 	unsigned int	i;
 	char			quote;
 	char			*arg;
+	char 			*just_check;
 
 	i = 0;
 	while (*str && ft_isspace((*str)[i]))
@@ -113,12 +114,13 @@ char	*get_arg(char **str, char **envp, t_redi **first_redi)
 		return (NULL);
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
-	shell_envpsub(&arg, envp, quote);
+//	shell_envpsub(&arg, envp, quote);
 	shell_redi(&arg, first_redi, quote);
-	if (!shl_clean_arg(arg, quote))
+	if (!shl_clean_arg(just_check = ft_strdup(arg), quote))
 		ft_strdel(&arg);
 	else
 		*str = *str + i + len_arg(*str + i, quote);
+	ft_strdel(&just_check);
 	return (arg);
 }
 

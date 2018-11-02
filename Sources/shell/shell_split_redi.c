@@ -11,7 +11,50 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
+
+int		len_redi_to(char *str, char quote)
+{
+	int i;
+
+	i = 0;
+	while (*str && str[i])
+	{
+		i++;
+		if (str[i - 1] == '\\' && str[i] == quote && quote != '\'')
+			i++;
+		if (ft_strchr("'\"", str[i]) && quote == ' ')
+			quote = str[i++];
+		if (str[i] == quote && quote != ' ' && (!ft_strchr("\0 ", str[i + 1])))
+			quote = ' ';
+		if (quote == ' ' && str[i - 1] != '\\' && ft_strchr("><", str[i]))
+			break ;
+		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
+			break ;
+	}
+	return (i);
+}
+
+/*
+** Return NULL si redi est dans le prochain arg (si existant) ou si quote
+** non fermé.
+*/
+
+char 	*get_redi_to(char *redi, int *pos)
+{
+	char 	*redi_to;
+	char 	quote;
+	int 	len;
+
+	if (redi[*pos] == '\0') //redi prochain arg
+		return (NULL);
+	quote = ft_strchr("'\"", redi[*pos]) ? (char)redi[*pos] : (char)' ';
+	len = len_redi_to(redi + *pos, quote);
+	redi_to = ft_strsub(redi, (unsigned)*pos, (size_t)len);
+	*pos += len;
+	return (redi_to);
+}
+
 
 int 	get_redi_from(char *redi, int pos)
 {
@@ -37,48 +80,30 @@ int 	get_redi_from(char *redi, int pos)
 }
 
 /*
-** Return NULL si redi est dans le prochain arg (si existant) ou si quote non
-** non fermé.
-*/
-
-char 	*get_redi_to(char *redi, int pos)
-{
-	char 	*redi_to;
-	char 	quote;
-	int 	len;
-
-	if (redi[pos] == '\0') //redi prochain arg
-		return (NULL);
-	quote = ft_strchr("'\"", redi[pos]) ? (char)redi[pos] : (char)'\0';
-	len = ft_strlen(redi) - pos;
-	if (quote != '\0')
-		redi_to = ft_strsub(redi, (unsigned)pos + 1, (size_t)len - 2);
-	else
-		redi_to = ft_strsub(redi, (unsigned)pos, (size_t)len);
-	return (redi_to);
-}
-
-/*
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-void 	shell_redi_sub(char **arg, int i, t_redi *redi)
+int 	shell_redi_sub(char **arg, int i, t_redi *redi)
 {
 	redi->from = get_redi_from(*arg, i);
 	ft_strdel(&redi->to);
-	if ((*arg)[i + 1] != '>')
-	{
-		redi->append = 0;
-		redi->to = get_redi_to(*arg, i + 1);
-	}
-	else
+	if ((*arg)[i] && (*arg)[i + 1] != '>')
 	{
 		redi->append = 1;
-		redi->to = get_redi_to(*arg, i + 2);
+		(*arg)[i] = '\0';
+		i += 1;
+		redi->to = get_redi_to(*arg, &i);
 	}
-	(*arg)[i] = '\0';
-	if (ft_atoi(*arg) == redi->from)
+	else if ((*arg)[i])
+	{
+		redi->append = 0;
+		(*arg)[i] = '\0';
+		i += 2;
+		redi->to = get_redi_to(*arg, &i);
+	}
+	if ((*arg)[i] && ft_atoi(*arg) == redi->from)
 		*arg[0] = '\0';
+	return (i);
 }
 
 t_redi	*add_redi(t_redi **first_redi)
@@ -109,8 +134,24 @@ t_redi	*add_redi(t_redi **first_redi)
 	return (new_redi);
 }
 
+t_redi		*get_last_redi(t_redi *redi)
+{
+	t_redi	*t_next;
+
+	t_next = redi;
+	while (t_next->next)
+		t_next = t_next->next;
+	return (t_next);
+}
+
+void		complete_redi_to(char **arg, t_redi *add_to, char quote)
+{
+	;
+}
+
 /*
-** shell redi peut renvoyer 0 si malloc fail. On effectue alors un exit propre
+** shell redi peut renvoyer NULL si malloc fail.
+** On effectue un exit propre (à faire).
 */
 
 t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
@@ -118,6 +159,8 @@ t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
 	int		i;
 	t_redi	*redi;
 
+	//if ((get_last_redi(*first_redi))->to == NULL)
+	//	complete_redi_to(arg, get_last_redi(*first_redi), quote);
 	redi = NULL;
 	i = (quote == ' ') ? 0 : 1;
 	while ((*arg)[i])
@@ -132,10 +175,10 @@ t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
 		{
 			if (!(redi = add_redi(first_redi)))
 				return (NULL);
-			shell_redi_sub(arg, i, redi);
-			break ;
+			i = shell_redi_sub(arg, i, redi);
 		}
-		i++;
+		else
+			i++;
 	}
 	return (redi);
 }

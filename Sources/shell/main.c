@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 /*
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
@@ -83,7 +83,7 @@ int		main(int ac, char **av, char **envp)
 			printf("multiline\n");
 			shell->mltline = 1;
 		}
-		else
+		else if (shell->str)
 		{
 			shell->mltline = 0;
 			shell_process(cmd, shell);
