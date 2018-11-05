@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "../../Include/shell.h"
 
 char			*cut_pwd_dir(char *pwd)
 {
@@ -53,28 +53,22 @@ static int		prompt_type(e_prompt prompt)
 
 int		display_prompt(e_prompt prompt)
 {
-	char	pwd[4096];
-//	char	*error;
-//	char	*home;
-	int		len;
+	unsigned char c;
 
-	len = 0;
-//	home = prompt == 0 ? ft_getenv("HOME", g_env) : NULL;
-	if (prompt != PROMPT)
-		return (prompt_type(prompt));
-	getcwd(pwd, sizeof(pwd));
-//	error = ft_getenv("?", g_set);
-//	ft_putstr(error && error[0] == '1' ? "\e[91m➜\e[0m" : "\e[92m➜\e[0m");
-	len += ft_putstrlen("  \e[1m\e[93m");
-//	if (!ft_strcmp(pwd, !home ? "" : home))
-//		ft_putstr("~");
-//	else
-	len += ft_putstrlen(cut_pwd_dir(pwd));
-	len += ft_putstrlen("\e[0m ");
-	//ft_print_git_branch();
-//	ft_putstr(error && error[0] == '1' ? "\U0001F44E" : "\U0001F44D");
-	len += ft_putstrlen("  ");
-//	free(error);
-//	ft_strdel(&home);
-	return (len);
+	c = 0xF0;
+	write(1, &c, 1);
+	c = 0x9F;
+	write(1, &c, 1);
+	c = 0x8D;
+	write(1, &c, 1);
+	c = 0xAA;
+	write(1, &c, 1);
+	write(1, " ", 1);
+	c = 0xE2;
+	write(1, &c, 1);
+	c = 0xA7;
+	write(1, &c, 1);
+	c = 0xBD;
+	write(1, &c, 1);
+	return (8);
 }
