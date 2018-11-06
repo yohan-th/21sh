@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/05 23:19:43 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/05/05 23:19:43 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 18:23:36 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,6 +31,10 @@ t_shell	*init_shell(char **envp)
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->mltline = 0;
 	shell->str = NULL;
+	shell->hist = malloc(sizeof(t_history));
+	shell->hist->cmd = NULL;
+	shell->hist->next = NULL;
+	shell->hist->prev = NULL;
 	return (shell);
 }
 
