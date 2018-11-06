@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/24 19:14:56 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 17:20:47 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,28 @@ int			get_term_raw_mode(int mode)
 	return (0);
 }
 
-t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size)
+t_history	*init_hist(t_history **hist)
+{
+	t_history *new;
+	t_history *now;
+
+	new = NULL;
+	now = NULL;
+	if ((*hist && (*hist)->cmd))
+	{
+		if (!(new = (t_history*)malloc(sizeof(t_history))))
+			exit (-1);
+		(*hist)->next = new;
+		now = *hist;
+		*hist = new;
+		(*hist)->cmd = NULL;
+		(*hist)->prev = now;
+		(*hist)->next = NULL;
+	}
+	return (new ? new : *hist);
+}
+
+t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_history **hist)
 {
 	t_editor *ed;
 
@@ -58,33 +79,32 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size)
 	ed->cursor_str_pos = 0;
 	ed->ws_row = 0;
 	ed->ws_col = 0;
-	ed->first_row = get_cursor_position(1);
+	ed->first_row = ed->cur_row;
 	ed->last_row = ed->first_row;
 	ed->first_char = ed->cur_col;
 	ed->last_char = ed->first_char;
-	ed->line = NULL;
 	ed->prompt_size = prompt_size;
-	ed->tmp_line = NULL;
 	ed->clipboard = NULL;
 	ft_bzero(ed->key, 4);
-	ft_memset(&(ed)->t, 0, sizeof(t_tab));
-	ed->sel = NULL;
-	ed->hist = -2;
-	ed->tabu = -1;
+	ed->hist = init_hist(hist);
 	if (prompt != PROMPT && prompt != E_PIPE)
 		*line = ft_strjoin_free(*line, "\n");
 	return (ed);
 }
 
-int			line_editor_delete(t_editor **ed)
+int			line_editor_delete(t_editor **ed, t_history **hist)
 {
 	int		ret;
 
 	ret = 0;
 	ret = (*ed)->ret;
-	ft_strdel(&(*ed)->line);
-	ft_strdel(&(*ed)->tmp_line);
+	//ft_strdel(&(*ed)->line);
 	ft_strdel(&(*ed)->clipboard);
+	while (((*ed)->hist->next))
+		(*ed)->hist = (*ed)->hist->next;
+	*hist = (*ed)->hist;
+	if ((*hist)->cmd)
+		ft_strdel(&(*hist)->cmd);
 	free(*ed);
 	return (ret);
 }

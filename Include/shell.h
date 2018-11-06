@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/24 21:34:32 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/30 19:41:26 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 15:03:34 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,27 +18,11 @@
 # define BUFF_READ 4096
 
 # include <unistd.h>
-//# include <stdlib.h>
-//# include <signal.h>
 # define BOOL char
-# include <term.h>
-# include <termios.h>
-# include <sys/ioctl.h>
-//# include <sys/ioctl.h>
 # include <sys/types.h>
-//# include <sys/utsname.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
-//# include <time.h>
-
-//# include <stdio.h>
-//# include <curses.h>
-//# include <fcntl.h>
-//# include <dirent.h>
-//# include <pwd.h>
-//# include <limits.h>
 #include <stdbool.h>
-
 # include "editor.h"
 # include "../Libft/Includes/libft.h"
 
@@ -67,6 +51,7 @@ typedef struct				s_shell
 	BOOL				mltline;
 	char 				**envp;
 	char 				*str;
+	t_history			*hist;
 }							t_shell;
 
 typedef enum 				e_sep

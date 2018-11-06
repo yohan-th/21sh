@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 23:48:48 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 18:14:37 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,24 +17,15 @@
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
 
-int		prompt(int multi)
-{
-	if (multi == 0)
-		ft_printf("$>");
-	else
-		ft_printf(">");
-	return (1);
-}
-
 void	read_array(char **str)
 {
 	int i;
 
 	i = 0;
-	ft_printf("Read array : ");
+	dprintf(2, "Read array : ");
 	while (str[i])
 	{
-		ft_printf("arg[%i]=<%s> ", i, str[i]);
+		dprintf(2, "arg[%i]=<%s> ", i, str[i]);
 		i++;
 	}
 }
@@ -66,6 +57,19 @@ int		init_terminal_data(void)
 	return (EXIT_SUCCESS);
 }
 
+void	fill_hist(t_history **hist, char *line)
+{
+	t_history *new;
+	t_history *now;
+
+	(*hist)->next = new;
+	now = *hist;
+	*hist = new;
+	(*hist)->cmd = ft_strdup(line);
+	(*hist)->prev = now;
+	(*hist)->next = NULL;
+}
+
 int		main(int ac, char **av, char **envp)
 {
 	e_prompt prompt;
@@ -75,17 +79,21 @@ int		main(int ac, char **av, char **envp)
 	init_terminal_data();
 	shell = init_shell(envp);
 	prompt = PROMPT;
-	shell->str = NULL;
-	while (get_stdin(&shell->str, &prompt) != -2)
+	while (get_stdin(&shell->str, &prompt, &shell->hist) != -2)
 	{
 		if (!(cmd = shell_split(shell->str, shell->envp)))
 		{
-			printf("multiline\n");
 			shell->mltline = 1;
+			prompt = B_QUOTE;
 		}
 		else if (shell->str)
 		{
+			if ((!shell->hist->cmd && !shell->hist->prev) ||
+			(shell->hist->prev && shell->hist->prev->cmd &&
+			ft_strcmp(shell->hist->prev->cmd, shell->str)))
+				shell->hist->cmd = ft_strdup(shell->str);
 			shell->mltline = 0;
+			prompt = PROMPT;
 			shell_process(cmd, shell);
 		}
 	}

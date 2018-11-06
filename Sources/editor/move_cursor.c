@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 04:48:57 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/15 22:42:59 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 15:07:49 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -35,13 +35,13 @@ void	move_cursor_down(t_editor *ed)
 {
 	if (ed->cur_row != ed->last_row)
 	{
-		if (ed->cur_row + 1 == ed->last_row && (ft_strlen(ed->line
+		if (ed->cur_row + 1 == ed->last_row && (ft_strlen(ed->hist->cmd
 		+ ed->cursor_str_pos) - (ed->ws_col - ed->cur_col)
 		< ed->cur_col))
 		{
-			tputs(tgoto(tgetstr("ch", NULL), 0, (ft_strlen(ed->line +
+			tputs(tgoto(tgetstr("ch", NULL), 0, (ft_strlen(ed->hist->cmd +
 			ed->cursor_str_pos) - (ed->ws_col - ed->cur_col)) - 1), 1, ft_putchar);
-			ed->cursor_str_pos = ft_strlen(ed->line);
+			ed->cursor_str_pos = ft_strlen(ed->hist->cmd);
 		}
 		else
 			ed->cursor_str_pos = ed->cursor_str_pos + ((get_cursor_position(0) +
@@ -64,9 +64,9 @@ void	move_cursor_left(t_editor *ed)
 
 void	move_cursor_right(t_editor *ed)
 {
-	if (ed->cursor_str_pos < ft_strlen(ed->line))
+	if (ed->cursor_str_pos < ft_strlen(ed->hist->cmd))
 	{
-		if (ed->line[ed->cursor_str_pos] == '\n')
+		if (ed->hist->cmd[ed->cursor_str_pos] == '\n')
 			tputs(tgetstr("do", NULL), 1, ft_putchar);
 		else
 			move_right();

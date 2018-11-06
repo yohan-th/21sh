@@ -6,34 +6,35 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/30 19:42:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 18:05:44 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt)
+static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
 {
-	if ((ed->last_row - ed->cur_row) != 0)
+	if (((*ed)->last_row - (*ed)->cur_row) != 0)
 		tputs(tgoto(tgetstr("DO", NULL), 0,
-		ed->last_row - ed->cur_row), 1, ft_putchar);
+		(*ed)->last_row - (*ed)->cur_row), 1, ft_putchar);
 	ft_putchar('\n');
 	if (*prompt != PROMPT && *prompt != E_PIPE)
-		*line = ed->line == NULL ? *line : ft_strjoin_free(*line, ed->line);
+		*line = (*ed)->hist->cmd == NULL ? *line :
+		ft_strjoin_free(*line, (*ed)->hist->cmd);
 	else
-		*line = ft_strdup(ed->line);
+		*line = ft_strdup((*ed)->hist->cmd);
 }
 
 static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
 {
-	if (CTRL_D && !(*ed)->line)
+	if (CTRL_D && !(*ed)->hist->cmd)
 		(*ed)->ret = -2;
 	else if (CTRL_C)
-		end_of_text(*ed, p);
+		end_of_text(ed, p);
 	else if (CTRL_L)
 		clear_window(*ed, *p);
-	else if (CTRL_K && (ft_strlen((*ed)->line) + (*ed)->cursor_str_pos))
+	else if (CTRL_K && (ft_strlen((*ed)->hist->cmd) + (*ed)->cursor_str_pos))
 		delete_from_cursor_to_end(*ed);
 	else if (CTRL_P)
 		paste_clipboard(*ed);
@@ -42,8 +43,9 @@ static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
 
 int				enough_space_on_screen(t_editor *ed)
 {
-	dprintf(2, "max_char: %zu\n", ed->ws_col * ed->ws_row);
-	dprintf(2, "line_len: %zu\n", ed->first_char * ed->first_row);
+	if (((ft_strlen(ed->hist->cmd) + ed->prompt_size) + 1)
+	>= (ed->ws_col * ed->ws_row))
+		return (0);
 	return (1);
 }
 
@@ -55,24 +57,26 @@ static int		get_keyboard_key(t_editor **ed, e_prompt *prompt)
 		LEFT_KEY ? move_cursor_left(*ed) : move_cursor_right(*ed);
 	else if (SHIFT_UP || SHIFT_DOWN)
 		SHIFT_UP ? move_cursor_up(*ed) : move_cursor_down(*ed);
-	else if ((SHIFT_LEFT || SHIFT_RIGHT) && (*ed)->line)
+	else if ((SHIFT_LEFT || SHIFT_RIGHT) && (*ed)->hist->cmd)
 		SHIFT_LEFT ? move_word_left(*ed) : move_word_right(*ed);
 	else if (HOME_KEY || CTRL_A || END_KEY || CTRL_E)
 		HOME_KEY || CTRL_A ? go_to_begin_of_line(*ed) : go_to_end_of_line(*ed);
-	else if (ft_isprint((*ed)->key[0]) /*&& enough_space_on_screen(*ed)*/)
+	else if (ft_isprint((*ed)->key[0]) && enough_space_on_screen(*ed))
 		return (print_key(ed));
-	else if (BACKSPACE && (*ed)->line && (*ed)->cursor_str_pos)
+	else if (BACKSPACE && (*ed)->hist->cmd && (*ed)->cursor_str_pos)
 		backspace(*ed);
+	else if ((UP_KEY || DOWN_KEY))
+		term_history(ed);
 	return (EXIT_SUCCESS);
 }
 
-int				get_stdin(char **line, e_prompt *prompt)
+int				get_stdin(char **line, e_prompt *prompt, t_history **hist)
 {
 	t_editor	*ed;
 
 	ed = NULL;
 	get_term_raw_mode(1);
-	if ((ed = line_editor_init(line, *prompt, display_prompt(*prompt))) == NULL)
+	if (!(ed = line_editor_init(line, *prompt, display_prompt(*prompt), hist)))
 		return (-2);
 	term_size(ed);
 	while (ed->ret != -1)
@@ -83,13 +87,13 @@ int				get_stdin(char **line, e_prompt *prompt)
 		if (term_size(ed) == EXIT_SUCCESS)
 			window_resize(&ed, prompt);
 		if (ed->ret && get_keyboard_key(&ed, prompt))
-			ed->line = ft_strjoin_free(ed->line, ed->key);
+			ed->hist->cmd = ft_strjoin_free(ed->hist->cmd, ed->key);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||
-			(ed->ret == -2 && !ed->line) || (ed->ret == -3 && *prompt == E_HDOC))))
+			(ed->ret == -2 && !ed->hist->cmd) || (ed->ret == -3 && *prompt == E_HDOC))))
 			break ;
 	}
-	get_stdin_next(line, ed, prompt);
+	get_stdin_next(line, &ed, prompt);
 	get_term_raw_mode(0);
-	return (line_editor_delete(&ed));
+	return (line_editor_delete(&ed, hist));
 }

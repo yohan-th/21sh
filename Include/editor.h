@@ -6,16 +6,21 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/30 19:42:48 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 17:57:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #ifndef EDITOR_H
 # define EDITOR_H
-
-# include "shell.h"
-
+#include <stdio.h> /*don't forget to remove*/
+//# include "shell.h"
+#include <stdlib.h>
+# include <term.h>
+# include <termios.h>
+# include <sys/ioctl.h>
+# include <unistd.h>
+# define BUFF_READ 4096
 # define WHITE "\033[7;49;37m"
 # define END "\033[0m"
 # define LEFT_KEY ((*ed)->key[0] == 27 && (*ed)->key[1] == 91 && (*ed)->key[2] == 68)
@@ -60,17 +65,12 @@ typedef enum		s_prompt
 	READ,
 }					e_prompt;
 
-typedef struct		s_tab
+typedef struct		s_history
 {
-	char			**cmd;
-	char			**elem;//LES ELEMENTS A ENVOYER A FT_SELECT
-	char			*is_file;//INDEX CORRESPONDANT A L ELEM ET IS_FILE[I] EST UN NBR
-	char			*before;//LE PATH COMME DE PAR EXEMPLE
-	char			*word;
-	int				nb_word;
-	int				nb_char;
-	int				nb_line;
-}					t_tab;
+	char				*cmd;
+	struct s_history	*next;
+	struct s_history	*prev;
+}					t_history;
 
 typedef struct		s_editor
 {
@@ -87,12 +87,8 @@ typedef struct		s_editor
 	size_t			prompt_size;
 	char			*clipboard;
 	char			key[BUFF_READ];
-	char			*line;
-	char			*tmp_line;
-	t_tab			t;
-	t_select		*sel;
-	int				hist;
-	int				tabu;
+//	char			*line;
+	t_history		*hist;
 }					t_editor;
 
 /*
@@ -121,7 +117,7 @@ void	move_to_previous_new_line(t_editor *ed);
  */
 
 int		clear_window(t_editor *ed, e_prompt prompt);
-void	end_of_text(t_editor *ed, e_prompt *prompt);
+void	end_of_text(t_editor **ed, e_prompt *prompt);
 void	myhandler_interrupt(int signal);
 
 /*
@@ -138,14 +134,14 @@ void	add_char_into_line(char key, t_editor *ed);
 void	add_char_to_line(char key, t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt);
-int		get_stdin(char **line, e_prompt *prompt);
+int		get_stdin(char **line, e_prompt *prompt, t_history **hist);
 void	myhandler_winsize_change(int signal);
 size_t	get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
 void	paste_clipboard(t_editor *ed);
 int		get_term_raw_mode(int mode);
 void	save_ed(t_editor **ed, int mode);
-int		term_historic(t_editor **ed);
+void	term_history(t_editor **ed);
 int		term_reinit(struct termios *raw_mode);
 int		get_term_raw_mode(int mode);
 char	*find_env_var(char **env, char *var, int mode);
@@ -159,8 +155,8 @@ void	ft_putfreshstr(char *str);
  */
 
 void	ft_miniconcat(char **s1, char *s2);
-t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size);
-int		line_editor_delete(t_editor **ed);
+t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_history **hist);
+int		line_editor_delete(t_editor **ed, t_history **hist);
 void	init_t_tab(t_editor **ed);
 int		term_size(t_editor *ed);
 void	window_resize(t_editor **ed, e_prompt *prompt);

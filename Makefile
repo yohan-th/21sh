@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/10/29 23:19:17 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/06 18:07:30 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -48,7 +48,6 @@ SRCS =  shell/main.c \
 		editor/add_char.c \
 		editor/paste_line.c \
 		editor/term_init.c \
-		editor/ft_putfreshstr.c \
 		editor/find_env_var.c \
 		editor/prompt_git.c \
 		editor/move_to_previous_new_line.c \
@@ -58,6 +57,7 @@ SRCS =  shell/main.c \
 		editor/clear_window.c \
 		editor/end_of_text.c \
 		editor/paste_clipboard.c \
+		editor/term_history.c
 
 INCLUDES_FILE = shell.h
 

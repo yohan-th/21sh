@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 10:42:22 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/29 23:47:22 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 18:05:58 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,19 +15,19 @@
 
 static void		add_char_into_line_2(char key, t_editor *ed)
 {
-	char tmp[ft_strlen(ed->line) + 2];
+	char tmp[ft_strlen(ed->hist->cmd) + 2];
 
 	ed->cursor_str_pos++;
-	ft_bzero(tmp, ft_strlen(ed->line) + 2);
+	ft_bzero(tmp, ft_strlen(ed->hist->cmd) + 2);
 	tputs(tgetstr("ei", NULL), 1, ft_putchar);
-	ft_strncpy(tmp, ed->line, ed->cursor_str_pos);
+	ft_strncpy(tmp, ed->hist->cmd, ed->cursor_str_pos);
 	tmp[ed->cursor_str_pos - 1] = key;
-	ft_strcat(tmp, ed->line + ed->cursor_str_pos - 1);
-	ft_strdel(&(ed->line));
-	ed->line = ft_strdup(tmp);
+	ft_strcat(tmp, ed->hist->cmd + ed->cursor_str_pos - 1);
+	ft_strdel(&(ed->hist->cmd));
+	ed->hist->cmd = ft_strdup(tmp);
 	tputs(tgetstr("sc", NULL), 1, ft_putchar);
-	write(1, ed->line + ed->cursor_str_pos,
-	ft_strlen(ed->line + ed->cursor_str_pos));
+	write(1, ed->hist->cmd + ed->cursor_str_pos,
+	ft_strlen(ed->hist->cmd + ed->cursor_str_pos));
 	tputs(tgetstr("rc", NULL), 1, ft_putchar);
 	ed->cur_col++;
 	ed->last_char++;
@@ -65,7 +65,7 @@ void			add_char_into_line(char key, t_editor *ed)
 	char *cursor_reset;
 
 	tputs(tgetstr("im", NULL), 1, ft_putchar);
-	if (ed->line && ed->last_char == ed->ws_col && ed->last_row == ed->ws_row)
+	if (ed->hist->cmd && ed->last_char == ed->ws_col && ed->last_row == ed->ws_row)
 	{
 		if (ed->cur_col == ed->ws_col)
 		{
@@ -122,7 +122,7 @@ int				print_key(t_editor **ed)
 {
 	if (ft_strlen((*ed)->key) == 1)
 	{
-		if ((*ed)->cursor_str_pos == ft_strlen((*ed)->line))
+		if ((*ed)->cursor_str_pos == ft_strlen((*ed)->hist->cmd))
 		{
 			add_char_to_line((*ed)->key[0], *ed);
 			return (1);
