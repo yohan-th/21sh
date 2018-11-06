@@ -17,20 +17,20 @@ int		len_redi_to(char *str, char quote)
 {
 	int i;
 
-	i = 0;
+	i = (quote == ' ') ? 0 : 1;
 	while (*str && str[i])
 	{
-		i++;
-		if (str[i - 1] == '\\' && str[i] == quote && quote != '\'')
-			i++;
+		if (str[i] == '\\' && ft_strlen(str) > (i + 2))
+			i += 2;
 		if (ft_strchr("'\"", str[i]) && quote == ' ')
-			quote = str[i++];
-		if (str[i] == quote && quote != ' ' && (!ft_strchr("\0 ", str[i + 1])))
+			quote = str[i];
+		else if (str[i] == quote && quote != ' ')
 			quote = ' ';
-		if (quote == ' ' && str[i - 1] != '\\' && ft_strchr("><", str[i]))
+		if (quote == ' ' && ft_strchr("><", str[i]))
 			break ;
 		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
 			break ;
+		i++;
 	}
 	return (i);
 }
@@ -50,11 +50,14 @@ char 	*get_redi_to(char *redi, int *pos)
 		return (NULL);
 	quote = ft_strchr("'\"", redi[*pos]) ? (char)redi[*pos] : (char)' ';
 	len = len_redi_to(redi + *pos, quote);
-	redi_to = ft_strsub(redi, (unsigned)*pos, (size_t)len);
+
+	if (len > 0)
+		redi_to = ft_strsub(redi, (unsigned)*pos, (size_t)len);
+	else
+		redi_to = NULL;
 	*pos += len;
 	return (redi_to);
 }
-
 
 int 	get_redi_from(char *redi, int pos)
 {
@@ -87,21 +90,21 @@ int 	shell_redi_sub(char **arg, int i, t_redi *redi)
 {
 	redi->from = get_redi_from(*arg, i);
 	ft_strdel(&redi->to);
-	if ((*arg)[i] && (*arg)[i + 1] != '>')
+	if ((*arg)[i] && (*arg)[i + 1] == '>')
 	{
 		redi->append = 1;
 		(*arg)[i] = '\0';
-		i += 1;
+		i += 2;
 		redi->to = get_redi_to(*arg, &i);
 	}
 	else if ((*arg)[i])
 	{
 		redi->append = 0;
 		(*arg)[i] = '\0';
-		i += 2;
+		i += 1;
 		redi->to = get_redi_to(*arg, &i);
 	}
-	if ((*arg)[i] && ft_atoi(*arg) == redi->from)
+	if (*arg && ft_atoi(*arg) == redi->from)
 		*arg[0] = '\0';
 	return (i);
 }
@@ -144,9 +147,19 @@ t_redi		*get_last_redi(t_redi *redi)
 	return (t_next);
 }
 
-void		complete_redi_to(char **arg, t_redi *add_to, char quote)
+char		*complete_redi_to(char **arg, t_redi *add_to, char quote)
 {
-	;
+	char *ret;
+
+	add_to->to = ft_strsub(*arg, 0, (size_t)len_redi_to(*arg, quote));
+	if ((ft_strlen(*arg) - len_redi_to(*arg, quote)) > 0)
+		ret = ft_strsub(*arg, (unsigned)len_redi_to(*arg, quote),
+						(size_t )ft_strlen(*arg));
+	else
+		ret = NULL;
+	ft_strdel(arg);
+	*arg = NULL;
+	return (ret);
 }
 
 /*
@@ -159,11 +172,11 @@ t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
 	int		i;
 	t_redi	*redi;
 
-	//if ((get_last_redi(*first_redi))->to == NULL)
-	//	complete_redi_to(arg, get_last_redi(*first_redi), quote);
+	if (*first_redi && (get_last_redi(*first_redi))->to == NULL && *arg)
+		*arg = complete_redi_to(arg, get_last_redi(*first_redi), quote);
 	redi = NULL;
 	i = (quote == ' ') ? 0 : 1;
-	while ((*arg)[i])
+	while (*arg && (*arg)[i])
 	{
 		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2))
 			i += 2;

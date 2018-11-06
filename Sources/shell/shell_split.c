@@ -48,8 +48,6 @@ t_cmd	*shell_split(char *line, char **envp)
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
 	}
-
-	printf("line <%s>\n", line);
 	if (ft_strlen(line) > 0)
 	{
 		clean_cmd(&cmd);

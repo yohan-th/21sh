@@ -22,6 +22,10 @@ void	clean_shell(t_shell **shell)
 	*shell = NULL;
 }
 
+/*
+** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
+*/
+
 t_shell	*init_shell(char **envp)
 {
 	t_shell *shell;
@@ -29,7 +33,6 @@ t_shell	*init_shell(char **envp)
 	shell = malloc(sizeof(t_shell));
 	shell->envp = ft_arrdup(envp);
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
-	shell->mltline = 0;
 	shell->str = NULL;
 	shell->hist = malloc(sizeof(t_history));
 	shell->hist->cmd = NULL;

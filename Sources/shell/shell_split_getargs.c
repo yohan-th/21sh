@@ -40,6 +40,13 @@ size_t	len_arg(char *str, char quote)
 		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
 			break ;
 	}
+	if ((ft_strchr("\"'", quote) && i == 1) ||
+			(i > 0 && ((quote == '"' && (str[i - 1] != quote ||
+			(i > 1 && str[i - 2] == '\\'))) ||
+			(quote == '\'' && str[i - 1] != quote) ||
+			(quote == ' ' && str[i - 1] == '\\'))))
+
+		i = 0;
 	return (i);
 }
 
@@ -54,11 +61,13 @@ int 	get_nb_args(char *str)
 	{
 		str = shell_trim(&str);
 		quote = ft_strchr("'\"", *str) ? *str : (char)' ';
-		str += len_arg(str, quote);
+		if (!(len_arg(str, quote)))
+			return (0);
+		else
+			str += len_arg(str, quote);
 		nb_args += 1;
 		str = shell_trim(&str);
 	}
-	printf("nb arg %d\n", nb_args);
 	return (nb_args);
 }
 
@@ -95,8 +104,6 @@ int 	shl_clean_arg(char *arg, char quote)
 /*
 ** subtitue le premier {args_tab} de {str} et avance de {len} de {args_tab}.
 ** {arg} garde les quotes pour {shell_envsub} au moment du [process].
-** C'est donc juste un check qu'on fait avec [shl_clean_arg].
-** Le vrai [shl_clean_arg] se fera au niveau du [process].
 ** /!\ shell_redi n'est pas safe si son malloc fail
 */
 
@@ -105,7 +112,6 @@ char	*get_arg(char **str, char **envp, t_redi **first_redi)
 	unsigned int	i;
 	char			quote;
 	char			*arg;
-	char 			*just_check;
 
 	i = 0;
 	while (*str && ft_isspace((*str)[i]))
@@ -114,13 +120,9 @@ char	*get_arg(char **str, char **envp, t_redi **first_redi)
 		return (NULL);
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
-//	shell_envpsub(&arg, envp, quote);
+//	shell_envpsub(&arg, envp, quote); <-- plus ici, on le fait dans process
 	shell_redi(&arg, first_redi, quote);
-	if (!shl_clean_arg(just_check = ft_strdup(arg), quote))
-		ft_strdel(&arg);
-	else
-		*str = *str + i + len_arg(*str + i, quote);
-	ft_strdel(&just_check);
+	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }
 
@@ -130,10 +132,9 @@ t_cmd 	*get_args(char **line, char **envp)
 	int 	nb_args;
 	t_cmd	*cmd;
 
-	if (!(*line) || (*line)[0] == '\0')
+	if (!(*line) || (*line)[0] == '\0' || !(nb_args = get_nb_args(*line)))
 		return (NULL);
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
-	nb_args = get_nb_args(*line);
 	cmd->args = (char **)malloc(sizeof(char *) * (nb_args + 1));
 	cmd->args[nb_args] = NULL;
 	cmd->redi = NULL;
@@ -141,13 +142,12 @@ t_cmd 	*get_args(char **line, char **envp)
 	i = 0;
 	while (i < nb_args)
 		cmd->args[i++] = get_arg(line, envp, &cmd->redi);
-	if (nb_args > 0 && cmd->args[nb_args - 1] == NULL) //ou parsing redi error
+	/* //if (cmd->redi && parsing redi error
 	{
-		//clean_cmd(&cmd);
-		//clean args avec args->args_tab
+		//dprintf(2, "<error dans redi>\n");
 		ft_arrdel(cmd->args);
 		return (NULL);
-	}
-	//prepare redi (erase or create files)
+	} */
+	//erase or create files for redi
 	return (cmd);
 }

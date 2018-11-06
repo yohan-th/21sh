@@ -16,17 +16,17 @@
 int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
-		ft_printf("shell: setenv: invalid argument\n"
+		dprintf(2, "shell: setenv: invalid argument\n"
 						"usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
-		ft_printf("shell: unsetenv: invalid argument\n"
+		dprintf(2, "shell: unsetenv: invalid argument\n"
 						"usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
-		ft_printf("shell: env: invalid argument\nusage: env VAR\n");
+		dprintf(2, "shell: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)
-		ft_printf("shell: $HOME env not set\n");
+		dprintf(2, "shell: $HOME env not set\n");
 	else
-		ft_printf("Error ENV : unknown msg type <%s>\n", msg);
+		dprintf(2, "Error ENV : unknown msg type <%s>\n", msg);
 	return (0);
 }
 
@@ -59,7 +59,7 @@ int		shell_error(char *type, int n, ...)
 	{
 		ft_strdel(va_arg(ap, char **));
 		ft_arrdel(va_arg(ap, char **));
-		ft_printf("Fatal: failed to allocate %zu bytes\n", va_arg(ap, size_t));
+		dprintf(2, "Fatal: failed to allocate %zu bytes\n", va_arg(ap, size_t));
 
 		va_end(ap);
 		exit(EXIT_FAILURE);

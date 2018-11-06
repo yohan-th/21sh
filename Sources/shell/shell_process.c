@@ -22,14 +22,14 @@ void	shell_process(t_cmd *cmd, t_shell *shell)
 	while ((cmd = cmd->next_cmd))
 	{
 		read_array(cmd->args);
-		printf("\nRead redir : ");
+		dprintf(2, "\nRead redir : ");
 		read = cmd->redi;
 		while (read != NULL)
 		{
-			printf("from %d to <%s> - ", read->from, read->to);
+			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
 			read = read->next;
 		}
-		printf("Et sep %d\n", cmd->sep);
+		dprintf(2, "Et sep %d\n", cmd->sep);
 	}
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{

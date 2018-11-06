@@ -48,7 +48,6 @@ typedef struct				s_cmd
 
 typedef struct				s_shell
 {
-	BOOL				mltline;
 	char 				**envp;
 	char 				*str;
 	t_history			*hist;
@@ -107,6 +106,7 @@ void	shell_envpsub(char **arg, char **envp, char quote);
 void 	shell_process(t_cmd *cmd, t_shell *shell);
 t_redi	*shell_redi(char **arg, t_redi **first_redi, char quote);
 
+size_t	len_arg(char *str, char quote);
 void	clean_cmd(t_cmd **cmd);
 char	*shell_trim(char **str);
 int		check_last_quote(char *arg, char quote);
@@ -144,8 +144,11 @@ int		shl_quotesub(char *arg);
 ** echo test >'&2'
 ** echo file > '&'
 ** {export tty=/dev/ttys001} {echo test > $tty} et car ttys001 recoit
-** {echo test > "/dev/ttys001\""} --> error avec {/dev/ttys001"}
+** {echo test > "/dev/ttys001\\"} --> error avec {/dev/ttys001\\}
 ** echo test > file > /dev/ttys001 (le dernier est prix en compte
+** echo test > glob"{\n}file"
+** echo test > file1>file2
+** echo test > file1\\>file2
 */
 
 

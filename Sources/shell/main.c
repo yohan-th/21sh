@@ -13,10 +13,6 @@
 
 #include "../../Include/shell.h"
 
-/*
-** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
-*/
-
 void	read_array(char **str)
 {
 	int i;
@@ -72,9 +68,9 @@ void	fill_hist(t_history **hist, char *line)
 
 int		main(int ac, char **av, char **envp)
 {
-	e_prompt prompt;
-	t_cmd	*cmd;
-	t_shell	*shell;
+	e_prompt	prompt;
+	t_cmd		*cmd;
+	t_shell		*shell;
 
 	init_terminal_data();
 	shell = init_shell(envp);
@@ -82,17 +78,13 @@ int		main(int ac, char **av, char **envp)
 	while (get_stdin(&shell->str, &prompt, &shell->hist) != -2)
 	{
 		if (!(cmd = shell_split(shell->str, shell->envp)))
-		{
-			shell->mltline = 1;
 			prompt = B_QUOTE;
-		}
 		else if (shell->str)
 		{
 			if ((!shell->hist->cmd && !shell->hist->prev) ||
 			(shell->hist->prev && shell->hist->prev->cmd &&
 			ft_strcmp(shell->hist->prev->cmd, shell->str)))
 				shell->hist->cmd = ft_strdup(shell->str);
-			shell->mltline = 0;
 			prompt = PROMPT;
 			shell_process(cmd, shell);
 		}
