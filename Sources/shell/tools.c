@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/05 23:19:43 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 18:23:36 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/07 14:02:39 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,6 +26,52 @@ void	clean_shell(t_shell **shell)
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
 
+t_history	*recup_hist_from_file(t_history *hist, int fd)
+{
+	int c;
+	char buf[2];
+	char *cmd;
+
+	cmd = NULL;
+	c = 0;
+	while (read(fd, buf, 1) > 0)
+	{
+		buf[1] = '\0';
+		if (buf[0] == '\n' && c == 0 && cmd)
+		{
+			hist->cmd = ft_strdup(cmd);
+			hist = hist_add(hist);
+			ft_strdel(&cmd);
+			c = 0;
+		}
+		else
+			cmd = ft_strjoin_free(cmd, buf);
+		if (((buf[0] == '\'' || buf[0] == '\"' || buf[0] == '`') && c == 0)
+		|| ((c == '\'' && buf[0] == '\'') || (c == '\"' && buf[0] == '\"')
+		|| (c == '`' && buf[0] == '`')))
+		c = c ? 0 : buf[0];
+	}
+	return (hist);
+}
+
+t_history	*init_hist()
+{
+	t_history *hist;
+	int fd;
+
+	hist = malloc(sizeof(t_history));
+	hist->cmd = NULL;
+	hist->next = NULL;
+	hist->prev = NULL;
+	if (!access(".21sh_history", R_OK | F_OK))
+		if ((fd = open(".21sh_history", O_RDONLY)))
+		{
+			hist = recup_hist_from_file(hist, fd);
+			close(fd);
+		}
+	return (hist);
+}
+
 t_shell	*init_shell(char **envp)
 {
 	t_shell *shell;
@@ -34,10 +80,7 @@ t_shell	*init_shell(char **envp)
 	shell->envp = ft_arrdup(envp);
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
-	shell->hist = malloc(sizeof(t_history));
-	shell->hist->cmd = NULL;
-	shell->hist->next = NULL;
-	shell->hist->prev = NULL;
+	shell->hist = init_hist();
 	return (shell);
 }
 

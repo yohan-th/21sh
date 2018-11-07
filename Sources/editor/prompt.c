@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/05 21:43:28 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/07 14:10:24 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,7 +39,7 @@ static int		prompt_type(e_prompt prompt)
 	if (prompt == S_QUOTE)
 		return (ft_putstrlen("quote> "));
 	else if (prompt == B_QUOTE)
-		return (ft_putstrlen("bquote> "));
+		return (ft_putstrlen("> "));
 	else if (prompt == D_QUOTE)
 		return (ft_putstrlen("dquote> "));
 	else if (prompt == E_PIPE)

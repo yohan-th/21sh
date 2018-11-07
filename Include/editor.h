@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 17:57:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 21:11:53 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -164,5 +164,6 @@ int		print_key(t_editor **ed);
 
 void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
+t_history	*hist_add(t_history *hist);
 
 #endif

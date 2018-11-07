@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 18:14:37 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/07 14:09:51 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,6 +66,25 @@ void	fill_hist(t_history **hist, char *line)
 	(*hist)->next = NULL;
 }
 
+void	fill_hist_file(t_history *hist)
+{
+	int fd;
+
+	if ((fd = open(".21sh_history", O_WRONLY | O_CREAT |
+	O_APPEND | O_TRUNC, 0644)) < 0)
+		return ;
+	while (hist)
+	{
+		if (hist->cmd)
+		{
+			write(fd, hist->cmd, ft_strlen(hist->cmd));
+			write(fd, "\n", 1);
+		}
+		hist = hist->prev;
+	}
+	close(fd);
+}
+
 int		main(int ac, char **av, char **envp)
 {
 	e_prompt	prompt;
@@ -89,5 +108,7 @@ int		main(int ac, char **av, char **envp)
 			shell_process(cmd, shell);
 		}
 	}
+	if (shell->hist)
+		fill_hist_file(shell->hist);
 	return (1);
 }

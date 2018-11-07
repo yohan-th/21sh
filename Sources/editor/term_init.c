@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 17:20:47 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/06 23:54:10 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,25 +46,22 @@ int			get_term_raw_mode(int mode)
 	return (0);
 }
 
-t_history	*init_hist(t_history **hist)
+t_history	*hist_add(t_history *hist)
 {
 	t_history *new;
 	t_history *now;
 
 	new = NULL;
 	now = NULL;
-	if ((*hist && (*hist)->cmd))
-	{
-		if (!(new = (t_history*)malloc(sizeof(t_history))))
-			exit (-1);
-		(*hist)->next = new;
-		now = *hist;
-		*hist = new;
-		(*hist)->cmd = NULL;
-		(*hist)->prev = now;
-		(*hist)->next = NULL;
-	}
-	return (new ? new : *hist);
+	if (!(new = (t_history*)malloc(sizeof(t_history))))
+		exit (-1);
+	hist->next = new;
+	now = hist;
+	hist = new;
+	hist->cmd = NULL;
+	hist->prev = now;
+	hist->next = NULL;
+	return (new);
 }
 
 t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_history **hist)
@@ -86,7 +83,7 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_hist
 	ed->prompt_size = prompt_size;
 	ed->clipboard = NULL;
 	ft_bzero(ed->key, 4);
-	ed->hist = init_hist(hist);
+	ed->hist = *hist && (*hist)->cmd ? hist_add(*hist) : *hist;
 	if (prompt != PROMPT && prompt != E_PIPE)
 		*line = ft_strjoin_free(*line, "\n");
 	return (ed);
@@ -108,3 +105,4 @@ int			line_editor_delete(t_editor **ed, t_history **hist)
 	free(*ed);
 	return (ret);
 }
+
