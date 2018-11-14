@@ -13,7 +13,6 @@
 
 #include "../../Include/shell.h"
 
-
 int		get_sep(char **str)
 {
 	int		sep;
@@ -31,28 +30,47 @@ int		get_sep(char **str)
 	return (sep);
 }
 
+BOOL	checkredi_to(t_redi *redis)
+{
+	t_redi	*read;
+
+	read = redis;
+	while (read != NULL)
+	{
+		if (read->to == NULL)
+			return (0);
+		read = read->next;
+	}
+	return (1);
+}
+
 /*
 ** Split line jusqu'au prochain delimiteur
 ** Le premier maillon start pointé par tous les autres est vide.
 */
 
-t_cmd	*shell_split(char *line, char **envp)
+t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 {
 	t_cmd	*cmd;
 
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 	cmd->start = cmd;
-	while ((cmd->next_cmd = get_args(&line, envp)))
+	while (line && (cmd->next_cmd = get_args(&line, envp, prompt)))
 	{
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
+		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !checkredi_to(cmd->redi))
+			break ;
 	}
-	if (ft_strlen(line) > 0)
+	if ((!line || ft_strlen(line)) && ft_strlen(cmd->args[0]) && !cmd->sep)
 	{
 		clean_cmd(&cmd);
 		return (NULL);
 	}
 	else
+	{
+		*prompt = PROMPT;
 		return (cmd->start);
+	}
 }

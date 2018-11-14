@@ -18,11 +18,10 @@
 # define BUFF_READ 4096
 
 # include <unistd.h>
-# define BOOL char
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
-#include <stdbool.h>
+# include <stdbool.h>
 # include "editor.h"
 # include "../Libft/Includes/libft.h"
 
@@ -61,6 +60,13 @@ typedef enum 				e_sep
 	DBL_SPRLU = 4,
 }							t_sep;
 
+typedef enum 				s_error
+{
+	SPL_QUOTE,
+	DBL_QUOTE,
+	DBL_SEP_OR_BK,
+}							e_error;
+
 char	*path_cmd(char *cmd, char *envp_path);
 void	builtin_cd(char **cmd, char ***envp);
 void	builtin_setenv(char ***envp, char *key, char *value);
@@ -81,7 +87,6 @@ void	ft_strdelchar(char **str, char c);
 char	*get_cur_dir(void);
 int		ft_arrlen(char **arr);
 int		shell_argsub_env(char **arg, int i, char **envp);
-int		shell_error(char *type, int n, ...);
 void	*shl_mlc(char *type, int n, ...);
 
 /*
@@ -100,8 +105,8 @@ void	read_array(char **str);
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-t_cmd	*shell_split(char *line, char **envp);
-t_cmd 	*get_args(char **line, char **envp);
+t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt);
+t_cmd 	*get_args(char **line, char **envp, e_prompt *prompt);
 void	shell_envpsub(char **arg, char **envp, char quote);
 void 	shell_process(t_cmd *cmd, t_shell *shell);
 t_redi	*shell_redi(char **arg, t_redi **first_redi, char quote);
@@ -111,6 +116,7 @@ void	clean_cmd(t_cmd **cmd);
 char	*shell_trim(char **str);
 int		check_last_quote(char *arg, char quote);
 int		shl_quotesub(char *arg);
+BOOL	checkredi_to(t_redi *redis);
 
 
 /*
@@ -149,6 +155,10 @@ int		shl_quotesub(char *arg);
 ** echo test > glob"{\n}file"
 ** echo test > file1>file2
 ** echo test > file1\\>file2
+** echo test > file1\>file2
+** echo test && {ENTER} \ {ENTER} \\ {ENTER} puis flèche du haut et histo == {echo test && \\}
+** ; puis ;; (pas le meme msg d'erreur)
+** >>>
 */
 
 

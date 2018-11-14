@@ -85,6 +85,41 @@ void	fill_hist_file(t_history *hist)
 	close(fd);
 }
 
+int 	prt_err_sep(int sep)
+{
+
+	return (1);
+}
+
+BOOL	check_syntax_err(t_cmd *cmd)
+{
+	t_cmd	*next;
+
+	next = cmd;
+	while ((next = next->next_cmd))
+	{
+		if (!ft_strlen(next->args[0]) && next->sep)
+		{
+			write(2, "21sh: syntax error near unexpected token `", 42);
+			if (next->sep == 1)
+				write(2, "|'\n", 3);
+			else if (next->sep == 2)
+				write(2, ";'\n", 3);
+			else if (next->sep == 3)
+				write(2, "||'\n", 4);
+			else if (next->sep == 4)
+				write(2, "&&'\n", 4);
+			return (0);
+		}
+		if (!checkredi_to(next->redi))
+		{
+			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
+			return (0);
+		}
+	}
+	return (1);
+}
+
 int		main(int ac, char **av, char **envp)
 {
 	e_prompt	prompt;
@@ -96,16 +131,14 @@ int		main(int ac, char **av, char **envp)
 	prompt = PROMPT;
 	while (get_stdin(&shell->str, &prompt, &shell->hist) != -2)
 	{
-		if (!(cmd = shell_split(shell->str, shell->envp)))
-			prompt = B_QUOTE;
-		else if (shell->str)
+		if ((cmd = shell_split(shell->str, shell->envp, &prompt)))
 		{
 			if ((!shell->hist->cmd && !shell->hist->prev) ||
-			(shell->hist->prev && shell->hist->prev->cmd &&
-			ft_strcmp(shell->hist->prev->cmd, shell->str)))
+					(shell->hist->prev && shell->hist->prev->cmd &&
+					ft_strcmp(shell->hist->prev->cmd, shell->str)))
 				shell->hist->cmd = ft_strdup(shell->str);
-			prompt = PROMPT;
-			shell_process(cmd, shell);
+			if (check_syntax_err(cmd))
+				shell_process(cmd, shell);
 		}
 	}
 	if (shell->hist)

@@ -20,7 +20,7 @@ int		len_redi_to(char *str, char quote)
 	i = (quote == ' ') ? 0 : 1;
 	while (*str && str[i])
 	{
-		if (str[i] == '\\' && ft_strlen(str) > (i + 2))
+		if (str[i] == '\\' && ft_strlen(str) > (i + 2) && quote == ' ')
 			i += 2;
 		if (ft_strchr("'\"", str[i]) && quote == ' ')
 			quote = str[i];
