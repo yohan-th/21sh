@@ -69,6 +69,7 @@ int 	get_nbarg(char *str, e_prompt *prompt)
 	int 	nb_args;
 	size_t	lenarg;
 
+	str = shell_trim(&str);
 	nb_args = 0;
 	while (*str)
 	{
@@ -107,7 +108,7 @@ char	*get_arg(char **str, char **envp, t_stdout **first_redi, char ***hrdc)
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 //	shell_envpsub(&arg, envp, quote); <-- plus ici, on le fait dans process
-	shell_redi(&arg, first_redi, quote);
+	shell_std_out(&arg, first_redi, quote);
 	*hrdc = shell_heredoc(&arg, quote, *hrdc);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);

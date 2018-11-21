@@ -29,8 +29,8 @@ SRCS =  shell/main.c \
         shell/shell_split_getargs.c \
         shell/shell_split_envsub.c \
 		shell/shell_split_tools.c \
-		shell/shell_split_redi.c \
-		shell/shell_split_redi_tools.c \
+		shell/shell_split_stdout.c \
+		shell/shell_split_stdtools.c \
 		shell/shell_error.c \
         shell/shell_process.c \
         shell/shell_split_heredoc.c \

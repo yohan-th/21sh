@@ -13,6 +13,19 @@
 
 #include "../../Include/shell.h"
 
+void	read_array(char **str)
+{
+	int i;
+
+	i = 0;
+	dprintf(2, "Read array : ");
+	while (str[i])
+	{
+		dprintf(2, "arg[%i]=<%s> ", i, str[i]);
+		i++;
+	}
+}
+
 void	shell_process(t_cmd *cmd, t_shell *shell)
 {
 	t_cmd		*save;

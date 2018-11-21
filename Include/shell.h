@@ -97,7 +97,6 @@ void	*shl_mlc(char *type, int n, ...);
 
 t_shell	*init_shell(char **envp);
 void	clean_shell(t_shell **shell);
-void	read_array(char **str);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -109,7 +108,7 @@ t_cmd		*shell_split(char *line, char **envp, e_prompt *prompt);
 t_cmd 		*get_args(char **line, char **envp, e_prompt *prompt);
 void		shell_envpsub(char **arg, char **envp, char quote);
 void 		shell_process(t_cmd *cmd, t_shell *shell);
-t_stdout	*shell_redi(char **arg, t_stdout **first_redi, char quote);
+t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
 
 size_t	len_arg(char *str, char quote);
@@ -117,7 +116,7 @@ void	clean_cmd(t_cmd **cmd);
 char	*shell_trim(char **str);
 int		check_last_quote(char *arg, char quote);
 int		shl_quotesub(char *arg);
-BOOL	checkredi_to(t_stdout *redis);
+BOOL	checkstdout_to(t_stdout *redis);
 
 
 /*

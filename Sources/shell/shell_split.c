@@ -30,7 +30,7 @@ int		get_sep(char **str)
 	return (sep);
 }
 
-BOOL	checkredi_to(t_stdout *redis)
+BOOL	checkstdout_to(t_stdout *redis)
 {
 	t_stdout	*read;
 
@@ -60,10 +60,11 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
-		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !checkredi_to(cmd->std_out))
+		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !checkstdout_to(
+				cmd->std_out))
 			break ;
 	}
-	if ((!line || ft_strlen(line)) && ft_strlen(cmd->args[0]) && !cmd->sep)
+	if ((!line || ft_strlen(ft_strtrim(line))) && (ft_strlen(cmd->args[0]) && !cmd->sep))
 	{
 		clean_cmd(&cmd);
 		return (NULL);

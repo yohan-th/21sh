@@ -13,19 +13,6 @@
 
 #include "../../Include/shell.h"
 
-void	read_array(char **str)
-{
-	int i;
-
-	i = 0;
-	dprintf(2, "Read array : ");
-	while (str[i])
-	{
-		dprintf(2, "arg[%i]=<%s> ", i, str[i]);
-		i++;
-	}
-}
-
 int		init_terminal_data(void)
 {
 	static char term_buffer[2048];
@@ -85,9 +72,17 @@ void	fill_hist_file(t_history *hist)
 	close(fd);
 }
 
-int 	prt_err_sep(int sep)
+BOOL 	prt_err_sep(int sep)
 {
-
+	write(2, "21sh: syntax error near unexpected token `", 42);
+	if (sep == 1)
+		write(2, "|'\n", 3);
+	else if (sep == 2)
+		write(2, ";'\n", 3);
+	else if (sep == 3)
+		write(2, "||'\n", 4);
+	else if (sep == 4)
+		write(2, "&&'\n", 4);
 	return (1);
 }
 
@@ -99,19 +94,8 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	while ((next = next->next_cmd))
 	{
 		if (!ft_strlen(next->args[0]) && next->sep)
-		{
-			write(2, "21sh: syntax error near unexpected token `", 42);
-			if (next->sep == 1)
-				write(2, "|'\n", 3);
-			else if (next->sep == 2)
-				write(2, ";'\n", 3);
-			else if (next->sep == 3)
-				write(2, "||'\n", 4);
-			else if (next->sep == 4)
-				write(2, "&&'\n", 4);
-			return (1);
-		}
-		if (!checkredi_to(next->std_out))
+			return (prt_err_sep(next->sep));
+		if (!checkstdout_to(next->std_out))
 		{
 			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
 			return (1);
