@@ -109,39 +109,41 @@ BOOL	check_syntax_err(t_cmd *cmd)
 				write(2, "||'\n", 4);
 			else if (next->sep == 4)
 				write(2, "&&'\n", 4);
-			return (0);
+			return (1);
 		}
-		if (!checkredi_to(next->redi))
+		if (!checkredi_to(next->std_out))
 		{
 			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
-			return (0);
+			return (1);
 		}
 	}
-	return (1);
+	return (0);
 }
 
 int		main(int ac, char **av, char **envp)
 {
 	e_prompt	prompt;
 	t_cmd		*cmd;
-	t_shell		*shell;
+	t_shell		*shl;
 
 	init_terminal_data();
-	shell = init_shell(envp);
+	shl = init_shell(envp);
 	prompt = PROMPT;
-	while (get_stdin(&shell->str, &prompt, &shell->hist) != -2)
+	while (get_stdin(&shl->str, &prompt, &shl->hist) != -2)
 	{
-		if ((cmd = shell_split(shell->str, shell->envp, &prompt)))
+		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
-			if ((!shell->hist->cmd && !shell->hist->prev) ||
-					(shell->hist->prev && shell->hist->prev->cmd &&
-					ft_strcmp(shell->hist->prev->cmd, shell->str)))
-				shell->hist->cmd = ft_strdup(shell->str);
+			if ((!shl->hist->cmd && !shl->hist->prev) ||
+					(shl->hist->prev && shl->hist->prev->cmd &&
+					ft_strcmp(shl->hist->prev->cmd, shl->str)))
+				shl->hist->cmd = ft_strdup(shl->str);
 			if (check_syntax_err(cmd))
-				shell_process(cmd, shell);
+				clean_cmd(&cmd); //et shl->str n'a as besoin d'etre free ?
+			else
+				shell_process(cmd, shl);
 		}
 	}
-	if (shell->hist)
-		fill_hist_file(shell->hist);
+	if (shl->hist)
+		fill_hist_file(shl->hist);
 	return (1);
 }

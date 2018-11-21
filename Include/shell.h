@@ -25,21 +25,21 @@
 # include "editor.h"
 # include "../Libft/Includes/libft.h"
 
-typedef struct				s_redi
+typedef struct				s_stdout
 {
 	BOOL				append;
 	int 				from;
 	char 				*to;
-	char 				**std_in;
-	struct s_redi		*next;
-	struct s_redi		*start;
-}							t_redi;
+	struct s_stdout		*next;
+	struct s_stdout		*start;
+}							t_stdout;
 
 typedef struct				s_cmd
 {
 	char 				**args;
-	t_redi				*redi;
-	char 				*eof;
+	t_stdout			*std_out;
+	char 				**std_in;
+	char 				**hrdc;
 	int 				sep;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
@@ -105,18 +105,19 @@ void	read_array(char **str);
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt);
-t_cmd 	*get_args(char **line, char **envp, e_prompt *prompt);
-void	shell_envpsub(char **arg, char **envp, char quote);
-void 	shell_process(t_cmd *cmd, t_shell *shell);
-t_redi	*shell_redi(char **arg, t_redi **first_redi, char quote);
+t_cmd		*shell_split(char *line, char **envp, e_prompt *prompt);
+t_cmd 		*get_args(char **line, char **envp, e_prompt *prompt);
+void		shell_envpsub(char **arg, char **envp, char quote);
+void 		shell_process(t_cmd *cmd, t_shell *shell);
+t_stdout	*shell_redi(char **arg, t_stdout **first_redi, char quote);
+char		**shell_heredoc(char **arg, char quote, char **hrdc);
 
 size_t	len_arg(char *str, char quote);
 void	clean_cmd(t_cmd **cmd);
 char	*shell_trim(char **str);
 int		check_last_quote(char *arg, char quote);
 int		shl_quotesub(char *arg);
-BOOL	checkredi_to(t_redi *redis);
+BOOL	checkredi_to(t_stdout *redis);
 
 
 /*
@@ -131,6 +132,7 @@ BOOL	checkredi_to(t_redi *redis);
 ** path qui contient un lien et <cd -L -L -P -L .> && <cd -L -P .>
 ** <mkdir test1> && <chmod 666 test1> && <cd test> --> Fail
 ** <mkdir test2> && <chmod 111 test2> && <cd test2> --> OK
+** mkdir folder && cd folder && cd .. && rm -rf folder && cd -
 ** <cd \./> && pwd --> PWD et OLDPWD devrait avoir la meme valeur
 ** <cd \/.///> && env PWD && cd ..
 ** <cd ~///./folder//.//>
@@ -159,6 +161,10 @@ BOOL	checkredi_to(t_redi *redis);
 ** echo test && {ENTER} \ {ENTER} \\ {ENTER} puis flèche du haut et histo == {echo test && \\}
 ** ; puis ;; (pas le meme msg d'erreur)
 ** >>>
+** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
+** << EOF ;;
+** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
+** echo test > file && cat < file>>file2
 */
 
 

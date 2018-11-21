@@ -49,9 +49,9 @@ int		shl_quotesub(char *arg)
 	return (check_last_quote(arg, quote));
 }
 
-void	clean_redi(t_redi **redi)
+void	clean_redi(t_stdout **redi)
 {
-	t_redi	*tmp;
+	t_stdout	*tmp;
 
 	while ((*redi)->next != NULL)
 	{
@@ -73,8 +73,8 @@ void	clean_cmd(t_cmd **cmd)
 	while ((*cmd = (*cmd)->next_cmd))
 	{
 		ft_arrdel((*cmd)->args);
-		if ((*cmd)->redi)
-			clean_redi(&((*cmd)->redi));
+		if ((*cmd)->std_out)
+			clean_redi(&((*cmd)->std_out));
 		free(tmp);
 		tmp = *cmd;
 	}

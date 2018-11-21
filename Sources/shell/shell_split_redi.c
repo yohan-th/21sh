@@ -75,7 +75,7 @@ int 	get_redi_from(char *redi, int pos)
 	}
 	rev = ft_strrev(ft_strdup(redi));
 	pos = ft_strlen(redi) - pos;
-	redi_from = ft_strsub(rev, (unsigned int)pos, (size_t)ft_strlen(rev) - pos);
+	redi_from = ft_strsub(rev, (unsigned)pos, (size_t)ft_strlen(rev) - pos);
 	ft_strdel(&rev);
 	i = ft_atoi(ft_strrev(redi_from));
 	ft_strdel(&redi_from);
@@ -86,7 +86,7 @@ int 	get_redi_from(char *redi, int pos)
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-int 	shell_redi_sub(char **arg, int i, t_redi *redi)
+int 	shell_redi_sub(char **arg, int i, t_stdout *redi)
 {
 	redi->from = get_redi_from(*arg, i);
 	ft_strdel(&redi->to);
@@ -109,17 +109,16 @@ int 	shell_redi_sub(char **arg, int i, t_redi *redi)
 	return (i);
 }
 
-t_redi	*add_redi(t_redi **first_redi)
+t_stdout	*add_redi(t_stdout **first_redi)
 {
-	t_redi	*new_redi;
-	t_redi	*t_next;
+	t_stdout	*new_redi;
+	t_stdout	*t_next;
 
-	if (!(new_redi = malloc(sizeof(t_redi))))
+	if (!(new_redi = malloc(sizeof(t_stdout))))
 		return (NULL);
 	new_redi->append = 0;
 	new_redi->from = 1;
 	new_redi->to = ft_strdup("&1");
-	new_redi->std_in = NULL;
 	new_redi->next = NULL;
 	if (!(*first_redi))
 	{
@@ -137,9 +136,9 @@ t_redi	*add_redi(t_redi **first_redi)
 	return (new_redi);
 }
 
-t_redi		*get_last_redi(t_redi *redi)
+t_stdout		*get_last_redi(t_stdout *redi)
 {
-	t_redi	*t_next;
+	t_stdout	*t_next;
 
 	t_next = redi;
 	while (t_next->next)
@@ -147,7 +146,7 @@ t_redi		*get_last_redi(t_redi *redi)
 	return (t_next);
 }
 
-char		*complete_redi_to(char **arg, t_redi *add_to, char quote)
+char		*complete_redi_to(char **arg, t_stdout *add_to, char quote)
 {
 	char *ret;
 
@@ -167,10 +166,10 @@ char		*complete_redi_to(char **arg, t_redi *add_to, char quote)
 ** On effectue un exit propre (à faire).
 */
 
-t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
+t_stdout		*shell_redi(char **arg, t_stdout **first_redi, char quote)
 {
 	int		i;
-	t_redi	*redi;
+	t_stdout	*redi;
 
 	if (*first_redi && (get_last_redi(*first_redi))->to == NULL && *arg)
 		*arg = complete_redi_to(arg, get_last_redi(*first_redi), quote);
@@ -178,7 +177,7 @@ t_redi		*shell_redi(char **arg, t_redi **first_redi, char quote)
 	i = (quote == ' ') ? 0 : 1;
 	while (*arg && (*arg)[i])
 	{
-		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2))
+		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2) && quote == ' ')
 			i += 2;
 		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
 			quote = (*arg)[i];
