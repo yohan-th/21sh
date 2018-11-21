@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/07 14:10:24 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/17 15:18:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -72,5 +72,5 @@ int		display_prompt(e_prompt prompt)
 	write(1, &c, 1);
 	c = 0xBD;
 	write(1, &c, 1);
-	return (8);
+	return (4);
 }

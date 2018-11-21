@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/07 14:09:51 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/21 21:38:29 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -129,7 +129,7 @@ int		main(int ac, char **av, char **envp)
 	init_terminal_data();
 	shl = init_shell(envp);
 	prompt = PROMPT;
-	while (get_stdin(&shl->str, &prompt, &shl->hist) != -2)
+	while (get_stdin(&shl->str, &prompt, &shl->hist, get_envp(envp, "PATH")) != -2)
 	{
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{

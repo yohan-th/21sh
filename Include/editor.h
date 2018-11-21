@@ -6,23 +6,27 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 21:11:53 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/19 22:00:29 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #ifndef EDITOR_H
 # define EDITOR_H
-#include <stdio.h> /*don't forget to remove*/
-//# include "shell.h"
-#include <stdlib.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include <term.h>
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <unistd.h>
+# include <dirent.h>
 # define BUFF_READ 4096
 # define WHITE "\033[7;49;37m"
+# define RED "\033[1;31m"
+# define BLUE "\033[1;36m"
+# define YEL "\033[1;33m"
 # define END "\033[0m"
+# define LGRAY "\033[47m"
 # define LEFT_KEY ((*ed)->key[0] == 27 && (*ed)->key[1] == 91 && (*ed)->key[2] == 68)
 # define RIGHT_KEY ((*ed)->key[0] == 27 &&  (*ed)->key[1] == 91 && (*ed)->key[2] == 67)
 # define UP_KEY ((*ed)->key[0] == 27 && (*ed)->key[1] == 91 &&  (*ed)->key[2] == 65)
@@ -72,6 +76,29 @@ typedef struct		s_history
 	struct s_history	*prev;
 }					t_history;
 
+typedef struct		s_tab_elem
+{
+	t_dirent			*dir;
+	struct s_tab_elem	*next;
+	struct s_tab_elem	*prev;
+}					t_tab_elem;
+
+typedef struct		s_tab
+{
+	char			*path;
+	char			*data;
+	DIR				*dir;
+	int				nb_col;
+	int				nb_row;
+	int				max_len;
+	int				nb_node;
+	int				start;
+	int				end;
+	int				mode;
+	t_tab_elem		*elem;
+	t_tab_elem		*last_elem;
+}					t_tab;
+
 typedef struct		s_editor
 {
 	int				ret;
@@ -87,7 +114,6 @@ typedef struct		s_editor
 	size_t			prompt_size;
 	char			*clipboard;
 	char			key[BUFF_READ];
-//	char			*line;
 	t_history		*hist;
 }					t_editor;
 
@@ -129,12 +155,12 @@ void	myhandler_interrupt(int signal);
 char	*cursor_position_escape_sequence(int row, int col, t_editor *ed);
 void	reset_cursor_position_escape_sequence(char **cursor_position);
 
-void	add_paste_into_line(t_editor *ed);
+void	add_paste_into_line(t_editor **ed);
 void	add_char_into_line(char key, t_editor *ed);
 void	add_char_to_line(char key, t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt);
-int		get_stdin(char **line, e_prompt *prompt, t_history **hist);
+int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char *b_path);
 void	myhandler_winsize_change(int signal);
 size_t	get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
@@ -165,5 +191,6 @@ int		print_key(t_editor **ed);
 void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
 t_history	*hist_add(t_history *hist);
+void	term_tabulator(t_editor **ed, char *b_path, e_prompt *prompt);
 
 #endif

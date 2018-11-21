@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/06 18:07:30 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/21 21:39:03 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -58,7 +58,8 @@ SRCS =  shell/main.c \
 		editor/clear_window.c \
 		editor/end_of_text.c \
 		editor/paste_clipboard.c \
-		editor/term_history.c
+		editor/term_history.c \
+		editor/term_tabulator.c
 
 INCLUDES_FILE = shell.h
 

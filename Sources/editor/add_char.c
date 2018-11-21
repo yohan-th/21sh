@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 10:42:22 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 18:05:58 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/19 17:14:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -92,28 +92,22 @@ void			add_char_into_line(char key, t_editor *ed)
 void			add_char_to_line(char key, t_editor *ed)
 {
 	ed->cursor_str_pos++;
-	tputs(tgetstr("im", NULL), 1, ft_putchar);
+	ft_putchar(key);
 	if (ed->cur_col == ed->ws_col && ed->cur_row != ed->ws_row)
 	{
 		ed->cur_col = 0;
 		ed->last_char = 0;
-		ft_putchar(key);
 		tputs(tgetstr("do", NULL), 1, ft_putchar);
-		ed->cur_row = ed->cur_row == ed->ws_row ? ed->cur_row : ed->cur_row++;
-		ed->last_row = ed->last_row == ed->ws_row ? ed->ws_row : ed->last_row++;
+		ed->cur_row++;
+		ed->last_row++;
 	}
 	else if (ed->cur_col == ed->ws_col && ed->cur_row == ed->ws_row)
 	{
 		ed->cur_col = 0;
 		ed->last_char = 0;
-		ft_putchar(key);
 		tputs(tgetstr("sf", NULL), 1, ft_putchar);
-		ed->last_row = ed->last_row == ed->ws_row ? ed->ws_row : ed->last_row++;
 		ed->first_row--;
 	}
-	else
-		ft_putchar(key);
-	tputs(tgetstr("ei", NULL), 1, ft_putchar);
 	ed->cur_col++;
 	ed->last_char++;
 }
@@ -131,6 +125,6 @@ int				print_key(t_editor **ed)
 			add_char_into_line((*ed)->key[0], *ed);
 	}
 	else
-		add_paste_into_line(*ed);
+		add_paste_into_line(ed);
 	return (EXIT_SUCCESS);
 }
