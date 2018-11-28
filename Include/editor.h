@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/19 22:00:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/28 15:25:06 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,7 +54,7 @@
 
 typedef struct winsize	t_sz;
 typedef struct dirent	t_dirent;
-typedef struct s_select	t_select;
+typedef struct stat		t_stat;
 
 typedef enum		s_prompt
 {
@@ -87,6 +87,7 @@ typedef struct		s_tab
 {
 	char			*path;
 	char			*data;
+	char			*comp;
 	DIR				*dir;
 	int				nb_col;
 	int				nb_row;
@@ -192,5 +193,20 @@ void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
 t_history	*hist_add(t_history *hist);
 void	term_tabulator(t_editor **ed, char *b_path, e_prompt *prompt);
+
+/*
+ *******************************************************************************
+ **                                     TABULATOR                              *
+ *******************************************************************************
+ */
+
+int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode);
+void	check_data_with_space_after(char **new_cmd, char *d_name);
+void	check_data_with_space_before(char **path);
+void	tabulator_put_one_row(t_tab *tabu);
+int		tabulator_put_multi_row(t_tab *tabu, t_editor **ed, e_prompt *prompt);
+void	tabulator_recup_data(t_editor *ed, t_tab **tabu, char *b_path);
+void	tabulator_recup_folder_files(t_tab **tabu, char *bin);
+int		tabulator_get_path(t_editor *ed, t_tab **tabu);
 
 #endif

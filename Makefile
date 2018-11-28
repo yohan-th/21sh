@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/21 21:39:03 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/28 12:18:36 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -59,11 +59,16 @@ SRCS =  shell/main.c \
 		editor/end_of_text.c \
 		editor/paste_clipboard.c \
 		editor/term_history.c \
-		editor/term_tabulator.c
+		editor/tabulator/tabulator_check.c \
+		editor/tabulator/tabulator_check_mode.c \
+		editor/tabulator/tabulator_put_row.c \
+		editor/tabulator/tabulator_recup_data.c \
+		editor/tabulator/tabulator_recup_folder_files.c \
+		editor/tabulator/term_tabulator.c
 
 INCLUDES_FILE = shell.h
 
-OBJS_FOLDERS = builtins editor shell
+OBJS_FOLDERS = builtins editor editor/tabulator shell
 OBJS = $(addprefix $(DIR_OBJ),$(SRCS:.c=.o))
 OBJS_FOLDERS_BIS = $(addprefix $(DIR_OBJ),$(OBJS_FOLDERS))
 
