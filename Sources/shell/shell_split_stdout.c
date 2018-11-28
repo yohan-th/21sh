@@ -1,39 +1,18 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   shell_split_redi.c                               .::    .:/ .      .::   */
+/*   shell_split_stdout.c                             .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/10/18 21:05:41 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/18 21:05:41 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/11/22 00:38:38 by ythollet     #+#   ##    ##    #+#       */
+/*   Updated: 2018/11/22 00:38:38 by ythollet    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "../../Include/shell.h"
 
-int		len_stdout_to(char *str, char quote)
-{
-	int i;
-
-	i = (quote == ' ') ? 0 : 1;
-	while (*str && str[i])
-	{
-		if (str[i] == '\\' && ft_strlen(str) > (i + 2) && quote == ' ')
-			i += 2;
-		if (ft_strchr("'\"", str[i]) && quote == ' ')
-			quote = str[i];
-		else if (str[i] == quote && quote != ' ')
-			quote = ' ';
-		if (quote == ' ' && ft_strchr("><", str[i]))
-			break ;
-		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
-			break ;
-		i++;
-	}
-	return (i);
-}
 
 /*
 ** Return NULL si redi est dans le prochain arg (si existant) ou si quote
@@ -50,7 +29,6 @@ char 	*get_stdout_to(char *redi, int *pos)
 		return (NULL);
 	quote = ft_strchr("'\"", redi[*pos]) ? (char)redi[*pos] : (char)' ';
 	len = len_stdout_to(redi + *pos, quote);
-
 	if (len > 0)
 		redi_to = ft_strsub(redi, (unsigned)*pos, (size_t)len);
 	else
@@ -136,31 +114,6 @@ t_stdout	*add_stdout(t_stdout **first_redi)
 	return (new_redi);
 }
 
-t_stdout		*get_last_stdout(t_stdout *redi)
-{
-	t_stdout	*t_next;
-
-	t_next = redi;
-	while (t_next->next)
-		t_next = t_next->next;
-	return (t_next);
-}
-
-char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
-{
-	char *ret;
-
-	add_to->to = ft_strsub(*arg, 0, (size_t) len_stdout_to(*arg, quote));
-	if ((ft_strlen(*arg) - len_stdout_to(*arg, quote)) > 0)
-		ret = ft_strsub(*arg, (unsigned) len_stdout_to(*arg, quote),
-						(size_t )ft_strlen(*arg));
-	else
-		ret = NULL;
-	ft_strdel(arg);
-	*arg = NULL;
-	return (ret);
-}
-
 /*
 ** shell redi peut renvoyer NULL si malloc fail.
 ** On effectue un exit propre (à faire).
@@ -177,7 +130,7 @@ t_stdout		*shell_std_out(char **arg, t_stdout **first_redi, char quote)
 	i = (quote == ' ') ? 0 : 1;
 	while (*arg && (*arg)[i])
 	{
-		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2) && quote == ' ')
+		if ((*arg)[i] == '\\' && ft_strlen(*arg) >= (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
 			quote = (*arg)[i];
@@ -190,7 +143,7 @@ t_stdout		*shell_std_out(char **arg, t_stdout **first_redi, char quote)
 			i = shell_stdout_sub(arg, i, redi);
 		}
 		else
-			i++;
+			i += ((*arg)[i]) ? 1 : 0;
 	}
 	return (redi);
 }

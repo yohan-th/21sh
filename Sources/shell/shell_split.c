@@ -30,7 +30,7 @@ int		get_sep(char **str)
 	return (sep);
 }
 
-BOOL	checkstdout_to(t_stdout *redis)
+BOOL	stdout_to(t_stdout *redis)
 {
 	t_stdout	*read;
 
@@ -44,6 +44,50 @@ BOOL	checkstdout_to(t_stdout *redis)
 	return (1);
 }
 
+BOOL	ft_isempty(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str && ft_isspace(str[i]))
+		i++;
+	if (str && i == ft_strlen(str))
+		return (1);
+	else
+		return (0);
+}
+
+/*
+** Verifie si les quotes sont fermées et {\} en fin non présent
+*/
+
+BOOL	iscomplet(char *str, e_prompt *prompt)
+{
+	int		i;
+	char	quote;
+
+	i = 0;
+	quote = ' ';
+	while (str && str[i])
+	{
+		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
+			i += 2;
+		if (ft_strchr("'\"", str[i]) && quote == ' ')
+			quote = str[i];
+		else if (str[i] == quote && quote != ' ')
+			quote = ' ';
+		i += (str[i] ? 1 : 0);
+	}
+	if ((i > 0 && quote != ' ') || (i == 1 && str[0] == '\\') ||
+			(i > 1 && str[i - 1] == '\\' && str[i - 2] != '\\'))
+	{
+		*prompt = B_QUOTE;
+		return (0);
+	}
+	else
+		return (1);
+}
+
 /*
 ** Split line jusqu'au prochain delimiteur
 ** Le premier maillon start (pointé par tous les autres) est vide.
@@ -53,6 +97,8 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 {
 	t_cmd	*cmd;
 
+	if (ft_isempty(line) || !iscomplet(line, prompt))
+		return (NULL);
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 	cmd->start = cmd;
 	while (line && (cmd->next_cmd = get_args(&line, envp, prompt)))
@@ -60,11 +106,10 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
-		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !checkstdout_to(
-				cmd->std_out))
+		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !stdout_to(cmd->std_out))
 			break ;
 	}
-	if ((!line || ft_strlen(ft_strtrim(line))) && (ft_strlen(cmd->args[0]) && !cmd->sep))
+	if (!cmd->args)
 	{
 		clean_cmd(&cmd);
 		return (NULL);

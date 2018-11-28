@@ -18,9 +18,9 @@ int		len_hrdc(char *str, char quote)
 	int i;
 
 	i = (quote == ' ') ? 0 : 1;
-	while (*str && str[i])
+	while (str && str[i])
 	{
-		if (str[i] == '\\' && ft_strlen(str) > (i + 2) && quote == ' ')
+		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", str[i]) && quote == ' ')
 			quote = str[i];
@@ -30,7 +30,7 @@ int		len_hrdc(char *str, char quote)
 			break ;
 		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
 			break ;
-		i++;
+		i += (str[i] ? 1 : 0);
 	}
 	return (i);
 }
@@ -74,13 +74,14 @@ char	**add_hrdc(char **hrdc)
 	i = 0;
 	while (hrdc && hrdc[i] != NULL)
 	{
-		if ((int)hrdc[i] == -1)
-			ret[i++] = (char *)-1;
+		if ((int)hrdc[i] == -1 || (int)hrdc[i] == -2)
+			ret[i] = (char *)hrdc[i];
 		else
 		{
 			ret[i] = ft_strdup(hrdc[i]);
-			ft_strdel(&hrdc[i++]);
+			ft_strdel(&hrdc[i]);
 		}
+		i++;
 	}
 	if (hrdc)
 		free(hrdc);
@@ -99,7 +100,7 @@ void	complete_hrdc(char **arg, char quote, char ***hrdc)
 	if (*hrdc && (int)(*hrdc)[last - 1] == -2 && len_hrdc(*arg, quote) > 0)
 	{
 		(*hrdc)[last - 1] = ft_strsub(*arg, (unsigned)0,
-				(size_t)len_hrdc(*arg, quote));
+				(size_t) len_hrdc(*arg, quote));
 		**arg = '\0';
 	}
 	arg = arg + len_hrdc(*arg, quote);
@@ -119,7 +120,7 @@ char	**shell_heredoc(char **arg, char quote, char **hrdc)
 	i = (quote == ' ') ? 0 : 1;
 	while (*arg && (*arg)[i])
 	{
-		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2) && quote == ' ')
+		if ((*arg)[i] == '\\' && ft_strlen(*arg) >= (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
 			quote = (*arg)[i];
@@ -133,7 +134,7 @@ char	**shell_heredoc(char **arg, char quote, char **hrdc)
 			i = shell_hrdc_sub(arg, i + 2, &hrdc);
 		}
 		else
-			i++;
+			i += ((*arg)[i]) ? 1 : 0;
 	}
 	return (hrdc);
 }

@@ -36,24 +36,33 @@ void	shell_process(t_cmd *cmd, t_shell *shell)
 	while ((cmd = cmd->next_cmd))
 	{
 		read_array(cmd->args);
-		dprintf(2, "\nRead redir : ");
+		dprintf(2, "\nRead stdout : ");
 		read = cmd->std_out;
 		while (read != NULL)
 		{
 			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
 			read = read->next;
 		}
-		dprintf(2, "Et sep %d\n", cmd->sep);
-		dprintf(2, "Read heredoc : ");
+		dprintf(2, "\nRead stdin : ");
+		i = 0;
+		while (cmd->std_in && (cmd->std_in)[i] != NULL)
+		{
+			if ((int)(cmd->std_in)[i] == -1 || (int)(cmd->std_in)[i] == -2)
+				dprintf(2, "<%d> -", (int)(cmd->std_in)[i++]);
+			else
+				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
+		}
+		dprintf(2, "\nRead heredoc : ");
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{
-			if ((int)(cmd->hrdc)[i] < 0)
+			if ((int)(cmd->hrdc)[i] == -1 || (int)(cmd->hrdc)[i] == -2)
 				dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
 			else
 				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
 		}
-		printf("\n");
+		dprintf(2, "\n");
+		dprintf(2, "Et sep %d\n", cmd->sep);
 	}
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{

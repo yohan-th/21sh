@@ -110,20 +110,26 @@ void		shell_envpsub(char **arg, char **envp, char quote);
 void 		shell_process(t_cmd *cmd, t_shell *shell);
 t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
+char		**shell_std_in(char **arg, char quote, char **std_in);
 
-size_t	len_arg(char *str, char quote);
-void	clean_cmd(t_cmd **cmd);
-char	*shell_trim(char **str);
-int		check_last_quote(char *arg, char quote);
-int		shl_quotesub(char *arg);
-BOOL	checkstdout_to(t_stdout *redis);
-
+size_t		len_arg(char *str, char quote);
+void		clean_cmd(t_cmd **cmd);
+char		*shell_trim(char **str);
+int			check_last_quote(char *arg, char quote);
+int			shl_quotesub(char *arg);
+BOOL		stdout_to(t_stdout *redis);
+int			len_stdout_to(char *str, char quote);
+t_stdout	*get_last_stdout(t_stdout *redi);
+char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote);
+void		complete_hrdc(char **arg, char quote, char ***hrdc);
+int			shell_hrdc_sub(char **arg, int i, char ***hrdc);
+char		**add_hrdc(char **hrdc);
 
 /*
 ** Hard test
 ** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>
 ** <echo "test>
-** <echo test\>
+** <echo test\ {ENTER} ' {ENTER} test {ENTER} '>
 ** <echo 'test\'
 ** echo tes't $USER te'st
 ** echo tes"t $USER te"st
@@ -152,16 +158,16 @@ BOOL	checkstdout_to(t_stdout *redis);
 ** echo file > '&'
 ** {export tty=/dev/ttys001} {echo test > $tty} et car ttys001 recoit
 ** {echo test > "/dev/ttys001\\"} --> error avec {/dev/ttys001\\}
-** echo test > file > /dev/ttys001 (le dernier est prix en compte
+** echo test > file > /dev/ttys001 (le dernier est prit en compte mais file est créé)
 ** echo test > glob"{\n}file"
 ** echo test > file1>file2
-** echo test > file1\\>file2
 ** echo test > file1\>file2
+** echo test > file1\\>file2
 ** echo test && {ENTER} \ {ENTER} \\ {ENTER} puis flèche du haut et histo == {echo test && \\}
 ** ; puis ;; (pas le meme msg d'erreur)
 ** >>>
 ** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
-** << EOF ;;
+** << EOF cat nofile ;; --> les EOF sont prio puis ;; puis erreur de cat
 ** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
 ** echo test > file && cat < file>>file2
 */

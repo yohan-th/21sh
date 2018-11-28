@@ -95,7 +95,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	{
 		if (!ft_strlen(next->args[0]) && next->sep)
 			return (prt_err_sep(next->sep));
-		if (!checkstdout_to(next->std_out))
+		if (!stdout_to(next->std_out))
 		{
 			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
 			return (1);

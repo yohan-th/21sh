@@ -13,21 +13,6 @@
 
 #include "../../Include/shell.h"
 
-BOOL	check_quote(char *str, char quote, size_t i)
-{
-	if (!str)
-		return(false);
-	i -= 1;
-	if (ft_strchr("\"'", quote) && i == 0)
-		return (false);
-	if (quote == '"' && (str[i] != quote ||
-			(str[i] == quote && str[i - 1] == '\\')))
-		return (false);
-	if (quote == '\'' && str[i] != quote)
-		return (false);
-	return (true);
-}
-
 /*
 ** Calcul la longueur de l'argument
 ** Les conditions de fin sont :
@@ -42,25 +27,23 @@ size_t	len_arg(char *str, char quote)
 	i = (quote == ' ') ? 0 : 1;
 	while (str && str[i])
 	{
-		if (str[i] == '\\' && ft_strlen(str) > (i + 1) && quote == ' ')
+		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", str[i]) && quote == ' ')
 			quote = str[i++];
-		else if (str[i] == quote && quote != ' ' &&
-				(!ft_strchr("\0 ", str[i + 1])))
+		else if (str[i] == quote && quote != ' ')
+		{
 			quote = ' ';
+			i++;
+		}
 		else if ((quote == ' ' && (ft_strchr(";|", str[i]) || (str[i] == '&' &&
 				str[i + 1] == '&'))) || (str[i] == quote && (quote == ' ' ||
 				ft_strchr("\0 ", str[i + 1]))))
 			break ;
 		else
-			i++;
+			i += (str[i]) ? 1 : 0;
 	}
-	/*if (!check_quote(str, quote, i))
-		printf("<len arg = 0 error de quote>\n");
-	else
-		printf("<len arg = %zu>\n", i);*/
-	return (check_quote(str, quote, i) ? i : 0);
+	return (i);
 }
 
 int 	get_nbarg(char *str, e_prompt *prompt)
@@ -74,8 +57,10 @@ int 	get_nbarg(char *str, e_prompt *prompt)
 	while (*str)
 	{
 		str = shell_trim(&str);
-		quote = ft_strchr("'\"", *str) ? *str : (char)' ';
+		quote = ft_strchr("'\"", str[0]) ? str[0] : (char)' ';
 		lenarg = len_arg(str, quote);
+		if (ft_strlen(str) && lenarg == 0)
+			*prompt = B_QUOTE;
 		str += lenarg;
 		if (lenarg == 0 && !ft_strchr(";|", str[0]) && str[0] != '&' &&
 															 str[1] != '&')
@@ -94,7 +79,7 @@ int 	get_nbarg(char *str, e_prompt *prompt)
 ** /!\ shell_redi n'est pas safe si son malloc fail
 */
 
-char	*get_arg(char **str, char **envp, t_stdout **first_redi, char ***hrdc)
+char	*get_arg(char **str, char **envp, t_cmd *cmd)
 {
 	unsigned int	i;
 	char			quote;
@@ -108,8 +93,9 @@ char	*get_arg(char **str, char **envp, t_stdout **first_redi, char ***hrdc)
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 //	shell_envpsub(&arg, envp, quote); <-- plus ici, on le fait dans process
-	shell_std_out(&arg, first_redi, quote);
-	*hrdc = shell_heredoc(&arg, quote, *hrdc);
+	shell_std_out(&arg, &cmd->std_out, quote);
+	cmd->hrdc = shell_heredoc(&arg, quote, cmd->hrdc);
+	cmd->std_in = shell_std_in(&arg, quote, cmd->std_in);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }
@@ -127,10 +113,11 @@ t_cmd 	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->args = (char **)malloc(sizeof(char *) * (nb_arg + 1));
 	cmd->args[nb_arg] = NULL;
 	cmd->std_out = NULL;
+	cmd->std_in = NULL;
 	cmd->hrdc = NULL;
 	i = 0;
 	while (i < nb_arg)
-		cmd->args[i++] = get_arg(line, envp, &cmd->std_out, &cmd->hrdc);
+		cmd->args[i++] = get_arg(line, envp, cmd);
 	//erase or create files for redi
 	return (cmd);
 }
