@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/28 15:25:06 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 15:33:30 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -78,7 +78,9 @@ typedef struct		s_history
 
 typedef struct		s_tab_elem
 {
-	t_dirent			*dir;
+	char				d_name[256];
+	unsigned long		d_namlen;
+	unsigned long		d_type;
 	struct s_tab_elem	*next;
 	struct s_tab_elem	*prev;
 }					t_tab_elem;
@@ -88,6 +90,7 @@ typedef struct		s_tab
 	char			*path;
 	char			*data;
 	char			*comp;
+	char			**env;
 	DIR				*dir;
 	int				nb_col;
 	int				nb_row;
@@ -161,7 +164,7 @@ void	add_char_into_line(char key, t_editor *ed);
 void	add_char_to_line(char key, t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt);
-int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char *b_path);
+int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env);
 void	myhandler_winsize_change(int signal);
 size_t	get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
@@ -192,7 +195,7 @@ int		print_key(t_editor **ed);
 void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
 t_history	*hist_add(t_history *hist);
-void	term_tabulator(t_editor **ed, char *b_path, e_prompt *prompt);
+void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt);
 
 /*
  *******************************************************************************
@@ -205,7 +208,7 @@ void	check_data_with_space_after(char **new_cmd, char *d_name);
 void	check_data_with_space_before(char **path);
 void	tabulator_put_one_row(t_tab *tabu);
 int		tabulator_put_multi_row(t_tab *tabu, t_editor **ed, e_prompt *prompt);
-void	tabulator_recup_data(t_editor *ed, t_tab **tabu, char *b_path);
+void	tabulator_recup_data(t_editor *ed, t_tab **tabu);
 void	tabulator_recup_folder_files(t_tab **tabu, char *bin);
 int		tabulator_get_path(t_editor *ed, t_tab **tabu);
 

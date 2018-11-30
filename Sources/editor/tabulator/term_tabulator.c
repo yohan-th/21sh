@@ -6,15 +6,17 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/28 15:52:37 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 15:33:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-t_tab	*tabulator_init(t_tab *tabu, int cursor_pos)
+t_tab	*tabulator_init(int cursor_pos, char **env)
 {
+	t_tab *tabu;
+
 	if (!(tabu = (t_tab*)malloc(sizeof(t_tab))))
 		return (NULL);
 	tabu->path = NULL;
@@ -23,6 +25,7 @@ t_tab	*tabulator_init(t_tab *tabu, int cursor_pos)
 	tabu->dir = NULL;
 	tabu->elem = NULL;
 	tabu->last_elem = NULL;
+	tabu->env = env;
 	tabu->nb_col = 0;
 	tabu->nb_row = 0;
 	tabu->max_len = 0;
@@ -38,14 +41,16 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 	char *new;
 
 	new = NULL;
+	dprintf(2, "comp: %s\n", (*tabu)->comp);
 	new = ft_strsub((*ed)->hist->cmd, 0, (*tabu)->start);
-	(*tabu)->data = ft_strjoin_free((*tabu)->data, (*tabu)->elem->dir->d_name +
-	ft_strlen((*tabu)->data));
+	(*tabu)->data = ft_strjoin_free((*tabu)->data, ((*tabu)->comp ?
+	(*tabu)->comp : (*tabu)->elem->d_name) + ft_strlen((*tabu)->data));
 	(*tabu)->path = ft_strjoin_free((*tabu)->path, (*tabu)->data);
 	check_data_with_space_after(&new, (*tabu)->path);
-	if ((*tabu)->elem->dir->d_type == 4)
+	if ((*tabu)->elem->d_type == 4 && (*tabu)->nb_node == 1)
 		new = ft_strjoin_free(new, "/");
-	else if (!ft_strlen((*ed)->hist->cmd + (*ed)->cursor_str_pos))
+	else if (!ft_strlen((*ed)->hist->cmd + (*ed)->cursor_str_pos) &&
+	(*tabu)->nb_node == 1)
 		new = ft_strjoin_free(new, " ");
 	new = ft_strjoin_free(new, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
 	go_to_begin_of_line(*ed);
@@ -84,17 +89,18 @@ int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
 	return (ret);
 }
 
-void	term_tabulator(t_editor **ed, char *b_path, e_prompt *prompt)
+void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
 {
 	int		nb_line;
 	int		cur_row;
 	t_tab *tabu;
 
-	tabu = tabulator_init(tabu, (*ed)->cursor_str_pos);
-	tabulator_recup_data(*ed, &tabu, b_path);
+	tabu = tabulator_init((*ed)->cursor_str_pos, env);
+	tabulator_recup_data(*ed, &tabu);
+	dprintf(2, "comp: %s\n", tabu->comp);
 	if (!tabu->nb_node)
 		return ;
-	else if (tabu->nb_node == 1)
+	else if (tabu->nb_node == 1 || tabu->comp)
 		tabulator_put_new_cmd(&tabu, ed);
 	else
 	{

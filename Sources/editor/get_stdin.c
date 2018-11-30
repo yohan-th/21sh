@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/26 18:53:05 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 15:02:15 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,7 +49,7 @@ int				enough_space_on_screen(t_editor *ed)
 	return (1);
 }
 
-static int		get_keyboard_key(t_editor **ed, e_prompt *prompt, char *b_path)
+static int		get_keyboard_key(t_editor **ed, e_prompt *prompt, char **env)
 {
 	if (CTRL_D || CTRL_C || CTRL_L || CTRL_K || CTRL_P)
 		get_keyboard_key_ctrl(ed, prompt);
@@ -68,11 +68,11 @@ static int		get_keyboard_key(t_editor **ed, e_prompt *prompt, char *b_path)
 	else if ((UP_KEY || DOWN_KEY))
 		term_history(ed);
 	else if (TAB_KEY)
-		term_tabulator(ed, b_path, prompt);
+		term_tabulator(ed, env, prompt);
 	return (EXIT_SUCCESS);
 }
 
-int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char *b_path)
+int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env)
 {
 	t_editor	*ed;
 
@@ -88,7 +88,7 @@ int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char *b_path)
 		tputs(tgetstr("vi", NULL), 1, ft_putchar);
 		if (term_size(ed) == EXIT_SUCCESS)
 			window_resize(&ed, prompt);
-		if (ed->ret && get_keyboard_key(&ed, prompt, b_path))
+		if (ed->ret && get_keyboard_key(&ed, prompt, env))
 			ed->hist->cmd = ft_strjoin_free(ed->hist->cmd, ed->key);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||

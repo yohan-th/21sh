@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/28 13:51:47 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 14:18:26 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,7 +41,7 @@ int		tabulator_check_executable(t_tab *tabu, t_dirent **dirent, char *bin)
 	return (0);
 }
 
-void	tabulator_autocomplete(char **comp, char *d_name, char *data)
+void	tabulator_autocomplete(char **comp, char *d_name)
 {
 	int i;
 
@@ -59,7 +59,7 @@ void	tabulator_autocomplete(char **comp, char *d_name, char *data)
 
 void	tabulator_recup_folder_files(t_tab **tabu, char *bin)
 {
-	t_dirent		*dir;
+	struct dirent		*dir;
 	t_tab_elem		*list;
 	t_tab_elem		*new;
 
@@ -73,12 +73,13 @@ void	tabulator_recup_folder_files(t_tab **tabu, char *bin)
 		&& tabulator_check_executable(*tabu, &dir, bin))
 		{
 			if (!(*tabu)->comp || ft_strlen((*tabu)->comp))
-			tabulator_autocomplete(&(*tabu)->comp, dir->d_name, (*tabu)->data);
+			tabulator_autocomplete(&(*tabu)->comp, dir->d_name);
 			(*tabu)->max_len = dir->d_namlen > (*tabu)->max_len ? dir->d_namlen : (*tabu)->max_len;
 			if (!(new = malloc(sizeof(t_tab_elem))))
 				return ;
-			new->dir = (t_dirent*)malloc(sizeof(t_dirent));
-			*new->dir = *dir;
+			ft_strcpy(new->d_name, dir->d_name);
+			new->d_namlen = dir->d_namlen;
+			new->d_type = dir->d_type;
 			new->next = NULL;
 			new->prev = NULL;
 			if (list)

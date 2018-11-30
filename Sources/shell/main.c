@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/21 21:38:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/11/30 15:35:58 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -45,6 +45,7 @@ void	fill_hist(t_history **hist, char *line)
 	t_history *new;
 	t_history *now;
 
+	new = NULL;
 	(*hist)->next = new;
 	now = *hist;
 	*hist = new;
@@ -104,16 +105,17 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
-int		main(int ac, char **av, char **envp)
+int		main(void)
 {
+	extern char **environ;
 	e_prompt	prompt;
 	t_cmd		*cmd;
 	t_shell		*shl;
 
 	init_terminal_data();
-	shl = init_shell(envp);
+	shl = init_shell(environ);
 	prompt = PROMPT;
-	while (get_stdin(&shl->str, &prompt, &shl->hist, get_envp(envp, "PATH")) != -2)
+	while (get_stdin(&shl->str, &prompt, &shl->hist, shl->envp) != -2)
 	{
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{

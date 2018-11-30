@@ -6,14 +6,14 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/28 12:18:36 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/11/30 12:08:41 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
 
 .PHONY: all clean fclean re
 
-CFLAGS = -g #-Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 
 NAME = 21sh
 
