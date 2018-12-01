@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/16 15:01:15 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 18:06:20 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:58:58 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 int				clear_window(t_editor *ed, e_prompt prompt)
 {
-	size_t	cursor_str_pos_tmp;
+	int	cursor_str_pos_tmp;
 
 	cursor_str_pos_tmp = ed->cursor_str_pos;
 	tputs(tgetstr("cl", NULL), 1, ft_putchar);

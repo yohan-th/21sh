@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/06 21:40:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 15:09:43 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:58:39 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 void	window_resize(t_editor **ed, e_prompt *prompt)
 {
-	size_t	cursor_str_pos_tmp;
+	int	cursor_str_pos_tmp;
 
 	cursor_str_pos_tmp = 0;
 	cursor_str_pos_tmp = (*ed)->cursor_str_pos;

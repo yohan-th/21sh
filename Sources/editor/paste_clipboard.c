@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/16 15:40:27 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/26 20:19:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:41:19 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -36,7 +36,7 @@ void			paste_clipboard(t_editor *ed)
 	{
 		if (ed->cursor_str_pos == ft_strlen(ed->hist->cmd))
 		{
-			ed->hist->cmd = ft_strjoin_free(ed->hist->cmd, ed->clipboard);
+			ft_strjoin_free(&ed->hist->cmd, ed->clipboard);
 			ed->cursor_str_pos = ft_strlen(ed->hist->cmd);
 			ft_putstr(ed->clipboard);
 			if (get_cursor_position(0) == ed->ws_col &&

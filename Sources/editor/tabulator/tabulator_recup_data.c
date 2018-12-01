@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:00:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 15:32:58 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 14:51:59 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,25 +41,46 @@ void	tabulator_sort_list(t_tab_elem **list)
 		*list = (*list)->prev;
 }
 
+void	check_home(t_tab **tabu)
+{
+	char *tmp;
+
+	if ((*tabu)->path[1] == '/')
+		(*tabu)->home = ft_strdup(get_envp((*tabu)->env, "HOME"));
+	else
+		(*tabu)->home = ft_strdup("/Users/");
+	if ((*tabu)->home)
+	{
+		tmp = ft_strdup((*tabu)->home);
+		ft_strjoin_free(&tmp, (*tabu)->path + 1);
+		ft_strdel(&(*tabu)->path);
+		(*tabu)->path = tmp;
+	}
+}
+
 int		tabulator_open_dir(t_tab **tabu)
 {
 	int		len;
-	char	tmp[ft_strlen((*tabu)->path) + 1];
+	char	*tmp;
 
-	len = ft_strlen((*tabu)->path);
-	while (len)
+	if ((*tabu)->path[0] == '~')
+		check_home(tabu);
+	len = ft_strlen((*tabu)->path) + 1;
+	while (--len)
 	{
-		ft_bzero(tmp, len + 1);
-		ft_strncpy(tmp, (*tabu)->path, len);
+		tmp = ft_strsub((*tabu)->path, 0, len);
 		if (tmp[len - 1] == '/' && ((*tabu)->dir = opendir(tmp)))
 		{
 			(*tabu)->data = ft_strlen((*tabu)->path + len) ? ft_strdup((*tabu)->
 			path + len) : (*tabu)->data;
 			ft_strdel(&(*tabu)->path);
-			(*tabu)->path = ft_strdup(tmp);
+			(*tabu)->path = (*tabu)->home ? ft_strdup("~") : ft_strdup(tmp);
+			if ((*tabu)->home)
+				ft_strjoin_free(&(*tabu)->path, tmp + ft_strlen((*tabu)->home));
+			ft_strdel(&tmp);
 			return (1);
 		}
-		len--;
+		ft_strdel(&tmp);
 	}
 	(*tabu)->data = ft_strdup((*tabu)->path);
 	ft_strdel(&(*tabu)->path);
@@ -76,7 +97,6 @@ void	tabulator_get_binairies(t_tab **tabu)
 	if (!(b_path = get_envp((*tabu)->env, "PATH")))
 		return ;
 	bin = ft_strsplit(b_path, ':');
-	ft_strdel(&b_path);
 	while (bin[++i])
 	{
 		if (((*tabu)->dir = opendir(bin[i])))

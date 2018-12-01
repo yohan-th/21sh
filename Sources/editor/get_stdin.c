@@ -6,22 +6,24 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 15:02:15 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 10:02:18 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt, t_history **hist)
+static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
 {
 	if (((*ed)->last_row - (*ed)->cur_row) != 0)
 		tputs(tgoto(tgetstr("DO", NULL), 0,
 		(*ed)->last_row - (*ed)->cur_row), 1, ft_putchar);
 	ft_putchar('\n');
 	if (*prompt != PROMPT && *prompt != E_PIPE)
-		*line = (*ed)->hist->cmd == NULL ? *line :
-		ft_strjoin_free(*line, (*ed)->hist->cmd);
+	{
+		if ((*ed)->hist->cmd)
+			ft_strjoin_free(line, (*ed)->hist->cmd);
+	}
 	else
 		*line = ft_strdup((*ed)->hist->cmd);
 }
@@ -89,13 +91,13 @@ int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env)
 		if (term_size(ed) == EXIT_SUCCESS)
 			window_resize(&ed, prompt);
 		if (ed->ret && get_keyboard_key(&ed, prompt, env))
-			ed->hist->cmd = ft_strjoin_free(ed->hist->cmd, ed->key);
+			ft_strjoin_free(&ed->hist->cmd, ed->key);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||
 			(ed->ret == -2 && !ed->hist->cmd) || (ed->ret == -3 && *prompt == E_HDOC))))
 			break ;
 	}
-	get_stdin_next(line, &ed, prompt, hist);
+	get_stdin_next(line, &ed, prompt);
 	get_term_raw_mode(0);
 	return (line_editor_delete(&ed, hist));
 }

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:40:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 12:53:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 11:17:50 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,8 +29,8 @@ void	check_data_with_space_after(char **new_cmd, char *d_name)
 		if (d_name[i] == ' ')
 		{
 			tmp = ft_strsub(tmp1, 0, j);
-			tmp = ft_strjoin_free(tmp, "\\");
-			tmp = ft_strjoin_free(tmp, d_name + i);
+			ft_strjoin_free(&tmp, "\\");
+			ft_strjoin_free(&tmp, d_name + i);
 			ft_strdel(&tmp1);
 			tmp1 = ft_strdup(tmp);
 			ft_strdel(&tmp);
@@ -38,7 +38,7 @@ void	check_data_with_space_after(char **new_cmd, char *d_name)
 		}
 		j++;
 	}
-	*new_cmd = ft_strjoin_free(*new_cmd, tmp1);
+	ft_strjoin_free(new_cmd, tmp1);
 	ft_strdel(&tmp1);
 }
 
@@ -59,7 +59,7 @@ void	check_data_with_space_before(char **path)
 		{
 			tmp = ft_strsub(tmp1, 0, j);
 			j--;
-			tmp = ft_strjoin_free(tmp, *path + i + 1);
+			ft_strjoin_free(&tmp, *path + i + 1);
 			ft_strdel(&tmp1);
 			tmp1 = ft_strdup(tmp);
 			ft_strdel(&tmp);

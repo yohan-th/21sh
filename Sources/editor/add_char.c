@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 10:42:22 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/19 17:14:04 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:56:40 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -116,7 +116,7 @@ int				print_key(t_editor **ed)
 {
 	if (ft_strlen((*ed)->key) == 1)
 	{
-		if ((*ed)->cursor_str_pos == ft_strlen((*ed)->hist->cmd))
+		if ((int)(*ed)->cursor_str_pos == ft_strlen((*ed)->hist->cmd))
 		{
 			add_char_to_line((*ed)->key[0], *ed);
 			return (1);

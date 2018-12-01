@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 14:18:26 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:42:41 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,7 +20,7 @@ int		tabulator_check_executable(t_tab *tabu, t_dirent **dirent, char *bin)
 	DIR		*dir;
 
 	path = ft_strdup(bin ? bin : tabu->path);
-	path = ft_strjoin_free(path, (*dirent)->d_name);
+	ft_strjoin_free(&path, (*dirent)->d_name);
 	lstat(path, &buf);
 	if ((dir = opendir(path)) &&
 	((*dirent)->d_type = 4))

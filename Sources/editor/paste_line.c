@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/15 20:34:38 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/19 17:16:11 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:58:31 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 void	add_paste_into_line(t_editor **ed)
 {
-	size_t	tmp_last_pos;
+	int	tmp_last_pos;
 	char	tmp[ft_strlen((*ed)->hist->cmd) + ft_strlen((*ed)->key) + 1];
 
 	tmp_last_pos = (*ed)->cursor_str_pos + ft_strlen((*ed)->key);

@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 15:33:30 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 11:16:33 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -90,6 +90,7 @@ typedef struct		s_tab
 	char			*path;
 	char			*data;
 	char			*comp;
+	char			*home;
 	char			**env;
 	DIR				*dir;
 	int				nb_col;
@@ -114,7 +115,7 @@ typedef struct		s_editor
 	size_t			last_row;
 	size_t			first_char;
 	size_t			last_char;
-	size_t			cursor_str_pos;
+	int				cursor_str_pos;
 	size_t			prompt_size;
 	char			*clipboard;
 	char			key[BUFF_READ];

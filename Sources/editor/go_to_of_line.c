@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/15 20:32:37 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/10 12:35:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 09:55:36 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 
 void	go_to_end_of_line(t_editor *ed)
 {
-	if (ed->cursor_str_pos < ft_strlen(ed->hist->cmd))
+	if ((int)ed->cursor_str_pos < ft_strlen(ed->hist->cmd))
 	{
 		tputs(tgoto(tgetstr("cv", NULL), 0, ed->last_row - 1), 1, ft_putchar);
 		tputs(tgoto(tgetstr("ch", NULL), 0, ed->last_char - 1), 1,

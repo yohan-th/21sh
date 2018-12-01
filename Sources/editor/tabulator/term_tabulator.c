@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 15:33:04 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/01 11:17:39 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,6 +21,7 @@ t_tab	*tabulator_init(int cursor_pos, char **env)
 		return (NULL);
 	tabu->path = NULL;
 	tabu->data = NULL;
+	tabu->home = NULL;
 	tabu->comp = NULL;
 	tabu->dir = NULL;
 	tabu->elem = NULL;
@@ -41,18 +42,17 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 	char *new;
 
 	new = NULL;
-	dprintf(2, "comp: %s\n", (*tabu)->comp);
 	new = ft_strsub((*ed)->hist->cmd, 0, (*tabu)->start);
-	(*tabu)->data = ft_strjoin_free((*tabu)->data, ((*tabu)->comp ?
+	ft_strjoin_free(&(*tabu)->data, ((*tabu)->comp ?
 	(*tabu)->comp : (*tabu)->elem->d_name) + ft_strlen((*tabu)->data));
-	(*tabu)->path = ft_strjoin_free((*tabu)->path, (*tabu)->data);
+	ft_strjoin_free(&(*tabu)->path, (*tabu)->data);
 	check_data_with_space_after(&new, (*tabu)->path);
 	if ((*tabu)->elem->d_type == 4 && (*tabu)->nb_node == 1)
-		new = ft_strjoin_free(new, "/");
+		ft_strjoin_free(&new, "/");
 	else if (!ft_strlen((*ed)->hist->cmd + (*ed)->cursor_str_pos) &&
 	(*tabu)->nb_node == 1)
-		new = ft_strjoin_free(new, " ");
-	new = ft_strjoin_free(new, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
+		ft_strjoin_free(&new, " ");
+	ft_strjoin_free(&new, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
 	go_to_begin_of_line(*ed);
 	ft_putstr("\E[J");
 	if ((*ed)->hist->cmd)
@@ -97,7 +97,6 @@ void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
 
 	tabu = tabulator_init((*ed)->cursor_str_pos, env);
 	tabulator_recup_data(*ed, &tabu);
-	dprintf(2, "comp: %s\n", tabu->comp);
 	if (!tabu->nb_node)
 		return ;
 	else if (tabu->nb_node == 1 || tabu->comp)
