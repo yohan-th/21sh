@@ -25,6 +25,7 @@ DIR_OBJ = ./Objects/
 SRCS =  shell/main.c \
         shell/get_path.c \
         shell/tools.c \
+        shell/shell_tools.c \
         shell/shell_split.c \
         shell/shell_split_getargs.c \
         shell/shell_split_envsub.c \
@@ -87,7 +88,7 @@ $(NAME): $(OBJS)
 
 $(DIR_OBJ)%.o: $(DIR_SRC)%.c  $(DIR_INC)/$(INCLUDES_FILE)
 	@mkdir -p $(DIR_OBJ) $(OBJS_FOLDERS_BIS)
-	@gcc -o $@ -c $< -I $(DIR_INC) $(CFLAGS)
+	@gcc -o $@ -c $< -I $(DIR_INC) #$(CFLAGS)
 
 clean:
 	@rm -rf $(DIR_OBJ)

@@ -22,7 +22,7 @@
 
 size_t	len_arg(char *str, char quote)
 {
-	size_t i;
+	int i;
 
 	i = (quote == ' ') ? 0 : 1;
 	while (str && str[i])
@@ -43,13 +43,13 @@ size_t	len_arg(char *str, char quote)
 		else
 			i += (str[i]) ? 1 : 0;
 	}
-	return (i);
+	return ((size_t)i);
 }
 
-int 	get_nbarg(char *str, e_prompt *prompt)
+int		get_nbarg(char *str, e_prompt *prompt)
 {
 	char	quote;
-	int 	nb_args;
+	int		nb_args;
 	size_t	lenarg;
 
 	str = shell_trim(&str);
@@ -63,7 +63,7 @@ int 	get_nbarg(char *str, e_prompt *prompt)
 			*prompt = B_QUOTE;
 		str += lenarg;
 		if (lenarg == 0 && !ft_strchr(";|", str[0]) && str[0] != '&' &&
-															 str[1] != '&')
+															str[1] != '&')
 			return (0);
 		nb_args += 1;
 		str = shell_trim(&str);
@@ -79,7 +79,7 @@ int 	get_nbarg(char *str, e_prompt *prompt)
 ** /!\ shell_redi n'est pas safe si son malloc fail
 */
 
-char	*get_arg(char **str, char **envp, t_cmd *cmd)
+char	*get_arg(char **str, t_cmd *cmd)
 {
 	unsigned int	i;
 	char			quote;
@@ -92,7 +92,6 @@ char	*get_arg(char **str, char **envp, t_cmd *cmd)
 		return (NULL);
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
-//	shell_envpsub(&arg, envp, quote); <-- plus ici, on le fait dans process
 	shell_std_out(&arg, &cmd->std_out, quote);
 	cmd->hrdc = shell_heredoc(&arg, quote, cmd->hrdc);
 	cmd->std_in = shell_std_in(&arg, quote, cmd->std_in);
@@ -100,10 +99,10 @@ char	*get_arg(char **str, char **envp, t_cmd *cmd)
 	return (arg);
 }
 
-t_cmd 	*get_args(char **line, char **envp, e_prompt *prompt)
+t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 {
 	int		i;
-	int 	nb_arg;
+	int		nb_arg;
 	t_cmd	*cmd;
 
 	nb_arg = 0;
@@ -117,7 +116,6 @@ t_cmd 	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->hrdc = NULL;
 	i = 0;
 	while (i < nb_arg)
-		cmd->args[i++] = get_arg(line, envp, cmd);
-	//erase or create files for redi
+		cmd->args[i++] = get_arg(line, cmd);
 	return (cmd);
 }

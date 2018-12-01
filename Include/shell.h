@@ -170,6 +170,7 @@ char		**add_hrdc(char **hrdc);
 ** << EOF cat nofile ;; --> les EOF sont prio puis ;; puis erreur de cat
 ** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
 ** echo test > file && cat < file>>file2
+** a=5 b=3 echo $a (variable local ignoré)
 */
 
 

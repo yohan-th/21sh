@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   shell_err.c                                    .::    .:/ .      .::   */
+/*   shell_error.c                                    .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/10/07 19:24:29 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/07 19:24:29 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Created: 2018/11/30 17:55:32 by ythollet     #+#   ##    ##    #+#       */
+/*   Updated: 2018/11/30 17:55:32 by ythollet    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -60,7 +60,6 @@ int		shell_error(char *type, int n, ...)
 		ft_strdel(va_arg(ap, char **));
 		ft_arrdel(va_arg(ap, char **));
 		dprintf(2, "Fatal: failed to allocate %zu bytes\n", va_arg(ap, size_t));
-
 		va_end(ap);
 		exit(EXIT_FAILURE);
 	}

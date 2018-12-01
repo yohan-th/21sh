@@ -15,10 +15,11 @@
 
 int		init_terminal_data(void)
 {
-	static char term_buffer[2048];
-	char *termtype = getenv ("TERM");
-	int success;
+	static char	term_buffer[2048];
+	char		*termtype;
+	int			success;
 
+	termtype = getenv("TERM");
 	if (termtype == 0)
 	{
 		ft_putstr("Specify a terminal type with `setenv TERM <yourtype>'.\n");
@@ -65,26 +66,12 @@ void	fill_hist_file(t_history *hist)
 	{
 		if (hist->cmd)
 		{
-			write(fd, hist->cmd, ft_strlen(hist->cmd));
+			write(fd, hist->cmd, (size_t)ft_strlen(hist->cmd));
 			write(fd, "\n", 1);
 		}
 		hist = hist->prev;
 	}
 	close(fd);
-}
-
-BOOL 	prt_err_sep(int sep)
-{
-	write(2, "21sh: syntax error near unexpected token `", 42);
-	if (sep == 1)
-		write(2, "|'\n", 3);
-	else if (sep == 2)
-		write(2, ";'\n", 3);
-	else if (sep == 3)
-		write(2, "||'\n", 4);
-	else if (sep == 4)
-		write(2, "&&'\n", 4);
-	return (1);
 }
 
 BOOL	check_syntax_err(t_cmd *cmd)
@@ -95,7 +82,18 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	while ((next = next->next_cmd))
 	{
 		if (!ft_strlen(next->args[0]) && next->sep)
-			return (prt_err_sep(next->sep));
+		{
+			write(2, "21sh: syntax error near unexpected token `", 42);
+			if (next->sep == 1)
+				write(2, "|'\n", 3);
+			else if (next->sep == 2)
+				write(2, ";'\n", 3);
+			else if (next->sep == 3)
+				write(2, "||'\n", 4);
+			else if (next->sep == 4)
+				write(2, "&&'\n", 4);
+			return (1);
+		}
 		if (!stdout_to(next->std_out))
 		{
 			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
@@ -120,11 +118,15 @@ int		main(void)
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
 			if ((!shl->hist->cmd && !shl->hist->prev) ||
-					(shl->hist->prev && shl->hist->prev->cmd &&
-					ft_strcmp(shl->hist->prev->cmd, shl->str)))
+						(shl->hist->prev && shl->hist->prev->cmd &&
+						ft_strcmp(shl->hist->prev->cmd, shl->str)))
 				shl->hist->cmd = ft_strdup(shl->str);
+			//check EOF
 			if (check_syntax_err(cmd))
-				clean_cmd(&cmd); //et shl->str n'a as besoin d'etre free ?
+			{
+				clean_cmd(&cmd);
+				ft_strdel(&shl->str);
+			}
 			else
 				shell_process(cmd, shl);
 		}

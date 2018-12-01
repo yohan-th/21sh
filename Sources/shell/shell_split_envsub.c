@@ -78,5 +78,3 @@ void	shell_envpsub(char **arg, char **envp, char quote)
 		i++;
 	}
 }
-
-

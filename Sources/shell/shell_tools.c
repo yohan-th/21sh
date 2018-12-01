@@ -14,18 +14,18 @@
 #include "../../Include/shell.h"
 
 /*
-** Delete les double \\ ainsi que les quotes inutiles --> tes"t $USER te"st
-** Retourne 0 si les quotes ne sont pas fermé
+** Delete les double \\ ainsi que les quotes inutiles --> tes"t\\ $USER te"st
 */
 
-int 	shl_clean_arg(char *arg, char quote)
+//Fonction à Modifier
+void		shl_clean_arg(char *arg, char quote)
 {
 	arg += (quote == ' ') ? 0 : 1;
 	while (*arg)
 	{
 		if (*arg == '\\' && quote != '\'')
 		{
-			ft_strdelchar(&arg, *arg);
+			ft_strdelchar(arg, *arg);
 			arg++;
 		}
 		else if (ft_strchr("'\"", *arg) && quote == ' ')
@@ -35,10 +35,16 @@ int 	shl_clean_arg(char *arg, char quote)
 			ft_strdelchar(&arg, quote);
 			quote = ' ';
 		}
-		else if (quote != ' ' && *arg == quote && *(arg + 1) == '\0')
-			return (1);
 		else
 			arg++;
 	}
-	return ((quote != ' ') ? 0 : 1);
+}
+
+void		clean_shell(t_shell **shell)
+{
+	ft_arrdel((*shell)->envp);
+	if ((*shell)->str)
+		ft_strdel(&(*shell)->str);
+	free(*shell);
+	*shell = NULL;
 }

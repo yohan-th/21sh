@@ -13,24 +13,15 @@
 
 #include "../../Include/shell.h"
 
-void	clean_shell(t_shell **shell)
-{
-	ft_arrdel((*shell)->envp);
-	if ((*shell)->str)
-		ft_strdel(&(*shell)->str);
-	free(*shell);
-	*shell = NULL;
-}
-
 /*
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
 
 t_history	*recup_hist_from_file(t_history *hist, int fd)
 {
-	int c;
-	char buf[2];
-	char *cmd;
+	int		c;
+	char	buf[2];
+	char	*cmd;
 
 	cmd = NULL;
 	c = 0;
@@ -45,19 +36,19 @@ t_history	*recup_hist_from_file(t_history *hist, int fd)
 			c = 0;
 		}
 		else
-			cmd = ft_strjoin_free(cmd, buf);
+			cmd = ft_strjoin_free(&cmd, buf);
 		if (((buf[0] == '\'' || buf[0] == '\"' || buf[0] == '`') && c == 0)
-		|| ((c == '\'' && buf[0] == '\'') || (c == '\"' && buf[0] == '\"')
-		|| (c == '`' && buf[0] == '`')))
-		c = c ? 0 : buf[0];
+			|| ((c == '\'' && buf[0] == '\'') || (c == '\"' && buf[0] == '\"')
+			|| (c == '`' && buf[0] == '`')))
+			c = (c) ? 0 : buf[0];
 	}
 	return (hist);
 }
 
-t_history	*init_hist()
+t_history	*init_hist(void)
 {
-	t_history *hist;
-	int fd;
+	t_history	*hist;
+	int			fd;
 
 	hist = malloc(sizeof(t_history));
 	hist->cmd = NULL;
@@ -72,7 +63,7 @@ t_history	*init_hist()
 	return (hist);
 }
 
-t_shell	*init_shell(char **envp)
+t_shell		*init_shell(char **envp)
 {
 	t_shell *shell;
 
@@ -89,7 +80,7 @@ t_shell	*init_shell(char **envp)
 ** On commence avec 8 octet puis on monte puissance 2
 */
 
-char	*get_cur_dir(void)
+char		*get_cur_dir(void)
 {
 	size_t	buf;
 	char	*dir;

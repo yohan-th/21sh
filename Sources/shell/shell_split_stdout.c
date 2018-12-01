@@ -13,19 +13,18 @@
 
 #include "../../Include/shell.h"
 
-
 /*
 ** Return NULL si redi est dans le prochain arg (si existant) ou si quote
 ** non fermé.
 */
 
-char 	*get_stdout_to(char *redi, int *pos)
+char		*get_stdout_to(char *redi, int *pos)
 {
-	char 	*redi_to;
-	char 	quote;
-	int 	len;
+	char	*redi_to;
+	char	quote;
+	int		len;
 
-	if (redi[*pos] == '\0') //redi prochain arg
+	if (redi[*pos] == '\0')
 		return (NULL);
 	quote = ft_strchr("'\"", redi[*pos]) ? (char)redi[*pos] : (char)' ';
 	len = len_stdout_to(redi + *pos, quote);
@@ -37,11 +36,11 @@ char 	*get_stdout_to(char *redi, int *pos)
 	return (redi_to);
 }
 
-int 	get_stdout_from(char *redi, int pos)
+int			get_stdout_from(char *redi, int pos)
 {
-	char 	*rev;
-	char 	*redi_from;
-	int 	i;
+	char	*rev;
+	char	*redi_from;
+	int		i;
 
 	if (pos == 0)
 		return (1);
@@ -64,7 +63,7 @@ int 	get_stdout_from(char *redi, int pos)
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-int 	shell_stdout_sub(char **arg, int i, t_stdout *redi)
+int			shell_stdout_sub(char **arg, int i, t_stdout *redi)
 {
 	redi->from = get_stdout_from(*arg, i);
 	ft_strdel(&redi->to);
@@ -119,9 +118,9 @@ t_stdout	*add_stdout(t_stdout **first_redi)
 ** On effectue un exit propre (à faire).
 */
 
-t_stdout		*shell_std_out(char **arg, t_stdout **first_redi, char quote)
+t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote)
 {
-	int		i;
+	int			i;
 	t_stdout	*redi;
 
 	if (*first_redi && (get_last_stdout(*first_redi))->to == NULL && *arg)

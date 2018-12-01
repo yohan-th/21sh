@@ -13,29 +13,20 @@
 
 #include "../../Include/shell.h"
 
-void	read_array(char **str)
+void	read_lexing(t_cmd *cmd)
 {
-	int i;
-
-	i = 0;
-	dprintf(2, "Read array : ");
-	while (str[i])
-	{
-		dprintf(2, "arg[%i]=<%s> ", i, str[i]);
-		i++;
-	}
-}
-
-void	shell_process(t_cmd *cmd, t_shell *shell)
-{
-	t_cmd		*save;
 	t_stdout	*read;
 	int 		i;
 
-	save = cmd;
 	while ((cmd = cmd->next_cmd))
 	{
-		read_array(cmd->args);
+		i = 0;
+		dprintf(2, "Read array : ");
+		while (cmd->args[i])
+		{
+			dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
+			i++;
+		}
 		dprintf(2, "\nRead stdout : ");
 		read = cmd->std_out;
 		while (read != NULL)
@@ -63,7 +54,22 @@ void	shell_process(t_cmd *cmd, t_shell *shell)
 		}
 		dprintf(2, "\n");
 		dprintf(2, "Et sep %d\n", cmd->sep);
+		dprintf(2, "-------------\n");
 	}
+}
+
+void	shell_process(t_cmd *cmd, t_shell *shell)
+{
+	t_cmd		*save;
+
+	read_lexing(cmd);
+	save = cmd;
+	while ((cmd = cmd->next_cmd))
+	{
+
+	}
+	// prepare stdout
+	// shell_envpsub(&arg, envp, quote);
 	if (ft_strcmp(shell->str, "exit") == 0)
 	{
 		clean_shell(&shell);

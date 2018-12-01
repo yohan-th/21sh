@@ -13,14 +13,13 @@
 
 #include "../../Include/shell.h"
 
-int		len_stdout_to(char *str, char quote)
+int			len_stdout_to(char *str, char quote)
 {
 	int i;
 
 	i = (quote == ' ') ? 0 : 1;
 	while (str && str[i])
 	{
-		//printf("str[%d]<%c>\n", i, str[i]);
 		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", str[i]) && quote == ' ')
@@ -36,7 +35,7 @@ int		len_stdout_to(char *str, char quote)
 	return (i);
 }
 
-t_stdout		*get_last_stdout(t_stdout *redi)
+t_stdout	*get_last_stdout(t_stdout *redi)
 {
 	t_stdout	*t_next;
 
@@ -50,10 +49,10 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
 {
 	char *ret;
 
-	add_to->to = ft_strsub(*arg, 0, (size_t) len_stdout_to(*arg, quote));
+	add_to->to = ft_strsub(*arg, 0, (size_t)len_stdout_to(*arg, quote));
 	if ((ft_strlen(*arg) - len_stdout_to(*arg, quote)) > 0)
-		ret = ft_strsub(*arg, (unsigned) len_stdout_to(*arg, quote),
-						(size_t )ft_strlen(*arg));
+		ret = ft_strsub(*arg, (unsigned)len_stdout_to(*arg, quote),
+						(size_t)ft_strlen(*arg));
 	else
 		ret = NULL;
 	ft_strdel(arg);
@@ -68,7 +67,7 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
 ** la chaine de char se trouve dans le prochain arg.
 */
 
-char	**shell_std_in(char **arg, char quote, char **std_in)
+char		**shell_std_in(char **arg, char quote, char **std_in)
 {
 	int		i;
 
