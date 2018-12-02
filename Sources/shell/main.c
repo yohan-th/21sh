@@ -13,6 +13,8 @@
 
 #include "../../Include/shell.h"
 
+
+
 int		init_terminal_data(void)
 {
 	static char	term_buffer[2048];
@@ -79,7 +81,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	t_cmd	*next;
 
 	next = cmd;
-	while ((next = next->next_cmd))
+	while (next && (next = next->next_cmd))
 	{
 		if (!ft_strlen(next->args[0]) && next->sep)
 		{
@@ -103,6 +105,34 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
+void	hrdc_write(char **hrdc, t_shell *shl)
+{
+	e_prompt	prompt;
+	char 		*input;
+
+	prompt = HRDC;
+	input = NULL;
+	while (get_stdin(&input, &prompt, &shl->hist, shl->envp) != -2)
+	{
+		if (input)
+			printf("input = <%s>\n", input);
+	}
+}
+
+void	hrdc_check(t_cmd *cmd, t_shell *shell)
+{
+	t_cmd	*next;
+
+	next = cmd;
+	while ((next = next->next_cmd))
+	{
+		if (next->hrdc)
+			hrdc_write(next->hrdc, shell);
+	}
+}
+
+void	read_lexing(t_cmd *cmd);
+
 int		main(void)
 {
 	extern char **environ;
@@ -117,11 +147,15 @@ int		main(void)
 	{
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
+			read_lexing(cmd);
+			hrdc_check(cmd, shl);
+			//if (boucle all cmd)
+			//	continue ;
 			if ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
 						ft_strcmp(shl->hist->prev->cmd, shl->str)))
 				shl->hist->cmd = ft_strdup(shl->str);
-			//check EOF
+
 			if (check_syntax_err(cmd))
 			{
 				clean_cmd(&cmd);
@@ -131,7 +165,52 @@ int		main(void)
 				shell_process(cmd, shl);
 		}
 	}
+	//ft_exit
 	if (shl->hist)
 		fill_hist_file(shl->hist);
 	return (1);
+}
+
+void	read_lexing(t_cmd *cmd)
+{
+	t_stdout	*read;
+	int 		i;
+	while ((cmd = cmd->next_cmd))
+	{
+		i = 0;
+		dprintf(2, "Read array : ");
+		while (cmd->args[i])
+		{
+			dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
+			i++;
+		}
+		dprintf(2, "\nRead stdout : ");
+		read = cmd->std_out;
+		while (read != NULL)
+		{
+			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
+			read = read->next;
+		}
+		dprintf(2, "\nRead stdin : ");
+		i = 0;
+		while (cmd->std_in && (cmd->std_in)[i] != NULL)
+		{
+			if ((int)(cmd->std_in)[i] == -1 || (int)(cmd->std_in)[i] == -2)
+				dprintf(2, "<%d> -", (int)(cmd->std_in)[i++]);
+			else
+				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
+		}
+		dprintf(2, "\nRead heredoc : %p", cmd->hrdc);
+		i = 0;
+		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
+		{
+			if ((int)(cmd->hrdc)[i] == -1 || (int)(cmd->hrdc)[i] == -2)
+				dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
+			else
+				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
+		}
+		dprintf(2, "\n");
+		dprintf(2, "Et sep %d\n", cmd->sep);
+		dprintf(2, "-------------\n");
+	}
 }

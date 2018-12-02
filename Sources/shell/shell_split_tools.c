@@ -64,10 +64,15 @@ void	clean_redi(t_stdout **redi)
 	free(*redi);
 }
 
-void	clean_cmd(t_cmd **cmd)
+int		clean_cmd(t_cmd **cmd)
 {
 	t_cmd	*tmp;
 
+	if (!(*cmd))
+	{
+		printf("[!] <erreur de clean cmd>\n");
+		return (0);
+	}
 	*cmd = (*cmd)->start;
 	tmp = *cmd;
 	while ((*cmd = (*cmd)->next_cmd))
@@ -80,6 +85,7 @@ void	clean_cmd(t_cmd **cmd)
 	}
 	free(tmp);
 	*cmd = NULL;
+	return (1);
 }
 
 char	*shell_trim(char **str)

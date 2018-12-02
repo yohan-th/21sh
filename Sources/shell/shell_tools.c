@@ -18,6 +18,7 @@
 */
 
 //Fonction à Modifier
+/*
 void		shl_clean_arg(char *arg, char quote)
 {
 	arg += (quote == ' ') ? 0 : 1;
@@ -39,7 +40,7 @@ void		shl_clean_arg(char *arg, char quote)
 			arg++;
 	}
 }
-
+*/
 void		clean_shell(t_shell **shell)
 {
 	ft_arrdel((*shell)->envp);

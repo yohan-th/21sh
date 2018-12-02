@@ -113,7 +113,7 @@ char		**shell_heredoc(char **arg, char quote, char **hrdc);
 char		**shell_std_in(char **arg, char quote, char **std_in);
 
 size_t		len_arg(char *str, char quote);
-void		clean_cmd(t_cmd **cmd);
+int			clean_cmd(t_cmd **cmd);
 char		*shell_trim(char **str);
 int			check_last_quote(char *arg, char quote);
 int			shl_quotesub(char *arg);
@@ -149,7 +149,6 @@ char		**add_hrdc(char **hrdc);
 ** ./minishell && ./minishell && ./minishell && CtrC && CtrlD && exit
 ** echo `ls\` --> ` && echo `ls\``
 ** echo "text" > file ; < file cat
-** <cat > file << EOF> \n <line> <\n> <EOF>
 ** {echo test 1>/dev/ttys001 1>&2} --> la derniere redi est prit en compte et print test
 ** {cat missing 2>&1 1>/dev/ttys001} --> les redis sont save
 ** cat << EOF {ENTER} word1 {ENTER} word2 EOF {ENTER} EOF {ENTER}
@@ -171,6 +170,8 @@ char		**add_hrdc(char **hrdc);
 ** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
 ** echo test > file && cat < file>>file2
 ** a=5 b=3 echo $a (variable local ignoré)
+** echo test << "1" && test ; <<\2
+** cat << "EO {ENTER} F" {ENTER} puis essayer de fermer
 */
 
 
