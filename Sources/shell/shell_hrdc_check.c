@@ -32,7 +32,7 @@ void	hrdc_write(char **hrdc, t_shell *shl, t_cmd *cmd)
 	}
 }
 
-void	hrdc_check(t_cmd *cmd, t_shell *shell)
+BOOL	hrdc_check(t_cmd *cmd, t_shell *shell)
 {
 	t_cmd	*next;
 
@@ -40,8 +40,12 @@ void	hrdc_check(t_cmd *cmd, t_shell *shell)
 	while ((next = next->next_cmd))
 	{
 		if (next->hrdc)
-			hrdc_write(next->hrdc, shell, next);
+		{
+			//hrdc_write(next->hrdc, shell, next);
+			return (1);
+		}
 	}
+	return (0);
 }
 
 

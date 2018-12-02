@@ -117,14 +117,30 @@ int		main(void)
 	init_terminal_data();
 	shl = init_shell(environ);
 	prompt = PROMPT;
+	cmd = NULL;
 	printf("<%d>\n", B_QUOTE);
 	while (get_stdin(&shl->str, &prompt, &shl->hist, shl->envp) != -2)
 	{
+		if (prompt == PROMPT && cmd)  //HRDC + Ctrl+C ou Ctrl+D
+		{
+			clean_cmd(&cmd);
+			ft_strdel(&shl->str);
+		}
+		if (prompt == HRDC && cmd)
+		{
+			printf("<fill HRDC avec %s>\n", shl->str);
+			//fill_hrdc(shl, cmd);
+		}
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
 			read_lexing(cmd);
-			hrdc_check(cmd, shl);
-			//if (boucle all cmd)
+			//hrdc_check(cmd, shl);
+			if (hrdc_check(cmd, shl))
+			{
+				printf("<continue>\n");
+				prompt = HRDC;
+				continue ;
+			}
 			//	continue ;
 			if ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&

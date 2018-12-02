@@ -111,7 +111,7 @@ void 		shell_process(t_cmd *cmd, t_shell *shell);
 t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
 char		**shell_std_in(char **arg, char quote, char **std_in);
-void		hrdc_check(t_cmd *cmd, t_shell *shell);
+BOOL		hrdc_check(t_cmd *cmd, t_shell *shell);
 
 size_t		len_arg(char *str, char quote);
 int			clean_cmd(t_cmd **cmd);
