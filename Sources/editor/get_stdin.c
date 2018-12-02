@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 10:02:18 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 18:14:50 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,7 +19,7 @@ static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
 		tputs(tgoto(tgetstr("DO", NULL), 0,
 		(*ed)->last_row - (*ed)->cur_row), 1, ft_putchar);
 	ft_putchar('\n');
-	if (*prompt != PROMPT && *prompt != E_PIPE)
+	if (*prompt != PROMPT)
 	{
 		if ((*ed)->hist->cmd)
 			ft_strjoin_free(line, (*ed)->hist->cmd);
@@ -94,7 +94,7 @@ int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env)
 			ft_strjoin_free(&ed->hist->cmd, ed->key);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||
-			(ed->ret == -2 && !ed->hist->cmd) || (ed->ret == -3 && *prompt == E_HDOC))))
+		(ed->ret == -2 && !ed->hist->cmd))))
 			break ;
 	}
 	get_stdin_next(line, &ed, prompt);

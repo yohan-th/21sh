@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 09:42:41 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 17:27:17 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -77,7 +77,7 @@ void	tabulator_recup_folder_files(t_tab **tabu, char *bin)
 			(*tabu)->max_len = dir->d_namlen > (*tabu)->max_len ? dir->d_namlen : (*tabu)->max_len;
 			if (!(new = malloc(sizeof(t_tab_elem))))
 				return ;
-			ft_strcpy(new->d_name, dir->d_name);
+			new->d_name = ft_strdup(dir->d_name);
 			new->d_namlen = dir->d_namlen;
 			new->d_type = dir->d_type;
 			new->next = NULL;

@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 11:16:33 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 18:23:44 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -60,13 +60,7 @@ typedef enum		s_prompt
 {
 	PROMPT,
 	B_QUOTE,
-	S_QUOTE,
-	D_QUOTE,
-	DB_QUOTE,
-	E_HDOC,
-	E_PIPE,
-	BACKSLASH,
-	READ,
+	HRDC,
 }					e_prompt;
 
 typedef struct		s_history
@@ -78,7 +72,7 @@ typedef struct		s_history
 
 typedef struct		s_tab_elem
 {
-	char				d_name[256];
+	char				*d_name;
 	unsigned long		d_namlen;
 	unsigned long		d_type;
 	struct s_tab_elem	*next;
@@ -100,6 +94,7 @@ typedef struct		s_tab
 	int				start;
 	int				end;
 	int				mode;
+	int				save_pos;
 	t_tab_elem		*elem;
 	t_tab_elem		*last_elem;
 }					t_tab;

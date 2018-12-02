@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 11:17:39 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 18:14:11 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,6 +39,7 @@ t_tab	*tabulator_init(int cursor_pos, char **env)
 
 void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 {
+	int tmp_pos;
 	char *new;
 
 	new = NULL;
@@ -52,6 +53,7 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 	else if (!ft_strlen((*ed)->hist->cmd + (*ed)->cursor_str_pos) &&
 	(*tabu)->nb_node == 1)
 		ft_strjoin_free(&new, " ");
+	tmp_pos = ft_strlen(new);
 	ft_strjoin_free(&new, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
 	go_to_begin_of_line(*ed);
 	ft_putstr("\E[J");
@@ -62,6 +64,8 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 	(*ed)->cursor_str_pos = ft_strlen(new);
 	(*ed)->cur_col = get_cursor_position(0);
 	(*ed)->last_char = (*ed)->cur_col;
+	while ((*ed)->cursor_str_pos > tmp_pos)
+		move_cursor_left(*ed);
 }
 
 int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
@@ -78,6 +82,8 @@ int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
 			return (0);
 		else if (mode && ret == 1 && (*ed)->key[0] == '\n')
 			break ;
+		else if (term_size(*ed) == EXIT_SUCCESS)
+			continue ;
 		else if (CTRL_C)
 		{
 			end_of_text(ed, prompt);
@@ -89,44 +95,94 @@ int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
 	return (ret);
 }
 
+int		nb_line(t_editor *ed)
+{
+	int i;
+	int pos;
+	int row;
+
+	i = 0;
+	pos = get_cursor_position(0);
+	row = 0;
+	while (ed->hist->cmd && ed->hist->cmd[i])
+	{
+		if (pos == ed->ws_col)
+		{
+			pos = 0;
+			row++;
+		}
+		if (ed->hist->cmd[i] == '\n')
+			row++;
+		i++;
+		pos++;
+	}
+	return (row);
+}
+
+void	tabulator_put_row(t_editor **ed, t_tab *tabu, e_prompt *prompt)
+{
+	int		nb_l;
+
+	go_to_end_of_line(*ed);
+	write(1, "\n", 1);
+	if (!tabu->nb_row && tabu->nb_node > 1)
+		tabulator_put_one_row(tabu);
+	else if (tabulator_put_multi_row(tabu, ed, prompt) == -1)
+		return ;
+	tputs(tgetstr("vi", NULL), 1, ft_putchar);
+	(*ed)->prompt_size = display_prompt(*prompt);
+	nb_l = nb_line(*ed);
+	if ((((*ed)->first_row = get_cursor_position(1)) + nb_l) > (*ed)->ws_row)
+		(*ed)->first_row -= nb_l;
+	(*ed)->last_row = (*ed)->first_row + nb_l;
+	(*ed)->cur_row = (*ed)->last_row;
+	(*ed)->cursor_str_pos = ft_strlen((*ed)->hist->cmd);
+	ft_putstr((*ed)->hist->cmd);
+	if (get_cursor_position(0) == (*ed)->ws_col
+	&& (*ed)->cur_col < (*ed)->ws_col)
+		tputs(tgetstr("do", NULL), 1, ft_putchar);
+	(*ed)->cur_col = (*ed)->last_char;
+	while ((*ed)->cursor_str_pos > tabu->save_pos)
+		move_cursor_left(*ed);
+}
+
+void	free_tab(t_tab **tabu)
+{
+	t_tab_elem *tmp;
+
+	if ((*tabu)->path)
+		ft_strdel(&(*tabu)->path);
+	if ((*tabu)->data)
+		ft_strdel(&(*tabu)->data);
+	if ((*tabu)->comp)
+		ft_strdel(&(*tabu)->comp);
+	if ((*tabu)->home)
+		ft_strdel(&(*tabu)->home);
+	if ((*tabu)->dir)
+		closedir((*tabu)->dir);
+	while ((*tabu)->elem)
+	{
+		tmp = (*tabu)->elem->next;
+		if ((*tabu)->elem->d_name)
+			ft_strdel(&(*tabu)->elem->d_name);
+		free((*tabu)->elem);
+		(*tabu)->elem = tmp;
+	}
+	free(*tabu);
+}
+
 void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
 {
-	int		nb_line;
-	int		cur_row;
 	t_tab *tabu;
 
 	tabu = tabulator_init((*ed)->cursor_str_pos, env);
 	tabulator_recup_data(*ed, &tabu);
-	if (!tabu->nb_node)
-		return ;
-	else if (tabu->nb_node == 1 || tabu->comp)
-		tabulator_put_new_cmd(&tabu, ed);
-	else
+	if (tabu->nb_node)
 	{
-		ft_putchar('\n');
-		if (!tabu->nb_row && tabu->nb_node > 1)
-			tabulator_put_one_row(tabu);
-		else if (tabulator_put_multi_row(tabu, ed, prompt) == -1)
-			return ;
-		nb_line = (*ed)->last_row - (*ed)->first_row;
-		cur_row = (*ed)->cur_row - (*ed)->first_row;
-		if (!tabu->nb_row)
-			tabu->nb_row++;
-		if (((*ed)->last_row + tabu->nb_row + nb_line) > (*ed)->ws_row)
-		{
-			(*ed)->first_row = (*ed)->ws_row - nb_line;
-			(*ed)->cur_row = (*ed)->first_row + cur_row;
-			(*ed)->last_row = (*ed)->ws_row;
-		}
+		if (tabu->nb_node == 1 || tabu->comp)
+			tabulator_put_new_cmd(&tabu, ed);
 		else
-		{
-			(*ed)->first_row = (*ed)->last_row + tabu->nb_row + 1;
-			(*ed)->cur_row = (*ed)->first_row + cur_row;
-			(*ed)->last_row = (*ed)->first_row + nb_line;
-		}
-		(*ed)->cursor_str_pos = ft_strlen((*ed)->hist->cmd);
-		display_prompt(*prompt);
-		ft_putstr((*ed)->hist->cmd);
-		ft_bzero((*ed)->key, BUFF_READ);
+			tabulator_put_row(ed, tabu, prompt);
 	}
+	free_tab(&tabu);
 }

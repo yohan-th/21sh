@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:00:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 14:51:59 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 17:27:40 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -109,6 +109,7 @@ void	tabulator_get_binairies(t_tab **tabu)
 
 void	tabulator_recup_data(t_editor *ed, t_tab **tabu)
 {
+	(*tabu)->save_pos = ed->cursor_str_pos;
 	if (!((*tabu)->mode = tabulator_get_path(ed, tabu)))
 		tabulator_get_binairies(tabu);
 	else if ((*tabu)->mode == 1 || (*tabu)->mode == 2)
@@ -120,7 +121,8 @@ void	tabulator_recup_data(t_editor *ed, t_tab **tabu)
 		if ((*tabu)->dir || ((*tabu)->dir = opendir(".")))
 			tabulator_recup_folder_files(tabu, NULL);
 	}
-	(*tabu)->nb_col = (ed->ws_col) / ((*tabu)->max_len + 2);
+	if (!((*tabu)->nb_col = (ed->ws_col) / ((*tabu)->max_len + 2)))
+		(*tabu)->nb_col = 1;
 	(*tabu)->nb_row = (*tabu)->nb_node / (*tabu)->nb_col;
 	if ((*tabu)->elem)
 		tabulator_sort_list(&(*tabu)->elem);

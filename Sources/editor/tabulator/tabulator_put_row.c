@@ -6,15 +6,29 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 12:10:47 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 18:23:53 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
+int		check_if_name_with_new_line(char *name)
+{
+	int i;
+
+	i = -1;
+	while (name[++i])
+		if (name[i] == '\n' || name[i] == '\t')
+			return (1);
+	return (0);
+}
+
 void	tabulator_put_color(t_tab_elem *list)
 {
+	int i;
+
+	i = -1;
 	if (list->d_type == 4)
 		ft_putstr(RED);
 	else if (list->d_type == 10)
@@ -23,7 +37,14 @@ void	tabulator_put_color(t_tab_elem *list)
 		ft_putstr(YEL);
 	else if (list->d_type == 16)
 		ft_putstr("\033[0;49;92m");
-	ft_putstr(list->d_name);
+	if (check_if_name_with_new_line(list->d_name))
+	{
+		while (list->d_name[++i])
+				write(1, list->d_name[i] == '\n' || list->d_name[i] == '\t' ?
+				"?" : &(list->d_name)[i], 1);
+	}
+	else
+		ft_putstr(list->d_name);
 	ft_putstr(END);
 }
 

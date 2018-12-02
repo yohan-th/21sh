@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 09:41:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 18:23:55 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -84,7 +84,7 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_hist
 	ed->clipboard = NULL;
 	ft_bzero(ed->key, 4);
 	ed->hist = *hist && (*hist)->cmd ? hist_add(*hist) : *hist;
-	if (prompt != PROMPT && prompt != E_PIPE)
+	if (*line && prompt != PROMPT)
 		ft_strjoin_free(line, "\n");
 	return (ed);
 }

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/17 15:18:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/02 17:21:32 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -36,18 +36,18 @@ int		ft_putstrlen(char *str)
 
 static int		prompt_type(e_prompt prompt)
 {
-	if (prompt == S_QUOTE)
-		return (ft_putstrlen("quote> "));
-	else if (prompt == B_QUOTE)
+	if (prompt == B_QUOTE)
 		return (ft_putstrlen("> "));
-	else if (prompt == D_QUOTE)
+/*	if (prompt == S_QUOTE)
+		return (ft_putstrlen("quote> "));
+else if (prompt == D_QUOTE)
 		return (ft_putstrlen("dquote> "));
 	else if (prompt == E_PIPE)
 		return (ft_putstrlen("pipe> "));
 	else if (prompt == E_HDOC)
 		return (ft_putstrlen("heredoc> "));
 	else if (prompt == DB_QUOTE)
-		return (ft_putstrlen("dquote bquote> "));
+		return (ft_putstrlen("dquote bquote> "));*/
 	return (0);
 }
 
@@ -72,5 +72,6 @@ int		display_prompt(e_prompt prompt)
 	write(1, &c, 1);
 	c = 0xBD;
 	write(1, &c, 1);
-	return (4);
+	write(1, " ", 1);
+	return (5);
 }
