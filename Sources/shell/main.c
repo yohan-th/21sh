@@ -105,32 +105,6 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
-void	hrdc_write(char **hrdc, t_shell *shl)
-{
-	e_prompt	prompt;
-	char 		*input;
-
-	prompt = HRDC;
-	input = NULL;
-	while (get_stdin(&input, &prompt, &shl->hist, shl->envp) != -2)
-	{
-		if (input)
-			printf("input = <%s>\n", input);
-	}
-}
-
-void	hrdc_check(t_cmd *cmd, t_shell *shell)
-{
-	t_cmd	*next;
-
-	next = cmd;
-	while ((next = next->next_cmd))
-	{
-		if (next->hrdc)
-			hrdc_write(next->hrdc, shell);
-	}
-}
-
 void	read_lexing(t_cmd *cmd);
 
 int		main(void)
@@ -143,6 +117,7 @@ int		main(void)
 	init_terminal_data();
 	shl = init_shell(environ);
 	prompt = PROMPT;
+	printf("<%d>\n", B_QUOTE);
 	while (get_stdin(&shl->str, &prompt, &shl->hist, shl->envp) != -2)
 	{
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
@@ -170,6 +145,10 @@ int		main(void)
 		fill_hist_file(shl->hist);
 	return (1);
 }
+
+
+
+
 
 void	read_lexing(t_cmd *cmd)
 {

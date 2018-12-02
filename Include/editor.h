@@ -60,6 +60,8 @@ typedef enum		s_prompt
 {
 	PROMPT,
 	B_QUOTE,
+	S_QUOTE,
+	D_QUOTE,
 	HRDC,
 }					e_prompt;
 

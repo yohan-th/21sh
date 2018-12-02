@@ -81,7 +81,8 @@ BOOL	iscomplet(char *str, e_prompt *prompt)
 	if ((i > 0 && quote != ' ') || (i == 1 && str[0] == '\\') ||
 			(i > 1 && str[i - 1] == '\\' && str[i - 2] != '\\'))
 	{
-		*prompt = B_QUOTE;
+		*prompt = (quote == '"') ? D_QUOTE : S_QUOTE;
+		printf("<%c>\n", quote);
 		return (0);
 	}
 	else
