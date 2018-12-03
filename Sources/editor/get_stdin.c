@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/02 18:14:50 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/03 13:48:08 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,9 +15,7 @@
 
 static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
 {
-	if (((*ed)->last_row - (*ed)->cur_row) != 0)
-		tputs(tgoto(tgetstr("DO", NULL), 0,
-		(*ed)->last_row - (*ed)->cur_row), 1, ft_putchar);
+	go_to_end_of_line(*ed);
 	ft_putchar('\n');
 	if (*prompt != PROMPT)
 	{
@@ -33,7 +31,10 @@ static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
 	if (CTRL_D && !(*ed)->hist->cmd)
 		(*ed)->ret = -2;
 	else if (CTRL_C)
-		end_of_text(ed, p);
+	{
+		go_to_end_of_line(*ed);
+		(*ed)->ret = -3;
+	}
 	else if (CTRL_L)
 		clear_window(*ed, *p);
 	else if (CTRL_K && (ft_strlen((*ed)->hist->cmd) + (*ed)->cursor_str_pos))
@@ -70,7 +71,7 @@ static int		get_keyboard_key(t_editor **ed, e_prompt *prompt, char **env)
 	else if ((UP_KEY || DOWN_KEY))
 		term_history(ed);
 	else if (TAB_KEY)
-		term_tabulator(ed, env, prompt);
+		(*ed)->ret = term_tabulator(ed, env, prompt);
 	return (EXIT_SUCCESS);
 }
 
@@ -93,8 +94,8 @@ int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env)
 		if (ed->ret && get_keyboard_key(&ed, prompt, env))
 			ft_strjoin_free(&ed->hist->cmd, ed->key);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
-		if (ed->key[0] && ((ft_strchr(ed->key, '\n') ||
-		(ed->ret == -2 && !ed->hist->cmd))))
+		if ((ed->key[0] && ((ft_strchr(ed->key, '\n') ||
+		(ed->ret == -2 && !ed->hist->cmd)))) || ed->ret == -3)
 			break ;
 	}
 	get_stdin_next(line, &ed, prompt);

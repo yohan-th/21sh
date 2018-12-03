@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/02 18:23:44 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/03 14:54:17 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -145,7 +145,6 @@ void	move_to_previous_new_line(t_editor *ed);
  */
 
 int		clear_window(t_editor *ed, e_prompt prompt);
-void	end_of_text(t_editor **ed, e_prompt *prompt);
 void	myhandler_interrupt(int signal);
 
 /*
@@ -193,7 +192,6 @@ int		print_key(t_editor **ed);
 void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
 t_history	*hist_add(t_history *hist);
-void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt);
 
 /*
  *******************************************************************************
@@ -201,13 +199,18 @@ void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt);
  *******************************************************************************
  */
 
-int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode);
+int		term_tabulator(t_editor **ed, char **env, e_prompt *prompt);
+int		tabulator_read(t_tab *tabu, t_editor **ed, int mode);
 void	check_data_with_space_after(char **new_cmd, char *d_name);
 void	check_data_with_space_before(char **path);
-void	tabulator_put_one_row(t_tab *tabu);
-int		tabulator_put_multi_row(t_tab *tabu, t_editor **ed, e_prompt *prompt);
+void	tabulator_one_row(t_tab *tabu);
+int		tabulator_multi_row(t_tab *tabu, t_editor **ed);
 void	tabulator_recup_data(t_editor *ed, t_tab **tabu);
 void	tabulator_recup_folder_files(t_tab **tabu, char *bin);
 int		tabulator_get_path(t_editor *ed, t_tab **tabu);
+int		nb_line(t_editor *ed);
 
+
+t_history	*init_hist(void);
+void		fill_hist_file(t_history *hist);
 #endif

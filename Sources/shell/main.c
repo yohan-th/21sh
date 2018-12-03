@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/30 15:35:58 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/03 14:57:27 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -39,39 +39,6 @@ int		init_terminal_data(void)
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
-}
-
-void	fill_hist(t_history **hist, char *line)
-{
-	t_history *new;
-	t_history *now;
-
-	new = NULL;
-	(*hist)->next = new;
-	now = *hist;
-	*hist = new;
-	(*hist)->cmd = ft_strdup(line);
-	(*hist)->prev = now;
-	(*hist)->next = NULL;
-}
-
-void	fill_hist_file(t_history *hist)
-{
-	int fd;
-
-	if ((fd = open(".21sh_history", O_WRONLY | O_CREAT |
-	O_APPEND | O_TRUNC, 0644)) < 0)
-		return ;
-	while (hist)
-	{
-		if (hist->cmd)
-		{
-			write(fd, hist->cmd, (size_t)ft_strlen(hist->cmd));
-			write(fd, "\n", 1);
-		}
-		hist = hist->prev;
-	}
-	close(fd);
 }
 
 BOOL	check_syntax_err(t_cmd *cmd)
@@ -115,12 +82,16 @@ int		main(void)
 	shl = init_shell(environ);
 	prompt = PROMPT;
 	cmd = NULL;
-	while ((ret = get_stdin(&shl->str, &prompt, &shl->hist, shl->envp)) != -2)
+	while ((ret = get_stdin(&shl->str, &prompt, &shl->hist, shl->envp)) != -1)
 	{
 		hrdc_fill(&prompt, cmd, shl, ret);
+		if (ret == -2)
+			break ;
+		else if (ret == -3)
+			ft_strdel(&shl->str);
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
-			read_lexing(cmd);
+		//	read_lexing(cmd);
 			if (hrdc_check(&cmd, shl, &prompt))
 				continue ;
 			if ((!shl->hist->cmd && !shl->hist->prev) ||
@@ -138,10 +109,6 @@ int		main(void)
 		fill_hist_file(shl->hist);
 	return (1);
 }
-
-
-
-
 
 void	read_lexing(t_cmd *cmd)
 {

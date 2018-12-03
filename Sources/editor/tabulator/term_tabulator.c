@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/02 18:14:11 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/03 14:58:44 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -68,7 +68,7 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 		move_cursor_left(*ed);
 }
 
-int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
+int		tabulator_read(t_tab *tabu, t_editor **ed, int mode)
 {
 	int ret;
 
@@ -85,10 +85,7 @@ int		tabulator_read(t_tab *tabu, t_editor **ed, e_prompt *prompt, int mode)
 		else if (term_size(*ed) == EXIT_SUCCESS)
 			continue ;
 		else if (CTRL_C)
-		{
-			end_of_text(ed, prompt);
-			return (-1);
-		}
+			return (-3);
 	tputs(tgoto(tgetstr("ch", NULL), 0, 0), 1, ft_putchar);
 	ft_putstr("\E[J");
 	tabu->nb_node++;
@@ -106,58 +103,54 @@ int		nb_line(t_editor *ed)
 	row = 0;
 	while (ed->hist->cmd && ed->hist->cmd[i])
 	{
-		if (pos == ed->ws_col)
+		if (pos == (int)ed->ws_col || ed->hist->cmd[i] == '\n')
 		{
 			pos = 0;
 			row++;
 		}
-		if (ed->hist->cmd[i] == '\n')
-			row++;
 		i++;
 		pos++;
 	}
 	return (row);
 }
 
-void	tabulator_put_row(t_editor **ed, t_tab *tabu, e_prompt *prompt)
+int		tabulator_put_row(t_editor **ed, t_tab *tabu, e_prompt *prompt)
 {
 	int		nb_l;
+	int		ret;
 
+	ret = EXIT_SUCCESS;
 	go_to_end_of_line(*ed);
 	write(1, "\n", 1);
 	if (!tabu->nb_row && tabu->nb_node > 1)
-		tabulator_put_one_row(tabu);
-	else if (tabulator_put_multi_row(tabu, ed, prompt) == -1)
-		return ;
+		tabulator_one_row(tabu);
+	else if (((ret = tabulator_multi_row(tabu, ed)) == -1 || ret == -3))
+		return (ret);
 	tputs(tgetstr("vi", NULL), 1, ft_putchar);
 	(*ed)->prompt_size = display_prompt(*prompt);
 	nb_l = nb_line(*ed);
-	if ((((*ed)->first_row = get_cursor_position(1)) + nb_l) > (*ed)->ws_row)
-		(*ed)->first_row -= nb_l;
-	(*ed)->last_row = (*ed)->first_row + nb_l;
+	ft_putstr((*ed)->hist->cmd);
+	(*ed)->last_row = get_cursor_position(1);
+	(*ed)->first_row = (*ed)->first_row - nb_l;
 	(*ed)->cur_row = (*ed)->last_row;
 	(*ed)->cursor_str_pos = ft_strlen((*ed)->hist->cmd);
-	ft_putstr((*ed)->hist->cmd);
 	if (get_cursor_position(0) == (*ed)->ws_col
 	&& (*ed)->cur_col < (*ed)->ws_col)
 		tputs(tgetstr("do", NULL), 1, ft_putchar);
 	(*ed)->cur_col = (*ed)->last_char;
 	while ((*ed)->cursor_str_pos > tabu->save_pos)
 		move_cursor_left(*ed);
+	return (ret);
 }
 
 void	free_tab(t_tab **tabu)
 {
 	t_tab_elem *tmp;
 
-	if ((*tabu)->path)
-		ft_strdel(&(*tabu)->path);
-	if ((*tabu)->data)
-		ft_strdel(&(*tabu)->data);
-	if ((*tabu)->comp)
-		ft_strdel(&(*tabu)->comp);
-	if ((*tabu)->home)
-		ft_strdel(&(*tabu)->home);
+	ft_strdel(&(*tabu)->path);
+	ft_strdel(&(*tabu)->data);
+	ft_strdel(&(*tabu)->comp);
+	ft_strdel(&(*tabu)->home);
 	if ((*tabu)->dir)
 		closedir((*tabu)->dir);
 	while ((*tabu)->elem)
@@ -171,10 +164,12 @@ void	free_tab(t_tab **tabu)
 	free(*tabu);
 }
 
-void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
+int		term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
 {
 	t_tab *tabu;
+	int ret;
 
+	ret = EXIT_SUCCESS;
 	tabu = tabulator_init((*ed)->cursor_str_pos, env);
 	tabulator_recup_data(*ed, &tabu);
 	if (tabu->nb_node)
@@ -182,7 +177,8 @@ void	term_tabulator(t_editor **ed, char **env, e_prompt *prompt)
 		if (tabu->nb_node == 1 || tabu->comp)
 			tabulator_put_new_cmd(&tabu, ed);
 		else
-			tabulator_put_row(ed, tabu, prompt);
+			ret = tabulator_put_row(ed, tabu, prompt);
 	}
 	free_tab(&tabu);
+	return (ret);
 }

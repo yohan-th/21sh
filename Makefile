@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/11/30 12:08:41 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/12/03 15:00:12 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -35,7 +35,7 @@ SRCS =  shell/main.c \
 		shell/shell_error.c \
         shell/shell_process.c \
         shell/shell_split_heredoc.c \
-        shell/shell_hrdc.c \
+		shell/shell_hrdc.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
@@ -58,19 +58,19 @@ SRCS =  shell/main.c \
 		editor/insert_del_line.c \
 		editor/delete_from_cursor_to_end.c \
 		editor/clear_window.c \
-		editor/end_of_text.c \
 		editor/paste_clipboard.c \
-		editor/term_history.c \
 		editor/tabulator/tabulator_check.c \
 		editor/tabulator/tabulator_check_mode.c \
 		editor/tabulator/tabulator_put_row.c \
 		editor/tabulator/tabulator_recup_data.c \
 		editor/tabulator/tabulator_recup_folder_files.c \
-		editor/tabulator/term_tabulator.c
+		editor/tabulator/term_tabulator.c \
+		editor/history/term_hist_recup_cmd.c \
+		editor/history/term_history.c
 
 INCLUDES_FILE = shell.h
 
-OBJS_FOLDERS = builtins editor editor/tabulator shell
+OBJS_FOLDERS = builtins editor editor/tabulator editor/history shell
 OBJS = $(addprefix $(DIR_OBJ),$(SRCS:.c=.o))
 OBJS_FOLDERS_BIS = $(addprefix $(DIR_OBJ),$(OBJS_FOLDERS))
 
@@ -89,7 +89,7 @@ $(NAME): $(OBJS)
 
 $(DIR_OBJ)%.o: $(DIR_SRC)%.c  $(DIR_INC)/$(INCLUDES_FILE)
 	@mkdir -p $(DIR_OBJ) $(OBJS_FOLDERS_BIS)
-	@gcc -o $@ -c $< -I $(DIR_INC) #$(CFLAGS)
+	@gcc -o $@ -c $< -I $(DIR_INC) $(CFLAGS)
 
 clean:
 	@rm -rf $(DIR_OBJ)

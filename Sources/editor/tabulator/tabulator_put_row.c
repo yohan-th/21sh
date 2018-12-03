@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/02 18:23:53 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/03 14:55:21 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -83,7 +83,7 @@ void	tabulator_put_elem(t_tab_elem *list, int index)
 	}
 }
 
-void	tabulator_put_one_row(t_tab *tabu)
+void	tabulator_one_row(t_tab *tabu)
 {
 	int i;
 
@@ -100,7 +100,7 @@ void	tabulator_put_one_row(t_tab *tabu)
 	write(1, "\n", 1);
 }
 
-int		tabulator_put_multi_row(t_tab *tabu, t_editor **ed, e_prompt *prompt)
+int		tabulator_multi_row(t_tab *tabu, t_editor **ed)
 {
 	int i;
 	int n;
@@ -109,16 +109,16 @@ int		tabulator_put_multi_row(t_tab *tabu, t_editor **ed, e_prompt *prompt)
 
 	nb = 0;
 	if (tabu->nb_row > (int)(*ed)->ws_row &&
-	((ret = tabulator_read(tabu, ed, prompt, 0)) == 0 || ret == -1))
+	((!(ret = tabulator_read(tabu, ed, 0)) || ret == -1 || ret == -3)))
 		return (ret);
 	n = -1;
 	while (++n < tabu->nb_row)
 	{
 		if (n + 1 >= (int)(*ed)->ws_row)
-			if ((ret = tabulator_read(tabu, ed, prompt, 1)) == 0 || ret == -1)
+			if ((((ret = tabulator_read(tabu, ed, 1)) == -1 || ret == -3)))
 				return (ret);
 		if (tabu->nb_row && !(i = 0))
-			while (i < tabu->nb_col && 
+			while (i < tabu->nb_col &&
 			(n + (i * tabu->nb_row)) <= tabu->nb_node)
 			{
 				tabulator_put_elem(tabu->elem, n + (i++ * tabu->nb_row));
