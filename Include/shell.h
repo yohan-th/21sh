@@ -40,6 +40,7 @@ typedef struct				s_cmd
 	t_stdout			*std_out;
 	char 				**std_in;
 	char 				**hrdc;
+	char 				*hrdc_stdin;
 	int 				sep;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
@@ -111,7 +112,10 @@ void 		shell_process(t_cmd *cmd, t_shell *shell);
 t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
 char		**shell_std_in(char **arg, char quote, char **std_in);
-BOOL		hrdc_check(t_cmd *cmd, t_shell *shell);
+
+BOOL		hrdc_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt);
+int			hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell,
+						int shortcut);
 
 size_t		len_arg(char *str, char quote);
 int			clean_cmd(t_cmd **cmd);
@@ -125,6 +129,9 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote);
 void		complete_hrdc(char **arg, char quote, char ***hrdc);
 int			shell_hrdc_sub(char **arg, int i, char ***hrdc);
 char		**add_hrdc(char **hrdc);
+int 		clean_data(t_cmd *cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str);
+
+void		read_lexing(t_cmd *cmd);
 
 /*
 ** Hard test
@@ -173,6 +180,7 @@ char		**add_hrdc(char **hrdc);
 ** a=5 b=3 echo $a (variable local ignoré)
 ** echo test << "1" && test ; <<\2
 ** cat << "EO {ENTER} F" {ENTER} puis essayer de fermer
+** heredoc puis Cltr-c et Ctrl-v
 */
 
 

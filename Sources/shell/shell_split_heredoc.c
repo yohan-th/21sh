@@ -93,17 +93,19 @@ char	**add_hrdc(char **hrdc)
 void	complete_hrdc(char **arg, char quote, char ***hrdc)
 {
 	int	last;
+	int lenhrdc;
 
 	last = 0;
+	lenhrdc = 0;
 	while (*hrdc && (*hrdc)[last] != NULL)
 		last++;
 	if (*hrdc && (int)(*hrdc)[last - 1] == -2 && len_hrdc(*arg, quote) > 0)
 	{
-		(*hrdc)[last - 1] = ft_strsub(*arg, (unsigned)0,
-				(size_t)len_hrdc(*arg, quote));
+		lenhrdc = len_hrdc(*arg, quote);
+		(*hrdc)[last - 1] = ft_strsub(*arg, (unsigned)0, (size_t)lenhrdc);
 		**arg = '\0';
 	}
-	arg = arg + len_hrdc(*arg, quote);
+	*arg = *arg + lenhrdc;
 }
 
 /*

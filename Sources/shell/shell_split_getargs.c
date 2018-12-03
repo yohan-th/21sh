@@ -114,6 +114,7 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->std_out = NULL;
 	cmd->std_in = NULL;
 	cmd->hrdc = NULL;
+	cmd->hrdc_stdin = NULL;
 	i = 0;
 	while (i < nb_arg)
 		cmd->args[i++] = get_arg(line, cmd);

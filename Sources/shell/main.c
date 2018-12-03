@@ -13,8 +13,6 @@
 
 #include "../../Include/shell.h"
 
-
-
 int		init_terminal_data(void)
 {
 	static char	term_buffer[2048];
@@ -105,53 +103,32 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
-void	read_lexing(t_cmd *cmd);
-
 int		main(void)
 {
 	extern char **environ;
 	e_prompt	prompt;
 	t_cmd		*cmd;
 	t_shell		*shl;
+	int 		ret;
 
 	init_terminal_data();
 	shl = init_shell(environ);
 	prompt = PROMPT;
 	cmd = NULL;
-	printf("<%d>\n", B_QUOTE);
-	while (get_stdin(&shl->str, &prompt, &shl->hist, shl->envp) != -2)
+	while ((ret = get_stdin(&shl->str, &prompt, &shl->hist, shl->envp)) != -2)
 	{
-		if (prompt == PROMPT && cmd)  //HRDC + Ctrl+C ou Ctrl+D
-		{
-			clean_cmd(&cmd);
-			ft_strdel(&shl->str);
-		}
-		if (prompt == HRDC && cmd)
-		{
-			printf("<fill HRDC avec %s>\n", shl->str);
-			//fill_hrdc(shl, cmd);
-		}
+		hrdc_fill(&prompt, cmd, shl, ret);
 		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
 		{
 			read_lexing(cmd);
-			//hrdc_check(cmd, shl);
-			if (hrdc_check(cmd, shl))
-			{
-				printf("<continue>\n");
-				prompt = HRDC;
+			if (hrdc_check(&cmd, shl, &prompt))
 				continue ;
-			}
-			//	continue ;
 			if ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
 						ft_strcmp(shl->hist->prev->cmd, shl->str)))
 				shl->hist->cmd = ft_strdup(shl->str);
-
 			if (check_syntax_err(cmd))
-			{
-				clean_cmd(&cmd);
-				ft_strdel(&shl->str);
-			}
+				clean_data(cmd, shl, 1, 1);
 			else
 				shell_process(cmd, shl);
 		}
@@ -195,7 +172,7 @@ void	read_lexing(t_cmd *cmd)
 			else
 				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
 		}
-		dprintf(2, "\nRead heredoc : %p", cmd->hrdc);
+		dprintf(2, "\nRead heredoc : ");
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{
@@ -204,7 +181,7 @@ void	read_lexing(t_cmd *cmd)
 			else
 				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
 		}
-		dprintf(2, "\n");
+		dprintf(2, "\nRead heredoc stdin : <%s>\n", cmd->hrdc_stdin);
 		dprintf(2, "Et sep %d\n", cmd->sep);
 		dprintf(2, "-------------\n");
 	}
