@@ -92,8 +92,9 @@ char	**add_hrdc(char **hrdc)
 
 void	complete_hrdc(char **arg, char quote, char ***hrdc)
 {
-	int	last;
-	int lenhrdc;
+	int		last;
+	int		lenhrdc;
+	char	*tmp;
 
 	last = 0;
 	lenhrdc = 0;
@@ -105,7 +106,9 @@ void	complete_hrdc(char **arg, char quote, char ***hrdc)
 		(*hrdc)[last - 1] = ft_strsub(*arg, (unsigned)0, (size_t)lenhrdc);
 		**arg = '\0';
 	}
-	*arg = *arg + lenhrdc;
+	tmp = *arg;
+	*arg = ft_strdup(*arg + lenhrdc);
+	ft_strdel(&tmp);
 }
 
 /*

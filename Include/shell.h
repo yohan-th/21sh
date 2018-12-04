@@ -108,14 +108,14 @@ void	clean_shell(t_shell **shell);
 t_cmd		*shell_split(char *line, char **envp, e_prompt *prompt);
 t_cmd 		*get_args(char **line, char **envp, e_prompt *prompt);
 void		shell_envpsub(char **arg, char **envp, char quote);
-void 		shell_process(t_cmd *cmd, t_shell *shell);
+void 		shell_process(t_cmd **cmd, t_shell *shell);
 t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
 char		**shell_std_in(char **arg, char quote, char **std_in);
 
 BOOL		hrdc_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt);
 int			hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell,
-						int shortcut);
+						e_shortcut ret);
 
 size_t		len_arg(char *str, char quote);
 int			clean_cmd(t_cmd **cmd);
@@ -181,6 +181,7 @@ void		read_lexing(t_cmd *cmd);
 ** echo test << "1" && test ; <<\2
 ** cat << "EO {ENTER} F" {ENTER} puis essayer de fermer
 ** heredoc puis Cltr-c et Ctrl-v
+** cat <<t {ENTER} test {Ctrl-D} ->> heredoc stop mais test dans cat
 */
 
 

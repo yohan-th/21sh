@@ -56,6 +56,12 @@ typedef struct winsize	t_sz;
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
 
+typedef  enum		s_shortcut
+{
+	CTRLD = -2,
+	CTRLC = -3,
+}					e_shortcut;
+
 typedef enum		s_prompt
 {
 	PROMPT,

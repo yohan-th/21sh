@@ -13,20 +13,21 @@
 
 #include "../../Include/shell.h"
 
-void	shell_process(t_cmd *cmd, t_shell *shell)
-{
-	t_cmd		*save;
+/*
+** ATTENTION shell->str peut etre vide apres un heredoc
+*/
 
-	save = cmd;
+void	shell_process(t_cmd **cmd, t_shell *shell)
+{
 	// prepare stdout
 	// shell_envpsub(&arg, envp, quote);
-	if (ft_strcmp(shell->str, "exit") == 0)
+	if (shell->str && ft_strcmp(shell->str, "exit") == 0)
 	{
 		clean_shell(&shell);
-		clean_cmd(&save);
+		clean_cmd(cmd);
 		exit(1);
 	}
-	clean_cmd(&save);
+	clean_cmd(cmd);
 	ft_strdel(&shell->str);
 	//clean_shell(&shell);
 }

@@ -38,40 +38,65 @@ int 	del_next_hrdc(char **hrdc)
 	return (1);
 }
 
-int		hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell, int shortcut)
+void	hrdc_fill_stdin(e_prompt *prompt, t_cmd *cmd, t_shell *shell)
 {
 	char	*hrdc;
 
-	if (shortcut == 3 && *prompt == PROMPT && cmd)  //HRDC + Ctrl+C
+	if (cmd->hrdc_stdin == NULL)
+		cmd->hrdc_stdin = ft_strdup("");
+	hrdc = get_next_hrdc(cmd->hrdc);
+	if (hrdc && shell->str && ft_strcmp(hrdc, shell->str) == 0)
+	{
+		del_next_hrdc(cmd->hrdc);
+		if (get_next_hrdc(cmd->hrdc) == NULL)
+			*prompt = PROMPT;
+	}
+	else
+	{
+		ft_strjoin_free(&cmd->hrdc_stdin, shell->str);
+		//ft_strjoin_free(&cmd->hrdc_stdin, "\n");
+	}
+	ft_strdel(&shell->str);
+}
+
+/*
+** La première conditon correspondau Ctrl-C dans un heredoc
+** La deuxième à un Ctrl-D (si cmd existe alors il attend des heredoc)
+*/
+
+int		hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell, e_shortcut ret)
+{
+	if (ret == CTRLC && *prompt == PROMPT && cmd)  //HRDC + Ctrl+C
 		return (clean_data(cmd, shell, 1, 1));
+	if (ret == CTRLD && *prompt == HRDC && !shell->str)
+	{
+		while (get_next_hrdc(cmd->hrdc))
+			del_next_hrdc(cmd->hrdc);
+		cmd->hrdc = NULL;
+		*prompt = PROMPT;
+		return (1);
+	}
 	if (*prompt == HRDC && cmd)
 	{
-		hrdc = get_next_hrdc(cmd->hrdc);
-		if (hrdc && ft_strcmp(hrdc, shell->str) == 0)
-		{
-			del_next_hrdc(cmd->hrdc);
-			if (get_next_hrdc(cmd->hrdc) == NULL)
-				*prompt = PROMPT;
-			read_lexing(cmd->start);
-		}
-		else
-		{
-			ft_strjoin_free(&cmd->hrdc_stdin, shell->str);
-			//ft_strjoin_free(&cmd->hrdc_stdin, "\n");
-		}
-		ft_strdel(&shell->str);
+		hrdc_fill_stdin(prompt, cmd, shell);
+		return (1);
 	}
-	return (1);
+	return (0);
 }
+
+/*
+** On del shell->str car déjà exploité dans cmd->split
+*/
 
 BOOL	hrdc_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 {
 	t_cmd	*next;
 
+	*cmd = (*cmd)->start;
 	next = *cmd;
 	while ((next = next->next_cmd))
 	{
-		if (next->hrdc)
+		if (next->hrdc && (int)next->hrdc[0] != -1)
 		{
 			*cmd = next;
 			ft_strdel(&shell->str);

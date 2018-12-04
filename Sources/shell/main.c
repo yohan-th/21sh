@@ -70,40 +70,61 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
+BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
+{
+	char quote;
+
+	if (shortcut == CTRLD || shortcut == CTRLC)
+		ft_strdel(&shl->str);
+	if (shortcut == CTRLD && *prompt == PROMPT)
+		return (0);
+	else if (shortcut == CTRLD && *prompt != PROMPT)
+	{
+		quote = (*prompt == S_QUOTE) ? (char)'\'' : (char)'"';
+		write(2, "bash: unexpected EOF while looking for matching `", 50);
+		write(2, &quote, 1);
+		write(2, "'\n", 2);
+		write(2, "bash: syntax error: unexpected end of file\n", 43);
+		*prompt = PROMPT;
+	}
+	return (1);
+}
+
 int		main(void)
 {
 	extern char **environ;
-	e_prompt	prompt;
+	e_prompt	prmpt;
 	t_cmd		*cmd;
 	t_shell		*shl;
-	int 		ret;
+	e_shortcut	ret;
 
 	init_terminal_data();
 	shl = init_shell(environ);
-	prompt = PROMPT;
+	prmpt = PROMPT;
 	cmd = NULL;
-	while ((ret = get_stdin(&shl->str, &prompt, &shl->hist, shl->envp)) != -1)
+	while ((ret = get_stdin(&shl->str, &prmpt, &shl->hist, shl->envp)) != -1)
 	{
-		hrdc_fill(&prompt, cmd, shl, ret);
-		if (ret == -2)
+		if (!hrdc_fill(&prmpt, cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
 			break ;
-		else if (ret == -3)
-			ft_strdel(&shl->str);
-		if (shl->str && (cmd = shell_split(shl->str, shl->envp, &prompt)))
+		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmpt))) ||
+				(prmpt == PROMPT && cmd && cmd->hrdc_stdin))
 		{
-		//	read_lexing(cmd);
-			if (hrdc_check(&cmd, shl, &prompt))
+			if (hrdc_check(&cmd, shl, &prmpt))
 				continue ;
-			if ((!shl->hist->cmd && !shl->hist->prev) ||
+			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
-						ft_strcmp(shl->hist->prev->cmd, shl->str)))
+						ft_strcmp(shl->hist->prev->cmd, shl->str))))
 				shl->hist->cmd = ft_strdup(shl->str);
 			if (check_syntax_err(cmd))
 				clean_data(cmd, shl, 1, 1);
 			else
-				shell_process(cmd, shl);
+			{
+				read_lexing(cmd->start);
+				shell_process(&cmd, shl);
+			}
 		}
 	}
+	printf("<exit>\n");
 	//ft_exit
 	if (shl->hist)
 		fill_hist_file(shl->hist);
