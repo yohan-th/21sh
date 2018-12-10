@@ -106,7 +106,7 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
-		if ((!ft_strlen(cmd->args[0]) && cmd->sep) || !stdout_to(cmd->std_out))
+		if (!stdout_to(cmd->std_out)) //(!ft_strlen(cmd->args[0]) && cmd->sep) ||
 			break ;
 	}
 	if (!cmd->args)

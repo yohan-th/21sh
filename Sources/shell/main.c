@@ -109,7 +109,7 @@ int		main(void)
 		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmpt))) ||
 				(prmpt == PROMPT && cmd && cmd->hrdc_stdin))
 		{
-			if (hrdc_check(&cmd, shl, &prmpt))
+			if (cmd_check(&cmd, shl, &prmpt))
 				continue ;
 			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
@@ -155,7 +155,7 @@ void	read_lexing(t_cmd *cmd)
 		i = 0;
 		while (cmd->std_in && (cmd->std_in)[i] != NULL)
 		{
-			if ((int)(cmd->std_in)[i] == -1 || (int)(cmd->std_in)[i] == -2)
+			if ((int)(cmd->std_in)[i] < 0)
 				dprintf(2, "<%d> -", (int)(cmd->std_in)[i++]);
 			else
 				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
@@ -164,7 +164,7 @@ void	read_lexing(t_cmd *cmd)
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{
-			if ((int)(cmd->hrdc)[i] == -1 || (int)(cmd->hrdc)[i] == -2)
+			if ((int)(cmd->hrdc)[i] < 0)
 				dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
 			else
 				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);

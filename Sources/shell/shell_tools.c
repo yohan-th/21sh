@@ -41,6 +41,7 @@ void		shl_clean_arg(char *arg, char quote)
 	}
 }
 */
+
 void		clean_shell(t_shell **shell)
 {
 	ft_arrdel((*shell)->envp);

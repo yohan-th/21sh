@@ -112,14 +112,17 @@ void	complete_hrdc(char **arg, char quote, char ***hrdc)
 }
 
 /*
-** shell redi peut renvoyer NULL si malloc fail.
-** {hrdc} peut valoir soit une chaine de char, soit -1 si erreur, soit -2 si
-** la chaine de char se trouve dans le prochain arg.
+** {hrdc[i]} peut valoir soit une string, soit -1 si non rempli,
+** soit -2 si la chaine de char se trouve dans le prochain arg.
+** Ensuite dans shell_hrdc il prendra la valeur de -3 pour être indiqué
+** comme rempli par l'utilisateur.
+** hrdc_sub renvoi la valeur de combien hrdc a été sub (idealement reçu pr {i})
 */
 
 char	**shell_heredoc(char **arg, char quote, char **hrdc)
 {
 	int		i;
+	char 	*tmp;
 
 	complete_hrdc(arg, quote, &hrdc);
 	i = (quote == ' ') ? 0 : 1;
@@ -133,13 +136,20 @@ char	**shell_heredoc(char **arg, char quote, char **hrdc)
 			quote = ' ';
 		if ((*arg)[i] == '<' && (*arg)[i + 1] == '<' && quote == ' ')
 		{
-			if (!(hrdc = add_hrdc(hrdc)))
-				return (NULL);
-			(*arg)[i] = '\0';
-			i = shell_hrdc_sub(arg, i + 2, &hrdc);
+			hrdc = add_hrdc(hrdc);
+			tmp = *arg;
+			*arg = ft_strdup(*arg + shell_hrdc_sub(arg, i + 2, &hrdc));
+			ft_strdel(&tmp);
+			i = 0;
 		}
 		else
 			i += ((*arg)[i]) ? 1 : 0;
 	}
 	return (hrdc);
 }
+
+/*
+** Note de fin :
+** L'inconvéniant d'attribuer des valeurs {-1}, {-2} et {-3} à un char* est
+** qu'il nécessite un free particulier car valeurs numériques non malloc
+*/

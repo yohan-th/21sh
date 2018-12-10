@@ -49,45 +49,6 @@ int		shl_quotesub(char *arg)
 	return (check_last_quote(arg, quote));
 }
 
-void	clean_redi(t_stdout **redi)
-{
-	t_stdout	*tmp;
-
-	while ((*redi)->next != NULL)
-	{
-		tmp = *redi;
-		(*redi) = (*redi)->next;
-		ft_strdel(&tmp->to);
-		free(tmp);
-	}
-	ft_strdel(&(*redi)->to);
-	free(*redi);
-}
-
-int		clean_cmd(t_cmd **cmd)
-{
-	t_cmd	*tmp;
-
-	if (!(*cmd))
-	{
-		printf("[!] <erreur de clean cmd>\n");
-		return (0);
-	}
-	*cmd = (*cmd)->start;
-	tmp = *cmd;
-	while ((*cmd = (*cmd)->next_cmd))
-	{
-		ft_arrdel((*cmd)->args);
-		if ((*cmd)->std_out)
-			clean_redi(&((*cmd)->std_out));
-		free(tmp);
-		tmp = *cmd;
-	}
-	free(tmp);
-	*cmd = NULL;
-	return (1);
-}
-
 char	*shell_trim(char **str)
 {
 	int i;

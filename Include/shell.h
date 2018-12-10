@@ -34,6 +34,10 @@ typedef struct				s_stdout
 	struct s_stdout		*start;
 }							t_stdout;
 
+/*
+** Le premier maillon de t_cmd est vide et est pointé par tous les autres
+*/
+
 typedef struct				s_cmd
 {
 	char 				**args;
@@ -113,7 +117,7 @@ t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
 char		**shell_heredoc(char **arg, char quote, char **hrdc);
 char		**shell_std_in(char **arg, char quote, char **std_in);
 
-BOOL		hrdc_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt);
+BOOL		cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt);
 int			hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell,
 						e_shortcut ret);
 
@@ -175,6 +179,7 @@ void		read_lexing(t_cmd *cmd);
 ** >>>
 ** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
 ** << EOF cat nofile ;; --> les EOF sont prio puis ;; puis erreur de cat
+** ;; "test {ENTER} " --> les fermetures des quotes sont prio face au ;;
 ** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
 ** echo test > file && cat < file>>file2
 ** a=5 b=3 echo $a (variable local ignoré)
@@ -182,6 +187,12 @@ void		read_lexing(t_cmd *cmd);
 ** cat << "EO {ENTER} F" {ENTER} puis essayer de fermer
 ** heredoc puis Cltr-c et Ctrl-v
 ** cat <<t {ENTER} test {Ctrl-D} ->> heredoc stop mais test dans cat
+** << \'"test"\\
+** file avec du txt dedans puis "> file" --> txt écrasé
+** <<EOF<file_stdin
+** <<EOF>file_stdout
+**
+** env -i env
 */
 
 

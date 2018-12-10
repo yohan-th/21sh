@@ -13,27 +13,33 @@
 
 #include "../../Include/shell.h"
 
-char 	*get_next_hrdc(char **hrdc)
+char	*get_next_hrdc(char **hrdc)
 {
-	int		i;
+	int	i;
 
 	i = 0;
-	while (hrdc && (int)hrdc[i] == -1)
+	while (hrdc && (int)hrdc[i] == -3)
 		i++;
 	return (hrdc ? hrdc[i] : NULL);
 }
 
-int 	del_next_hrdc(char **hrdc)
+/*
+** hrdc[i] prend la valeur de -3 pour indiqué d'être rempli (ça commence à etre
+** vraiment une mauvaise idée avec ces valeurs négative totalement subjective
+** et NON INTUITIVE pour autrui. My bad.
+*/
+
+int		del_next_hrdc(char **hrdc)
 {
-	int		i;
+	int	i;
 
 	i = 0;
-	while (hrdc && (int)hrdc[i] == -1)
+	while (hrdc && (int)hrdc[i] == -3)
 		i++;
 	if (hrdc && hrdc[i])
 	{
 		ft_strdel(&hrdc[i]);
-		hrdc[i] = (char *)-1;
+		hrdc[i] = (char *)-3;
 	}
 	return (1);
 }
@@ -66,7 +72,7 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd *cmd, t_shell *shell)
 
 int		hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell, e_shortcut ret)
 {
-	if (ret == CTRLC && *prompt == PROMPT && cmd)  //HRDC + Ctrl+C
+	if (ret == CTRLC && *prompt == PROMPT && cmd)
 		return (clean_data(cmd, shell, 1, 1));
 	if (ret == CTRLD && *prompt == HRDC && !shell->str)
 	{
@@ -80,29 +86,6 @@ int		hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell, e_shortcut ret)
 	{
 		hrdc_fill_stdin(prompt, cmd, shell);
 		return (1);
-	}
-	return (0);
-}
-
-/*
-** On del shell->str car déjà exploité dans cmd->split
-*/
-
-BOOL	hrdc_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
-{
-	t_cmd	*next;
-
-	*cmd = (*cmd)->start;
-	next = *cmd;
-	while ((next = next->next_cmd))
-	{
-		if (next->hrdc && (int)next->hrdc[0] != -1)
-		{
-			*cmd = next;
-			ft_strdel(&shell->str);
-			*prompt = HRDC;
-			return (1);
-		}
 	}
 	return (0);
 }

@@ -36,6 +36,8 @@ SRCS =  shell/main.c \
         shell/shell_process.c \
         shell/shell_split_heredoc.c \
 		shell/shell_hrdc.c \
+		shell/shell_check.c \
+		shell/shell_clean.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \

@@ -62,14 +62,14 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
 
 /*
 ** On réutilise les fonctions de heredoc car c'est le même principe.
-** shell_std_in peut renvoyer NULL si malloc fail.
-** {std_in} peut valoir soit une chaine de char, soit -1 si erreur, soit -2 si
-** la chaine de char se trouve dans le prochain arg.
+** {std_in} peut valoir soit une chaine de char, soit -1 si non rempli,
+** soit -2 si la chaine de char se trouve dans le prochain arg.
 */
 
 char		**shell_std_in(char **arg, char quote, char **std_in)
 {
 	int		i;
+	char	*tmp;
 
 	complete_hrdc(arg, quote, &std_in);
 	i = (quote == ' ') ? 0 : 1;
@@ -83,10 +83,11 @@ char		**shell_std_in(char **arg, char quote, char **std_in)
 			quote = ' ';
 		if ((*arg)[i] == '<' && quote == ' ')
 		{
-			if (!(std_in = add_hrdc(std_in)))
-				return (NULL);
-			(*arg)[i] = '\0';
+			std_in = add_hrdc(std_in);
 			i = shell_hrdc_sub(arg, i + 1, &std_in);
+			tmp = *arg;
+			*arg = ft_strdup(*arg + i);
+			ft_strdel(&tmp);
 		}
 		else
 			i++;
