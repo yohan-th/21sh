@@ -19,6 +19,7 @@
 
 void	shell_process(t_cmd **cmd, t_shell *shell)
 {
+	read_lexing((*cmd)->start);
 	// prepare stdout
 	// shell_envpsub(&arg, envp, quote);
 	if (shell->str && ft_strcmp(shell->str, "exit") == 0)

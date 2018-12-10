@@ -118,10 +118,7 @@ int		main(void)
 			if (check_syntax_err(cmd))
 				clean_data(cmd, shl, 1, 1);
 			else
-			{
-				read_lexing(cmd->start);
 				shell_process(&cmd, shl);
-			}
 		}
 	}
 	printf("<exit>\n");

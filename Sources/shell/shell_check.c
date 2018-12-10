@@ -36,7 +36,6 @@ BOOL	shell_hrdc_quotesub(t_cmd **cmd, t_cmd *next, t_shell *shell,
 BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 {
 	t_cmd	*next;
-	int		i;
 
 	*cmd = (*cmd)->start;
 	next = *cmd;
