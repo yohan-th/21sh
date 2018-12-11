@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:06:32 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 11:52:55 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/06 16:42:27 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -18,8 +18,7 @@ int		check_if_cmd(t_editor *ed)
 	int start;
 
 	start = ed->cursor_str_pos ? ed->cursor_str_pos - 1 : 0;
-	if (!start && (ed->hist->cmd[start] == '\n' || ed->hist->cmd[start] == ' '
-	|| ed->hist->cmd[start] == '\t'))
+	if (!start && ed->hist->cmd[start] == ' ')
 		return (1);
 	else if (!start)
 		return (0);
@@ -45,9 +44,7 @@ int		tabulator_check_cmd(t_editor *ed, t_tab **tabu)
 
 	(*tabu)->start = ed->cursor_str_pos;
 	while (--(*tabu)->start >= -1)
-		if (((*tabu)->start == -1 || ed->hist->cmd[(*tabu)->start] == '\n' ||
-		ed->hist->cmd[(*tabu)->start] == ' ' ||
-		ed->hist->cmd[(*tabu)->start] == '\t')
+		if (((*tabu)->start == -1 || ed->hist->cmd[(*tabu)->start] == ' ')
 		&& (*tabu)->start && ed->hist->cmd[(*tabu)->start - 1] != '\\')
 		{
 			(*tabu)->start++;
@@ -67,8 +64,7 @@ void	tabulator_check_argument(t_editor *ed, t_tab **tabu)
 	(*tabu)->start = ed->cursor_str_pos;
 	while (--(*tabu)->start)
 	{
-		if ((ed->hist->cmd[(*tabu)->start] == '\n' || ed->hist->cmd[(*tabu)->
-		start] == ' ' || ed->hist->cmd[(*tabu)->start] == '\t') &&
+		if ((ed->hist->cmd[(*tabu)->start] == ' ') &&
 		ed->hist->cmd[(*tabu)->start - 1] != '\\')
 		{
 			(*tabu)->start++;

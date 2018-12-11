@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 14:59:04 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/10 18:04:42 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,20 +29,27 @@ void	fill_hist(t_history **hist, char *line)
 
 void	fill_hist_file(t_history *hist)
 {
+	t_history *tmp;
 	int fd;
 
 	if ((fd = open(".21sh_history", O_WRONLY | O_CREAT |
 	O_APPEND | O_TRUNC, 0644)) < 0)
 		return ;
+	while (hist->prev)
+		hist = hist->prev;
 	while (hist)
 	{
 		if (hist->cmd)
 		{
 			write(fd, hist->cmd, (size_t)ft_strlen(hist->cmd));
+			ft_strdel(&hist->cmd);
 			write(fd, "\n", 1);
 		}
-		hist = hist->prev;
+		tmp = hist->next;
+		free(hist);
+		hist = tmp;
 	}
+	free(hist);
 	close(fd);
 }
 

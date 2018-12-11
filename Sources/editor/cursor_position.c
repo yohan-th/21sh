@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/12 18:13:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/11/06 18:06:27 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/11 17:38:58 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,9 +66,9 @@ static int		get_col(char *str)
 	return (ft_atoi(str + i));
 }
 
-size_t			get_cursor_position(int mode)
+int			check_cursor_position(int mode)
 {
-	size_t	res;
+	int		res;
 	char	buf[32];
 	unsigned int i;
 
@@ -86,9 +86,14 @@ size_t			get_cursor_position(int mode)
 	buf[i] = '\0';
 	if (buf[0] != 27 || buf[1] != '[')
 		return (-1);
-	if (mode)
-		res = get_row(buf);
-	else
-		res = get_col(buf);
+	res = mode ? get_row(buf) : get_col(buf);
 	return (res);
+}
+
+int		get_cursor_position(int mode)
+{
+	int res;
+
+	res = check_cursor_position(mode);
+	return (res == -1 ? get_cursor_position(mode) : res);
 }

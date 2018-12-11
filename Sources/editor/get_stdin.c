@@ -6,14 +6,14 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 13:48:08 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/11 17:15:50 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
+static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt, t_history **hist)
 {
 	go_to_end_of_line(*ed);
 	ft_putchar('\n');
@@ -24,6 +24,8 @@ static void		get_stdin_next(char **line, t_editor **ed, e_prompt *prompt)
 	}
 	else
 		*line = ft_strdup((*ed)->hist->cmd);
+	while ((*hist)->next)
+		*hist = (*hist)->next;
 }
 
 static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
@@ -36,7 +38,7 @@ static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
 		(*ed)->ret = -3;
 	}
 	else if (CTRL_L)
-		clear_window(*ed, *p);
+		clear_window(ed, *p);
 	else if (CTRL_K && (ft_strlen((*ed)->hist->cmd) + (*ed)->cursor_str_pos))
 		delete_from_cursor_to_end(*ed);
 	else if (CTRL_P)
@@ -46,7 +48,8 @@ static int		get_keyboard_key_ctrl(t_editor **ed, e_prompt *p)
 
 int				enough_space_on_screen(t_editor *ed)
 {
-	if (((ft_strlen(ed->hist->cmd) + ed->prompt_size) + 1)
+//	if (ed->first_row == )
+	if (((ft_strlen(ed->hist->cmd) + ed->prompt_size))
 	>= (ed->ws_col * ed->ws_row))
 		return (0);
 	return (1);
@@ -72,6 +75,10 @@ static int		get_keyboard_key(t_editor **ed, e_prompt *prompt, char **env)
 		term_history(ed);
 	else if (TAB_KEY)
 		(*ed)->ret = term_tabulator(ed, env, prompt);
+//	dprintf(2, "get_cur_col: %zu\n", get_cursor_position(0));
+//	dprintf(2, "cur_col: %zu\n", (*ed)->cur_col);
+//	dprintf(2, "get_cur_row: %zu\n", get_cursor_position(1));
+//	dprintf(2, "cur_row: %zu\n", (*ed)->cur_row);
 	return (EXIT_SUCCESS);
 }
 
@@ -93,12 +100,12 @@ int				get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env)
 			window_resize(&ed, prompt);
 		if (ed->ret && get_keyboard_key(&ed, prompt, env))
 			ft_strjoin_free(&ed->hist->cmd, ed->key);
-		tputs(tgetstr("ve", NULL), 1, ft_putchar);
+			tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if ((ed->key[0] && ((ft_strchr(ed->key, '\n') ||
 		(ed->ret == -2 && !ed->hist->cmd)))) || ed->ret == -3)
 			break ;
 	}
-	get_stdin_next(line, &ed, prompt);
+	get_stdin_next(line, &ed, prompt, hist);
 	get_term_raw_mode(0);
 	return (line_editor_delete(&ed, hist));
 }

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 14:58:44 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/11 20:25:49 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -37,15 +37,49 @@ t_tab	*tabulator_init(int cursor_pos, char **env)
 	return (tabu);
 }
 
+int		check_if_data_with_new_line(t_tab *tabu)
+{
+	int i;
+
+	i = -1;
+	while (tabu->elem->d_name[++i])
+	{
+		if (tabu->elem->d_name[i] == '\n')
+		{
+			return (1);
+		}
+	}
+	return (0);
+}
+
+void	add_quote_to_data(t_tab *tabu)
+{
+	char *tmp;
+
+	tmp = ft_strdup("'");
+	ft_strjoin_free(&tmp, tabu->elem->d_name);
+	ft_strjoin_free(&tmp, "'");
+	ft_strdel(&tabu->elem->d_name);
+	tabu->elem->d_name = tmp;
+}
+
 void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 {
+	int nb_l;
 	int tmp_pos;
 	char *new;
 
-	new = NULL;
 	new = ft_strsub((*ed)->hist->cmd, 0, (*tabu)->start);
-	ft_strjoin_free(&(*tabu)->data, ((*tabu)->comp ?
-	(*tabu)->comp : (*tabu)->elem->d_name) + ft_strlen((*tabu)->data));
+	if ((*tabu)->comp)
+		ft_strjoin_free(&(*tabu)->data, (*tabu)->comp + ft_strlen((*tabu)->data));
+	else if (check_if_data_with_new_line(*tabu))
+	{
+		add_quote_to_data(*tabu);
+		ft_strdel(&(*tabu)->data);
+		(*tabu)->data = ft_strdup((*tabu)->elem->d_name);
+	}
+	else
+	ft_strjoin_free(&(*tabu)->data, (*tabu)->elem->d_name + ft_strlen((*tabu)->data));
 	ft_strjoin_free(&(*tabu)->path, (*tabu)->data);
 	check_data_with_space_after(&new, (*tabu)->path);
 	if ((*tabu)->elem->d_type == 4 && (*tabu)->nb_node == 1)
@@ -57,15 +91,30 @@ void	tabulator_put_new_cmd(t_tab **tabu, t_editor **ed)
 	ft_strjoin_free(&new, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
 	go_to_begin_of_line(*ed);
 	ft_putstr("\E[J");
-	if ((*ed)->hist->cmd)
-		ft_strdel(&(*ed)->hist->cmd);
+	ft_strdel(&(*ed)->hist->cmd);
 	(*ed)->hist->cmd = new;
-	ft_putstr(new);
+	print_line(*ed);
 	(*ed)->cursor_str_pos = ft_strlen(new);
-	(*ed)->cur_col = get_cursor_position(0);
+	nb_l = nb_line(*ed);
+	(*ed)->cur_col = last_char_pos(*ed);
 	(*ed)->last_char = (*ed)->cur_col;
+	if ((*ed)->first_row + nb_l > (*ed)->ws_row)
+	{
+		(*ed)->last_row = (*ed)->ws_row;
+		(*ed)->first_row = (*ed)->last_row - nb_l;
+	}
+	else
+		(*ed)->last_row = (*ed)->first_row + nb_l;
+	(*ed)->cur_row = (*ed)->last_row;
+//	go_to_begin_of_line(*ed);
+	dprintf(2, "first_bef: %d\n", (*ed)->first_row);
+	dprintf(2, "last_bef: %d\n", (*ed)->last_row);
+//	while ((*ed)->cursor_str_pos < tmp_pos)
+//		move_cursor_right(*ed);
 	while ((*ed)->cursor_str_pos > tmp_pos)
 		move_cursor_left(*ed);
+	dprintf(2, "first: %d\n", (*ed)->first_row);
+	dprintf(2, "last: %d\n", (*ed)->last_row);
 }
 
 int		tabulator_read(t_tab *tabu, t_editor **ed, int mode)
@@ -99,7 +148,7 @@ int		nb_line(t_editor *ed)
 	int row;
 
 	i = 0;
-	pos = get_cursor_position(0);
+	pos = ed->first_char;
 	row = 0;
 	while (ed->hist->cmd && ed->hist->cmd[i])
 	{
@@ -131,7 +180,7 @@ int		tabulator_put_row(t_editor **ed, t_tab *tabu, e_prompt *prompt)
 	nb_l = nb_line(*ed);
 	ft_putstr((*ed)->hist->cmd);
 	(*ed)->last_row = get_cursor_position(1);
-	(*ed)->first_row = (*ed)->first_row - nb_l;
+	(*ed)->first_row = (*ed)->last_row - nb_l;
 	(*ed)->cur_row = (*ed)->last_row;
 	(*ed)->cursor_str_pos = ft_strlen((*ed)->hist->cmd);
 	if (get_cursor_position(0) == (*ed)->ws_col
@@ -156,11 +205,11 @@ void	free_tab(t_tab **tabu)
 	while ((*tabu)->elem)
 	{
 		tmp = (*tabu)->elem->next;
-		if ((*tabu)->elem->d_name)
-			ft_strdel(&(*tabu)->elem->d_name);
+		ft_strdel(&(*tabu)->elem->d_name);
 		free((*tabu)->elem);
 		(*tabu)->elem = tmp;
 	}
+	free((*tabu)->elem);
 	free(*tabu);
 }
 

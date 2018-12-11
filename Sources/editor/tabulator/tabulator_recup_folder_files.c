@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/02 17:27:17 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/06 21:32:44 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -64,7 +64,6 @@ void	tabulator_recup_folder_files(t_tab **tabu, char *bin)
 	t_tab_elem		*new;
 
 	list = (*tabu)->last_elem;
-	new = NULL;
 	while ((dir = readdir((*tabu)->dir)))
 	{
 		if ((((!(*tabu)->data && ft_strcmp(".", dir->d_name) && ft_strcmp("..", dir->d_name)))

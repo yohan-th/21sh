@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 04:54:46 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 09:58:10 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/11 23:13:46 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,7 +21,7 @@ static int		check_if_previous_word(char *line, size_t cursor_str_pos)
 	while (cursor_str_pos > 0)
 	{
 		if ((line[cursor_str_pos - 1] == ' ' || line
-		[cursor_str_pos - 1] == '\t') && line[cursor_str_pos] >= 33
+		[cursor_str_pos - 1] == '\t' || line[cursor_str_pos - 1] == '\n') && line[cursor_str_pos] >= 33
 		&& line[cursor_str_pos] <= 126 && cursor_str_pos != s_pos)
 			return (cursor_str_pos);
 		cursor_str_pos--;
@@ -40,7 +40,7 @@ static int		check_if_next_word(char *line)
 	while (line[cursor_str_pos])
 	{
 		if (cursor_str_pos && (line[cursor_str_pos - 1] == ' ' || line
-		[cursor_str_pos - 1] == '\t') && line[cursor_str_pos] >= 33
+		[cursor_str_pos - 1] == '\t' || line[cursor_str_pos - 1] == '\n') && line[cursor_str_pos] >= 33
 		&& line[cursor_str_pos] <= 126)
 			return (cursor_str_pos);
 		cursor_str_pos++;
