@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 14:54:17 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/11 17:17:27 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -110,16 +110,16 @@ typedef struct		s_tab
 typedef struct		s_editor
 {
 	int				ret;
-	size_t			cur_col;
-	size_t			cur_row;
-	size_t			ws_row;
-	size_t			ws_col;
-	size_t			first_row;
-	size_t			last_row;
-	size_t			first_char;
-	size_t			last_char;
+	int				cur_col;
+	int				cur_row;
+	int				ws_row;
+	int				ws_col;
+	int				first_row;
+	int				last_row;
+	int				first_char;
+	int				last_char;
 	int				cursor_str_pos;
-	size_t			prompt_size;
+	int				prompt_size;
 	char			*clipboard;
 	char			key[BUFF_READ];
 	t_history		*hist;
@@ -132,9 +132,7 @@ typedef struct		s_editor
  */
 
 void	move_cursor_left(t_editor *ed);
-void	move_left(t_editor *ed);
 void	move_cursor_right(t_editor *ed);
-void	move_right(void);
 void	move_cursor_up(t_editor *ed);
 void	move_cursor_down(t_editor *ed);
 void	move_word_left(t_editor *ed);
@@ -142,7 +140,6 @@ void	move_word_right(t_editor *ed);
 void	go_to_begin_of_line(t_editor *ed);
 void	go_to_end_of_line(t_editor *ed);
 int		backspace(t_editor *ed);
-void	move_to_previous_new_line(t_editor *ed);
 
 /*
  *******************************************************************************
@@ -150,7 +147,7 @@ void	move_to_previous_new_line(t_editor *ed);
  *******************************************************************************
  */
 
-int		clear_window(t_editor *ed, e_prompt prompt);
+int		clear_window(t_editor **ed, e_prompt prompt);
 void	myhandler_interrupt(int signal);
 
 /*
@@ -163,13 +160,13 @@ char	*cursor_position_escape_sequence(int row, int col, t_editor *ed);
 void	reset_cursor_position_escape_sequence(char **cursor_position);
 
 void	add_paste_into_line(t_editor **ed);
-void	add_char_into_line(char key, t_editor *ed);
+void	add_char_into_line(char *key, t_editor *ed);
 void	add_char_to_line(char key, t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt);
 int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env);
 void	myhandler_winsize_change(int signal);
-size_t	get_cursor_position(int mode);
+int		get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
 void	paste_clipboard(t_editor *ed);
 int		get_term_raw_mode(int mode);
@@ -216,7 +213,9 @@ void	tabulator_recup_folder_files(t_tab **tabu, char *bin);
 int		tabulator_get_path(t_editor *ed, t_tab **tabu);
 int		nb_line(t_editor *ed);
 
-
 t_history	*init_hist(void);
 void		fill_hist_file(t_history *hist);
+void	print_line(t_editor *ed);
+int		last_char_pos(t_editor *ed);
+
 #endif

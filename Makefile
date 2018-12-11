@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/12/03 15:00:12 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/12/10 17:16:35 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -47,7 +47,6 @@ SRCS =  shell/main.c \
 		editor/cursor_position.c \
 		editor/backspace.c \
 		editor/go_to_of_line.c \
-		editor/move.c \
 		editor/move_cursor.c \
 		editor/move_word.c \
 		editor/add_char.c \
@@ -55,7 +54,6 @@ SRCS =  shell/main.c \
 		editor/term_init.c \
 		editor/find_env_var.c \
 		editor/prompt_git.c \
-		editor/move_to_previous_new_line.c \
 		editor/window_resize.c \
 		editor/insert_del_line.c \
 		editor/delete_from_cursor_to_end.c \
