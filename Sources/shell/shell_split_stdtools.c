@@ -60,37 +60,45 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
 	return (ret);
 }
 
-/*
-** On réutilise les fonctions de heredoc car c'est le même principe.
-** {std_in} peut valoir soit une chaine de char, soit -1 si non rempli,
-** soit -2 si la chaine de char se trouve dans le prochain arg.
-*/
-
-char		**shell_std_in(char **arg, char quote, char **std_in)
+int		len_stdin(char *str, char quote)
 {
-	int		i;
-	char	*tmp;
+	int i;
 
-	complete_hrdc(arg, quote, &std_in);
 	i = (quote == ' ') ? 0 : 1;
-	while (*arg && (*arg)[i])
+	while (str && str[i])
 	{
-		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2) && quote == ' ')
+		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
 			i += 2;
-		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
-			quote = (*arg)[i];
-		else if ((*arg)[i] == quote && quote != ' ')
+		if (ft_strchr("'\"", str[i]) && quote == ' ')
+			quote = str[i];
+		else if (str[i] == quote && quote != ' ')
 			quote = ' ';
-		if ((*arg)[i] == '<' && quote == ' ')
-		{
-			std_in = add_hrdc(std_in);
-			i = shell_hrdc_sub(arg, i + 1, &std_in);
-			tmp = *arg;
-			*arg = ft_strdup(*arg + i);
-			ft_strdel(&tmp);
-		}
-		else
-			i++;
+		if (quote == ' ' && ft_strchr("><", str[i]))
+			break ;
+		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
+			break ;
+		i += (str[i] ? 1 : 0);
 	}
-	return (std_in);
+	return (i);
+}
+
+int		shell_stdin_sub(char **arg, int i, char ***std_in)
+{
+	int		last;
+	char	quote;
+	int		len;
+
+	last = 0;
+	while ((*std_in)[last] != NULL)
+		last++;
+	if ((*arg)[i] == '\0')
+	{
+		(*std_in)[last - 1] = (char *)-2;
+		return (i);
+	}
+	quote = ft_strchr("\"'", **arg) ? **arg : (char)' ';
+	len = len_stdin(*arg + i, quote);
+	if (len > 0)
+		(*std_in)[last - 1] = ft_strsub(*arg, (unsigned)i, (size_t)len);
+	return (i + len);
 }

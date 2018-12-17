@@ -24,9 +24,7 @@ char	*get_next_hrdc(char **hrdc)
 }
 
 /*
-** hrdc[i] prend la valeur de -3 pour indiqué d'être rempli (ça commence à etre
-** vraiment une mauvaise idée avec ces valeurs négative totalement subjective
-** et NON INTUITIVE pour autrui. My bad.
+** hrdc[i] prend la valeur de -3 pour indiqué d'être rempli
 */
 
 int		del_next_hrdc(char **hrdc)
@@ -44,45 +42,52 @@ int		del_next_hrdc(char **hrdc)
 	return (1);
 }
 
-void	hrdc_fill_stdin(e_prompt *prompt, t_cmd *cmd, t_shell *shell)
+void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 {
 	char	*hrdc;
+	int 	last;
 
-	if (cmd->hrdc_stdin == NULL)
-		cmd->hrdc_stdin = ft_strdup("");
-	hrdc = get_next_hrdc(cmd->hrdc);
+	if ((int)(*cmd)->hrdc_stdin == -1)
+		(*cmd)->hrdc_stdin = ft_strdup("");
+	hrdc = get_next_hrdc((*cmd)->hrdc);
 	if (hrdc && shell->str && ft_strcmp(hrdc, shell->str) == 0)
 	{
-		del_next_hrdc(cmd->hrdc);
-		if (get_next_hrdc(cmd->hrdc) == NULL)
+		del_next_hrdc((*cmd)->hrdc);
+		if (get_next_hrdc((*cmd)->hrdc) == NULL)
+		{
 			*prompt = PROMPT;
+			last = 0;
+			while ((int)(*cmd)->std_in[last] != -1)
+				last++;
+			(*cmd)->std_in[last] = (*cmd)->hrdc_stdin;
+		}
 	}
-	else
+	else if ((int)(*cmd)->hrdc_stdin != -1)
 	{
-		ft_strjoin_free(&cmd->hrdc_stdin, shell->str);
+		ft_strjoin_free(&(*cmd)->hrdc_stdin, shell->str);
 		//ft_strjoin_free(&cmd->hrdc_stdin, "\n");
 	}
 	ft_strdel(&shell->str);
 }
 
 /*
-** La première conditon correspondau Ctrl-C dans un heredoc
+** La première conditon correspond au Ctrl-C dans un heredoc
 ** La deuxième à un Ctrl-D (si cmd existe alors il attend des heredoc)
 */
 
-int		hrdc_fill(e_prompt *prompt, t_cmd *cmd, t_shell *shell, e_shortcut ret)
+int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
-	if (ret == CTRLC && *prompt == PROMPT && cmd)
+	if (ret == CTRLC && *prompt == PROMPT && *cmd)
 		return (clean_data(cmd, shell, 1, 1));
 	if (ret == CTRLD && *prompt == HRDC && !shell->str)
 	{
-		while (get_next_hrdc(cmd->hrdc))
-			del_next_hrdc(cmd->hrdc);
-		cmd->hrdc = NULL;
+		while (get_next_hrdc((*cmd)->hrdc))
+			del_next_hrdc((*cmd)->hrdc);
+		(*cmd)->hrdc = NULL;
 		*prompt = PROMPT;
 		return (1);
 	}
-	if (*prompt == HRDC && cmd)
+	if (*prompt == HRDC && *cmd)
 	{
 		hrdc_fill_stdin(prompt, cmd, shell);
 		return (1);

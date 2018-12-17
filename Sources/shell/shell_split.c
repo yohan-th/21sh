@@ -109,14 +109,14 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		if (!stdout_to(cmd->std_out)) //(!ft_strlen(cmd->args[0]) && cmd->sep) ||
 			break ;
 	}
-	if (!cmd->args)
+	if (!cmd->args || (ft_strlen(*cmd->args) && (cmd->sep == SPL_PIPE ||
+		cmd->sep == DBL_PIPE ||  cmd->sep == DBL_SPRLU)))
 	{
+		*prompt = B_QUOTE;
 		clean_cmd(&cmd);
 		return (NULL);
 	}
 	else
-	{
 		*prompt = PROMPT;
-		return (cmd->start);
-	}
+	return (cmd->start);
 }

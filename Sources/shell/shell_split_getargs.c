@@ -93,8 +93,7 @@ char	*get_arg(char **str, t_cmd *cmd)
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 	shell_std_out(&arg, &cmd->std_out, quote);
-	cmd->hrdc = shell_heredoc(&arg, quote, cmd->hrdc);
-	cmd->std_in = shell_std_in(&arg, quote, cmd->std_in);
+	shell_std_in(&arg, quote, &cmd->std_in, &cmd->hrdc, &cmd->hrdc_stdin);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }
@@ -115,8 +114,12 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->std_in = NULL;
 	cmd->hrdc = NULL;
 	cmd->hrdc_stdin = NULL;
+	cmd->exec = NULL;
 	i = 0;
 	while (i < nb_arg)
 		cmd->args[i++] = get_arg(line, cmd);
 	return (cmd);
 }
+
+//TO DO : probleme lorsque < file1 << EOF < file2 car EOF == NULL, donc
+//peut etre le mettre à -1 pour faire défiller jusqu'à EOF puis ajouter file2

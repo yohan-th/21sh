@@ -104,21 +104,21 @@ int		main(void)
 	cmd = NULL;
 	while ((ret = get_stdin(&shl->str, &prmpt, &shl->hist, shl->envp)) != -1)
 	{
-		if (!hrdc_fill(&prmpt, cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
+		if (!hrdc_fill(&prmpt, &cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
 			break ;
 		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmpt))) ||
 				(prmpt == PROMPT && cmd && cmd->hrdc_stdin))
 		{
 			if (cmd_check(&cmd, shl, &prmpt))
-				continue ;
+				continue;
 			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
 						ft_strcmp(shl->hist->prev->cmd, shl->str))))
 				shl->hist->cmd = ft_strdup(shl->str);
 			if (check_syntax_err(cmd))
-				clean_data(cmd, shl, 1, 1);
-			else
-				shell_process(&cmd, shl);
+				clean_data(&cmd, shl, 1, 1);
+			else if (shell_process(&cmd, shl) == -1)
+				break ;
 		}
 	}
 	printf("<exit>\n");
@@ -126,48 +126,4 @@ int		main(void)
 	if (shl->hist)
 		fill_hist_file(shl->hist);
 	return (1);
-}
-
-void	read_lexing(t_cmd *cmd)
-{
-	t_stdout	*read;
-	int 		i;
-	while ((cmd = cmd->next_cmd))
-	{
-		i = 0;
-		dprintf(2, "Read array : ");
-		while (cmd->args[i])
-		{
-			dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
-			i++;
-		}
-		dprintf(2, "\nRead stdout : ");
-		read = cmd->std_out;
-		while (read != NULL)
-		{
-			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
-			read = read->next;
-		}
-		dprintf(2, "\nRead stdin : ");
-		i = 0;
-		while (cmd->std_in && (cmd->std_in)[i] != NULL)
-		{
-			if ((int)(cmd->std_in)[i] < 0)
-				dprintf(2, "<%d> -", (int)(cmd->std_in)[i++]);
-			else
-				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
-		}
-		dprintf(2, "\nRead heredoc : ");
-		i = 0;
-		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
-		{
-			if ((int)(cmd->hrdc)[i] < 0)
-				dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
-			else
-				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
-		}
-		dprintf(2, "\nRead heredoc stdin : <%s>\n", cmd->hrdc_stdin);
-		dprintf(2, "Et sep %d\n", cmd->sep);
-		dprintf(2, "-------------\n");
-	}
 }

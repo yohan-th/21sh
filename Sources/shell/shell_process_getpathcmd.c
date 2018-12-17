@@ -55,41 +55,55 @@ int		is_directory(char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-char	*check_cmd(char *cmd)
+char 	*check_path_cmd(char *exec_path, char *exec)
 {
-	if (cmd && is_directory(cmd))
-		return (ft_strdup("cmd is directory"));
+	char *ret;
+
+	ret = NULL;
+	if ((exec_path && access(exec_path, X_OK) != -1))
+		ret = ft_strdup(exec_path);
+	else if (!ft_isdir(exec) && access(exec, X_OK) != -1)
+		ret = ft_strdup(exec);
+	else if (exec && ft_isdir(exec))
+	{
+		write(2, "21sh: ", 6);
+		write(2, exec, (size_t)ft_strlen(exec));
+		write(2, ": is a directory\n", 17);
+	}
 	else
-		return (ft_strdup("command not found"));
+	{
+		write(2, "21sh: ", 6);
+		write(2, exec, (size_t)ft_strlen(exec));
+		write(2, ": command not found\n", 20);
+	}
+	ft_strdel(&exec_path);
+	return (ret);
 }
 
 /*
-** Recherche le path de {cmd} dans les differents path de {envp_path}
-** si non trouvé ou {path_envp} == NULL on retourne {cmd}
+** Recherche le bon path de {cmd} dans les differents path de {envp PATH}
+** si non trouvé ou PATH inexistant on retourne {cmd}
 */
 
-char	*path_cmd(char *cmd, char *envp_path)
+char	*shell_getpathexec(char *exec, char **envp)
 {
-	char	*ret;
+	char	*exec_path;
 	char	**all_path;
 	int		i;
 
-	if (cmd == NULL || envp_path == NULL)
-		return (cmd);
-	all_path = ft_strsplit(envp_path, ':');
-	ret = NULL;
+	if (exec == NULL)
+		return (NULL);
+	all_path = ft_strsplit(get_envp(envp, "PATH"), ':');
+	exec_path = NULL;
 	i = 0;
-	while (all_path[i] != NULL && !ft_strchr(cmd, '/'))
+	while (get_envp(envp, "PATH") && all_path[i] != NULL &&
+		   !ft_strchr(exec, '/'))
 	{
-		ret = ft_strjoin_mltp(3, all_path[i++], "/", cmd);
-		if (access(ret, X_OK) != -1)
+		exec_path = ft_strjoin_mltp(3, all_path[i++], "/", exec);
+		if (access(exec_path, X_OK) != -1)
 			break ;
-		ft_strdel(&ret);
+		ft_strdel(&exec_path);
 	}
 	ft_arrdel(all_path);
-	if ((ret && access(ret, X_OK) != -1))
-		return (ret);
-	else if (!is_directory(cmd) && access(cmd, X_OK) != -1)
-		return (ft_strdup(cmd));
-	return (check_cmd(cmd));
+	return (check_path_cmd(exec_path, exec));
 }

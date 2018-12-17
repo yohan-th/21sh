@@ -42,15 +42,25 @@ int		shell_argsub_env(char **arg, int i, char **envp)
 		return (i + ft_strlen(var) - 1);
 }
 
-void	shell_check_tilde(char **arg, char **envp)
+void		shell_check_tilde(char **arg, char **envp)
 {
+	char	*tmp;
+
+	if ((*arg)[0] == '~' && !get_envp(envp, "HOME"))
+	{
+		write(2, "21sh: $HOME env not set for ~\n", 30);
+		return ;
+	}
 	if ((*arg)[0] == '~' && (*arg)[1] == '\0')
 	{
 		ft_strdel(arg);
-		if (get_envp(envp, "HOME") == NULL)
-			*arg = ft_strnew(0);
-		else
-			*arg = ft_strdup(get_envp(envp, "HOME"));
+		*arg = ft_strdup(ft_strdup(get_envp(envp, "HOME")));
+	}
+	else if ((*arg)[0] == '~' && (*arg)[1] == '/')
+	{
+		tmp = *arg;
+		*arg = ft_strjoin_mltp(3, get_envp(envp, "HOME"), "/", *arg + 2);
+		ft_strdel(&tmp);
 	}
 }
 
@@ -59,15 +69,17 @@ void	shell_check_tilde(char **arg, char **envp)
 ** Remplace les var d'environnements
 */
 
-void	shell_envpsub(char **arg, char **envp, char quote)
+void		shell_envpsub(char **arg, char **envp)
 {
 	int		i;
+	char 	quote;
 
 	shell_check_tilde(arg, envp);
+	quote = *arg && ft_strchr("\"'", *arg[0]) ? (char)*arg[0] : (char)' ';
 	i = (quote == ' ') ? 0 : 1;
-	while ((*arg)[i])
+	while (*arg && (*arg)[i])
 	{
-		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2))
+		if ((*arg)[i] == '\\' && ft_strlen(*arg) > (i + 2) && quote != '\'')
 			i += 2;
 		if (ft_strchr("'\"", (*arg)[i]) && quote == ' ')
 			quote = (*arg)[i];

@@ -23,21 +23,23 @@ DIR_SRC = ./Sources/
 DIR_OBJ = ./Objects/
 
 SRCS =  shell/main.c \
-        shell/get_path.c \
         shell/tools.c \
+        shell/ft_tools.c \
         shell/shell_tools.c \
+        shell/shell_envsub.c \
         shell/shell_split.c \
         shell/shell_split_getargs.c \
-        shell/shell_split_envsub.c \
-		shell/shell_split_tools.c \
-		shell/shell_split_stdout.c \
-		shell/shell_split_stdtools.c \
-		shell/shell_error.c \
+ 		shell/shell_split_tools.c \
+ 		shell/shell_split_stdout.c \
+ 		shell/shell_split_stdin.c \
+ 		shell/shell_split_stdtools.c \
+ 		shell/shell_prepare.c \
         shell/shell_process.c \
-        shell/shell_split_heredoc.c \
-		shell/shell_hrdc.c \
-		shell/shell_check.c \
-		shell/shell_clean.c \
+        shell/shell_process_getpathcmd.c \
+        shell/shell_error.c \
+ 		shell/shell_hrdc.c \
+ 		shell/shell_check.c \
+ 		shell/shell_clean.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \

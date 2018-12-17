@@ -13,17 +13,15 @@
 
 #include "../../Include/shell.h"
 
-BOOL	shell_hrdc_quotesub(t_cmd **cmd, t_cmd *next, t_shell *shell,
-							e_prompt *prompt)
+BOOL	shell_hrdc_quotesub(t_cmd *cmd, char **shell_str, e_prompt *prompt)
 {
 	int i;
 
-	*cmd = next;
-	ft_strdel(&shell->str);
+	ft_strdel(shell_str);
 	*prompt = HRDC;
 	i = 0;
-	while (next->hrdc[i] != NULL)
-		shl_quotesub(next->hrdc[i++]);
+	while (cmd->hrdc[i] != NULL)
+		shl_quotesub(cmd->hrdc[i++]);
 	return (1);
 }
 
@@ -42,7 +40,7 @@ BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 	while ((next = next->next_cmd))
 	{
 		if (next->hrdc && ((int)next->hrdc[0] < -3 || (int)next->hrdc[0] > -1))
-			return (shell_hrdc_quotesub(cmd, next, shell, prompt));
+			return (shell_hrdc_quotesub((*cmd = next), &shell->str, prompt));
 		if ((next->hrdc && (int)next->hrdc[0] == -1) ||
 			(((next->std_in && (int)next->std_in[0] == -2) ||
 			(next->hrdc && (int)next->hrdc[0] == -2)) &&

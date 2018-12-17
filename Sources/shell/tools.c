@@ -13,15 +13,6 @@
 
 #include "../../Include/shell.h"
 
-int 	clean_data(t_cmd *cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)
-{
-	if (t_cmd)
-		clean_cmd(&cmd);
-	if (shl_str)
-		ft_strdel(&shell->str);
-	return (1);
-}
-
 /*
 ** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
 */
@@ -35,6 +26,7 @@ t_shell		*init_shell(char **envp)
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
 	shell->hist = init_hist();
+	shell->cur_dir_run = get_cur_dir();
 	return (shell);
 }
 

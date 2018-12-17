@@ -13,7 +13,7 @@
 
 #include "../../Include/shell.h"
 
-void	clean_hrdc(char **arr)
+void	clean_arr_mlti(char **arr)
 {
 	int i;
 
@@ -57,9 +57,10 @@ int		clean_cmd(t_cmd **cmd)
 	tmp = *cmd;
 	while ((*cmd = (*cmd)->next_cmd))
 	{
-		ft_arrdel((*cmd)->args);
-		clean_hrdc((*cmd)->hrdc);
-		ft_strdel(&(*cmd)->hrdc_stdin);
+		if ((*cmd)->args)
+			ft_arrdel((*cmd)->args);
+		clean_arr_mlti((*cmd)->hrdc);
+		clean_arr_mlti((*cmd)->std_in);
 		if ((*cmd)->std_out)
 			clean_redi(&((*cmd)->std_out));
 		free(tmp);
@@ -67,5 +68,14 @@ int		clean_cmd(t_cmd **cmd)
 	}
 	free(tmp);
 	*cmd = NULL;
+	return (1);
+}
+
+int 	clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)
+{
+	if (t_cmd)
+		clean_cmd(cmd);
+	if (shl_str)
+		ft_strdel(&shell->str);
 	return (1);
 }
