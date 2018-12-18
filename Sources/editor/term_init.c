@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/11 17:40:51 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/18 16:45:07 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -54,7 +54,7 @@ t_history	*hist_add(t_history *hist)
 	new = NULL;
 	now = NULL;
 	if (!(new = (t_history*)malloc(sizeof(t_history))))
-		exit (-1);
+		exit(-1);
 	hist->next = new;
 	now = hist;
 	hist = new;
@@ -64,7 +64,8 @@ t_history	*hist_add(t_history *hist)
 	return (new);
 }
 
-t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_history **hist)
+t_editor	*line_editor_init(char **line, e_prompt prompt,
+			int prompt_size, t_history **hist)
 {
 	t_editor *ed;
 
@@ -82,27 +83,26 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_hist
 	ed->last_char = ed->first_char;
 	ed->prompt_size = prompt_size;
 	ed->clipboard = NULL;
-	ft_bzero(ed->key, 4);
+	ed->key = NULL;
 	ed->hist = *hist && (*hist)->cmd ? hist_add(*hist) : *hist;
 	if (*line && prompt != PROMPT)
 		ft_strjoin_free(line, "\n");
 	return (ed);
 }
 
-int			line_editor_delete(t_editor **ed, t_history **hist)
+int			line_editor_delete(t_editor *ed, t_history **hist)
 {
 	int		ret;
 
 	ret = 0;
-	ret = (*ed)->ret;
-	//ft_strdel(&(*ed)->line);
-	ft_strdel(&(*ed)->clipboard);
-	while (((*ed)->hist->next))
-		(*ed)->hist = (*ed)->hist->next;
-	*hist = (*ed)->hist;
+	ret = ed->ret;
+	ft_strdel(&ed->clipboard);
+	while ((ed->hist->next))
+		ed->hist = ed->hist->next;
+	*hist = ed->hist;
 	if ((*hist)->cmd)
 		ft_strdel(&(*hist)->cmd);
-	free(*ed);
+	ft_strdel(&ed->key);
+	free(ed);
 	return (ret);
 }
-

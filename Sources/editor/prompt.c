@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/04 18:34:40 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/17 17:49:28 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,7 +29,7 @@ char			*cut_pwd_dir(char *pwd)
 	return (0);
 }
 
-int		ft_putstrlen(char *str)
+static int		ft_putstrlen(char *str)
 {
 	return (write(1, str, ft_strlen(str)));
 }
@@ -47,7 +47,7 @@ static int		prompt_type(e_prompt prompt)
 	return (0);
 }
 
-int		display_prompt(e_prompt prompt)
+int				display_prompt(e_prompt prompt)
 {
 	unsigned char c;
 

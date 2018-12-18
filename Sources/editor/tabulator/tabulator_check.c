@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/06 16:42:37 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/11 20:26:00 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/17 20:52:06 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -69,4 +69,15 @@ void	check_data_with_space_before(char **path)
 	}
 	ft_strdel(path);
 	*path = tmp1;
+}
+
+int		check_if_name_with_new_line(char *name)
+{
+	int i;
+
+	i = -1;
+	while (name[++i])
+		if (name[i] == '\n')
+			return (1);
+	return (0);
 }

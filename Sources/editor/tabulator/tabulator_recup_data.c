@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:00:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/11 20:26:27 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/17 21:52:23 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,65 +41,65 @@ void	tabulator_sort_list(t_tab_elem **list)
 		*list = (*list)->prev;
 }
 
-void	check_home(t_tab **tabu)
+void	check_home(t_tab *tabu)
 {
 	char *tmp;
 
-	if ((*tabu)->path[1] == '/')
-		(*tabu)->home = ft_strdup(get_envp((*tabu)->env, "HOME"));
+	if (tabu->path[1] == '/')
+		tabu->home = ft_strdup(get_envp(tabu->env, "HOME"));
 	else
-		(*tabu)->home = ft_strdup("/Users/");
-	if ((*tabu)->home)
+		tabu->home = ft_strdup("/Users/");
+	if (tabu->home)
 	{
-		tmp = ft_strdup((*tabu)->home);
-		ft_strjoin_free(&tmp, (*tabu)->path + 1);
-		ft_strdel(&(*tabu)->path);
-		(*tabu)->path = tmp;
+		tmp = ft_strdup(tabu->home);
+		ft_strjoin_free(&tmp, tabu->path + 1);
+		ft_strdel(&tabu->path);
+		tabu->path = tmp;
 	}
 }
 
-int		tabulator_open_dir(t_tab **tabu)
+int		tabulator_open_dir(t_tab *tabu)
 {
 	int		len;
 	char	*tmp;
 
-	if ((*tabu)->path[0] == '~')
+	if (tabu->path[0] == '~')
 		check_home(tabu);
-	len = ft_strlen((*tabu)->path) + 1;
+	len = ft_strlen(tabu->path) + 1;
 	while (--len)
 	{
-		tmp = ft_strsub((*tabu)->path, 0, len);
-		if (tmp[len - 1] == '/' && ((*tabu)->dir = opendir(tmp)))
+		tmp = ft_strsub(tabu->path, 0, len);
+		if (tmp[len - 1] == '/' && (tabu->dir = opendir(tmp)))
 		{
-			(*tabu)->data = ft_strlen((*tabu)->path + len) ? ft_strdup((*tabu)->
-			path + len) : (*tabu)->data;
-			ft_strdel(&(*tabu)->path);
-			(*tabu)->path = (*tabu)->home ? ft_strdup("~") : ft_strdup(tmp);
-			if ((*tabu)->home)
-				ft_strjoin_free(&(*tabu)->path, tmp + ft_strlen((*tabu)->home));
+			tabu->data = ft_strlen(tabu->path + len) ? ft_strdup(tabu->
+			path + len) : tabu->data;
+			ft_strdel(&tabu->path);
+			tabu->path = tabu->home ? ft_strdup("~") : ft_strdup(tmp);
+			if (tabu->home)
+				ft_strjoin_free(&tabu->path, tmp + ft_strlen(tabu->home));
 			ft_strdel(&tmp);
 			return (1);
 		}
 		ft_strdel(&tmp);
 	}
-	(*tabu)->data = ft_strdup((*tabu)->path);
-	ft_strdel(&(*tabu)->path);
+	tabu->data = ft_strdup(tabu->path);
+	ft_strdel(&tabu->path);
 	return (0);
 }
 
-void	tabulator_get_binairies(t_tab **tabu)
+void	tabulator_get_binairies(t_tab *tabu)
 {
 	int		i;
 	char	*b_path;
 	char	**bin;
 
 	i = -1;
-	if (!(b_path = get_envp((*tabu)->env, "PATH")))
+	if (!(b_path = get_envp(tabu->env, "PATH")))
 		return ;
 	bin = ft_strsplit(b_path, ':');
 	while (bin[++i])
 	{
-		if (((*tabu)->dir = opendir(bin[i])))
+		if ((tabu->dir = opendir(bin[i])))
 			tabulator_recup_folder_files(tabu, bin[i]);
 		ft_strdel(&(bin[i]));
 	}
@@ -107,29 +107,29 @@ void	tabulator_get_binairies(t_tab **tabu)
 	free(bin);
 }
 
-void	tabulator_recup_data(t_editor *ed, t_tab **tabu)
+void	tabulator_recup_data(t_editor *ed, t_tab *tabu)
 {
-	(*tabu)->save_pos = ed->cursor_str_pos;
-	if (!((*tabu)->mode = tabulator_get_path(ed, tabu)))
+	tabu->save_pos = ed->cursor_str_pos;
+	if (!(tabu->mode = tabulator_get_path(ed, tabu)))
 		tabulator_get_binairies(tabu);
-	else if ((*tabu)->mode == 1 || (*tabu)->mode == 2)
+	else if (tabu->mode == 1 || tabu->mode == 2)
 	{
-		if ((*tabu)->path)
-			check_data_with_space_before(&(*tabu)->path);
-		if ((*tabu)->path && !(tabulator_open_dir(tabu)) && (*tabu)->mode == 1)
+		if (tabu->path)
+			check_data_with_space_before(&tabu->path);
+		if (tabu->path && !(tabulator_open_dir(tabu)) && tabu->mode == 1)
 			tabulator_get_binairies(tabu);
-		if ((*tabu)->dir || ((*tabu)->dir = opendir(".")))
+		if (tabu->dir || (tabu->dir = opendir(".")))
 			tabulator_recup_folder_files(tabu, NULL);
 	}
-	if (!((*tabu)->nb_col = (ed->ws_col) / ((*tabu)->max_len + 2)))
-		(*tabu)->nb_col = 1;
-	(*tabu)->nb_row = (*tabu)->nb_node / (*tabu)->nb_col;
-	if ((*tabu)->elem)
-		tabulator_sort_list(&(*tabu)->elem);
-	while ((*tabu)->nb_row &&
-	((*tabu)->nb_row * (*tabu)->nb_col) < (*tabu)->nb_node)
-		(*tabu)->nb_row++;
-	if ((*tabu)->comp && ((*tabu)->nb_node == 1 ||
-	ft_strlen((*tabu)->comp) == ft_strlen((*tabu)->data)))
-		ft_strdel(&(*tabu)->comp);
+	if (!(tabu->nb_col = (ed->ws_col) / (tabu->max_len + 2)))
+		tabu->nb_col = 1;
+	tabu->nb_row = tabu->nb_node / tabu->nb_col;
+	if (tabu->elem)
+		tabulator_sort_list(&tabu->elem);
+	while (tabu->nb_row &&
+	(tabu->nb_row * tabu->nb_col) < tabu->nb_node)
+		tabu->nb_row++;
+	if (tabu->comp && (tabu->nb_node == 1 ||
+	ft_strlen(tabu->comp) == ft_strlen(tabu->data)))
+		ft_strdel(&tabu->comp);
 }

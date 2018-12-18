@@ -6,37 +6,35 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/15 20:34:38 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/05 13:10:05 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/18 22:24:03 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	add_paste_into_line(t_editor **ed)
+void	add_paste_into_line(t_editor *ed)
 {
-	int	tmp_last_pos;
-	char	tmp[ft_strlen((*ed)->hist->cmd) + ft_strlen((*ed)->key) + 1];
+	int		tmp_last_pos;
+	char	*tmp;
 
-	tmp_last_pos = (*ed)->cursor_str_pos + ft_strlen((*ed)->key);
-	if ((*ed)->hist->cmd)
+	tmp_last_pos = ed->cursor_str_pos + ft_strlen(ed->key);
+	if (ed->hist->cmd)
 	{
-		ft_bzero(tmp, ft_strlen((*ed)->hist->cmd) + ft_strlen((*ed)->key) + 1);
-		ft_strncpy(tmp, (*ed)->hist->cmd, (*ed)->cursor_str_pos);
-		ft_strcat(tmp, (*ed)->key);
-		ft_strcat(tmp, (*ed)->hist->cmd + (*ed)->cursor_str_pos);
-		ft_strdel(&(*ed)->hist->cmd);
-		(*ed)->hist->cmd = ft_strdup(tmp);
+		tmp = ft_strsub(ed->hist->cmd, 0, ed->cursor_str_pos);
+		ft_strjoin_free(&tmp, ed->key);
+		ft_strjoin_free(&tmp, ed->hist->cmd + ed->cursor_str_pos);
+		ft_strdel(&ed->hist->cmd);
+		ed->hist->cmd = tmp;
 	}
 	else
-		(*ed)->hist->cmd = ft_strdup((*ed)->key);
-	ft_putstr((*ed)->hist->cmd + (*ed)->cursor_str_pos);
-	(*ed)->last_char = get_cursor_position(0);
-	(*ed)->cur_col = (*ed)->last_char;
-	(*ed)->last_row = get_cursor_position(1);
-	(*ed)->cursor_str_pos = ft_strlen((*ed)->hist->cmd);
-	while ((*ed)->cursor_str_pos > tmp_last_pos)
-		move_cursor_left(*ed);
-	if ((*ed)->cur_col == (*ed)->ws_col && (*ed)->cur_row == (*ed)->ws_row)
-		tputs(tgetstr("sf", NULL), 1, ft_putchar);
+		ed->hist->cmd = ft_strdup(ed->key);
+	print_line(ed->hist->cmd, ed->cursor_str_pos, ed->cur_col, ed->ws_col);
+	ed->last_char = last_char_pos(ed);
+	ed->cur_col = ed->last_char;
+	calculate_first_and_last_row(ed);
+	ed->cur_row = ed->last_row;
+	ed->cursor_str_pos = ft_strlen(ed->hist->cmd);
+	while (ed->cursor_str_pos > tmp_last_pos)
+		move_cursor_left(ed);
 }

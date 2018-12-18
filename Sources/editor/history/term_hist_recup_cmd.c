@@ -6,14 +6,14 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/10 18:04:42 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/17 17:37:14 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	fill_hist(t_history **hist, char *line)
+void		fill_hist(t_history **hist, char *line)
 {
 	t_history *new;
 	t_history *now;
@@ -27,10 +27,10 @@ void	fill_hist(t_history **hist, char *line)
 	(*hist)->next = NULL;
 }
 
-void	fill_hist_file(t_history *hist)
+void		fill_hist_file(t_history *hist)
 {
-	t_history *tmp;
-	int fd;
+	t_history	*tmp;
+	int			fd;
 
 	if ((fd = open(".21sh_history", O_WRONLY | O_CREAT |
 	O_APPEND | O_TRUNC, 0644)) < 0)

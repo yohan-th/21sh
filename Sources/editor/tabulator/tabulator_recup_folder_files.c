@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/06 21:32:44 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/18 19:13:26 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,7 +20,10 @@ int		tabulator_check_executable(t_tab *tabu, t_dirent **dirent, char *bin)
 	DIR		*dir;
 
 	path = ft_strdup(bin ? bin : tabu->path);
+	if (path && path[ft_strlen(path) - 1] != '/')
+		ft_strjoin_free(&path, "/");
 	ft_strjoin_free(&path, (*dirent)->d_name);
+	dprintf(2, "path: %s\n", path);
 	lstat(path, &buf);
 	if ((dir = opendir(path)) &&
 	((*dirent)->d_type = 4))
@@ -57,41 +60,51 @@ void	tabulator_autocomplete(char **comp, char *d_name)
 	*comp = ft_strsub(d_name, 0, i);
 }
 
-void	tabulator_recup_folder_files(t_tab **tabu, char *bin)
+int		check_if_true_file(t_tab *tabu, struct dirent **dir, char *bin)
 {
-	struct dirent		*dir;
-	t_tab_elem		*list;
+	if ((((!tabu->data && ft_strcmp(".", (*dir)->d_name) &&
+	ft_strcmp("..", (*dir)->d_name))) || (((bin &&
+	ft_strcmp(".", (*dir)->d_name) && ft_strcmp("..", (*dir)->d_name)) || !bin)
+	&& tabu->data && !ft_strncmp((*dir)->d_name, tabu->data,
+	ft_strlen(tabu->data)))) && tabulator_check_executable(tabu, dir, bin))
+		return (1);
+	return (0);
+}
+
+void	tabulator_fill_list(t_tab *ta, struct dirent *dir, t_tab_elem **list)
+{
 	t_tab_elem		*new;
 
-	list = (*tabu)->last_elem;
-	while ((dir = readdir((*tabu)->dir)))
+	if (!ta->comp || ft_strlen(ta->comp))
+		tabulator_autocomplete(&ta->comp, dir->d_name);
+	ta->max_len = dir->d_namlen > ta->max_len ? dir->d_namlen : ta->max_len;
+	if (!(new = malloc(sizeof(t_tab_elem))))
+		return ;
+	new->d_name = ft_strdup(dir->d_name);
+	new->d_namlen = dir->d_namlen;
+	new->d_type = dir->d_type;
+	new->next = NULL;
+	new->prev = NULL;
+	if (*list)
 	{
-		if ((((!(*tabu)->data && ft_strcmp(".", dir->d_name) && ft_strcmp("..", dir->d_name)))
-		|| (((bin && ft_strcmp(".", dir->d_name) && ft_strcmp("..", dir->d_name)) || !bin)
-		&& (*tabu)->data && !ft_strncmp(dir->d_name, (*tabu)->data, ft_strlen((*tabu)->data))))
-		&& tabulator_check_executable(*tabu, &dir, bin))
-		{
-			if (!(*tabu)->comp || ft_strlen((*tabu)->comp))
-			tabulator_autocomplete(&(*tabu)->comp, dir->d_name);
-			(*tabu)->max_len = dir->d_namlen > (*tabu)->max_len ? dir->d_namlen : (*tabu)->max_len;
-			if (!(new = malloc(sizeof(t_tab_elem))))
-				return ;
-			new->d_name = ft_strdup(dir->d_name);
-			new->d_namlen = dir->d_namlen;
-			new->d_type = dir->d_type;
-			new->next = NULL;
-			new->prev = NULL;
-			if (list)
-			{
-				list->next = new;
-				new->prev = list;
-			}
-			list = new;
-			(*tabu)->elem = !(*tabu)->elem ? new : (*tabu)->elem;
-			(*tabu)->nb_node++;
-		}
+		(*list)->next = new;
+		new->prev = *list;
 	}
-	(*tabu)->last_elem = list;
-	closedir(((*tabu)->dir));
-	(*tabu)->dir = NULL;
+	*list = new;
+	ta->elem = !ta->elem ? new : ta->elem;
+	ta->nb_node++;
+}
+
+void	tabulator_recup_folder_files(t_tab *tabu, char *bin)
+{
+	struct dirent	*dir;
+	t_tab_elem		*list;
+
+	list = tabu->last_elem;
+	while ((dir = readdir(tabu->dir)))
+		if (check_if_true_file(tabu, &dir, bin))
+			tabulator_fill_list(tabu, dir, &list);
+	tabu->last_elem = list;
+	closedir((tabu->dir));
+	tabu->dir = NULL;
 }
