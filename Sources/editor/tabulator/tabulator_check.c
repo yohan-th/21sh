@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/06 16:42:37 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 20:52:06 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 21:39:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -79,5 +79,30 @@ int		check_if_name_with_new_line(char *name)
 	while (name[++i])
 		if (name[i] == '\n')
 			return (1);
+	return (0);
+}
+
+int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin)
+{
+	t_stat	buf;
+	char	*path;
+	DIR		*dir;
+	int		is_dir;
+
+	is_dir = 0;
+	path = build_full_path(bin ? bin : tabu->path, dirent->d_name);
+	lstat(path, &buf);
+	if ((dir = opendir(path)) && !closedir(dir))
+		is_dir = 1;
+	ft_strdel(&path);
+	if (!tabu->mode || bin || is_dir)
+		return (1);
+	else if (!bin || tabu->mode == 2)
+	{
+		if (tabu->path && dirent->d_type == 8 && (buf.st_mode & S_IXUSR))
+			return (1);
+		else if ((buf.st_mode & S_IFMT) == S_IFDIR || tabu->mode == 2)
+			return (1);
+	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 22:13:29 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 21:41:38 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 21:34:01 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,6 +46,7 @@ void	tabulator_put_new_cmd_next(t_editor *ed, char **new)
 
 void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed)
 {
+	DIR		*dir;
 	char	*new;
 
 	new = ft_strsub(ed->hist->cmd, 0, tabu->start);
@@ -62,7 +63,7 @@ void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed)
 		tabu->elem->d_name + ft_strlen(tabu->data));
 	ft_strjoin_free(&tabu->path, tabu->data);
 	check_data_with_space_after(&new, tabu->path);
-	if (tabu->elem->d_type == 4 && tabu->nb_node == 1)
+	if (tabu->nb_node == 1 && (dir = opendir(tabu->path)) && !closedir(dir))
 		ft_strjoin_free(&new, "/");
 	else if (!ft_strlen(ed->hist->cmd + ed->cursor_str_pos) &&
 		tabu->nb_node == 1)

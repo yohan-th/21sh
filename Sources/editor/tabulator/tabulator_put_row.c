@@ -6,49 +6,49 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 21:45:52 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 22:03:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	tabulator_put_color(t_tab_elem *list)
+void	tabulator_put_color(t_tab_elem *el)
 {
 	int i;
+	DIR *dir;
 
 	i = -1;
-	if (list->d_type == 4)
-		ft_putstr(RED);
-	else if (list->d_type == 10)
+	if (el->d_type == 10)
 		ft_putstr(BLUE);
-	else if (list->d_type == 2 || list->d_type == 6)
+	else if (el->d_type == 2 || el->d_type == 6)
 		ft_putstr(YEL);
-	else if (list->d_type == 16)
-		ft_putstr("\033[0;49;92m");
-	if (check_if_name_with_new_line(list->d_name))
-	{
-		while (list->d_name[++i])
-			write(1, list->d_name[i] == '\n' || list->d_name[i] == '\t' ?
-			"?" : &(list->d_name)[i], 1);
-	}
+	else if (el->d_type == 8 && (el->st_mode & S_IXUSR))
+		ft_putstr(GREEN);
+	else if (el->d_type == 4 || ((dir = opendir(el->path)) && !closedir(dir)))
+		ft_putstr(RED);
+	if (check_if_name_with_new_line(el->d_name))
+		while (el->d_name[++i])
+			write(1, el->d_name[i] == '\n' ? "?" : &(el->d_name)[i], 1);
 	else
-		ft_putstr(list->d_name);
+		ft_putstr(el->d_name);
 	ft_putstr(END);
 }
 
-void	tabulator_put_type(t_tab_elem *list)
+void	tabulator_put_type(t_tab_elem *el)
 {
-	if (list->d_type == 2)
+	DIR *dir;
+
+	if (el->d_type == 2)
 		ft_putchar('%');
-	else if (list->d_type == 4)
-		ft_putchar('/');
-	else if (list->d_type == 6)
+	else if (el->d_type == 6)
 		ft_putchar('#');
-	else if (list->d_type == 10)
+	else if (el->d_type == 10)
 		ft_putchar('@');
-	else if (list->d_type == 16)
+	else if (el->d_type == 8 && (el->st_mode & S_IXUSR))
 		ft_putchar('*');
+	else if (el->d_type == 4 || ((dir = opendir(el->path)) && !closedir(dir)))
+		ft_putchar('/');
 	else
 		ft_putchar(' ');
 }

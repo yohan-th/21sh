@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 22:43:09 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 21:40:30 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,6 +26,7 @@
 # define YEL "\033[1;33m"
 # define END "\033[0m"
 # define LGRAY "\033[47m"
+# define GREEN "\033[0;49;92m"
 # define LEFT_KEY (!ft_strcmp("\E[D", ed->key))
 # define RIGHT_KEY (!ft_strcmp("\E[C", ed->key))
 # define UP_KEY (!ft_strcmp("\E[A", ed->key))
@@ -53,6 +54,7 @@ typedef struct winsize	t_sz;
 typedef struct dirent	t_dirent;
 typedef struct stat		t_stat;
 typedef struct termios t_term;
+
 typedef  enum		s_shortcut
 {
 	CTRLD = -2,
@@ -78,6 +80,8 @@ typedef struct		s_history
 typedef struct		s_tab_elem
 {
 	char				*d_name;
+	char				*path;
+	mode_t				st_mode;
 	unsigned long		d_namlen;
 	unsigned long		d_type;
 	struct s_tab_elem	*next;
@@ -218,5 +222,7 @@ int		check_if_new_line_in_line(t_editor *ed);
 int		get_read_key(char **key);
 int		enough_space_on_screen(t_editor *ed);
 void	calculate_first_and_last_row(t_editor *ed);
+char	*build_full_path(char *path, char *d_name);
+int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin);
 
 #endif

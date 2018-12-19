@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/12/10 17:16:35 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/12/18 23:28:10 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -49,13 +49,15 @@ SRCS =  shell/main.c \
 		editor/cursor_position.c \
 		editor/backspace.c \
 		editor/go_to_of_line.c \
-		editor/move_cursor.c \
+		editor/move_cursor_left.c \
+		editor/move_cursor_right.c \
+		editor/move_cursor_up.c \
+		editor/move_cursor_down.c \
 		editor/move_word.c \
 		editor/add_char.c \
 		editor/paste_line.c \
 		editor/term_init.c \
-		editor/find_env_var.c \
-		editor/prompt_git.c \
+		editor/tools.c \
 		editor/window_resize.c \
 		editor/insert_del_line.c \
 		editor/delete_from_cursor_to_end.c \
@@ -67,6 +69,7 @@ SRCS =  shell/main.c \
 		editor/tabulator/tabulator_recup_data.c \
 		editor/tabulator/tabulator_recup_folder_files.c \
 		editor/tabulator/term_tabulator.c \
+		editor/tabulator/tabulator_put_new_cmd.c \
 		editor/history/term_hist_recup_cmd.c \
 		editor/history/term_history.c
 

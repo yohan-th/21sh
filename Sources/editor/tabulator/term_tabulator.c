@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 22:49:05 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 21:54:06 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -108,6 +108,7 @@ void	free_tab(t_tab *tabu)
 	{
 		tmp = tabu->elem->next;
 		ft_strdel(&tabu->elem->d_name);
+		ft_strdel(&tabu->elem->path);
 		free(tabu->elem);
 		tabu->elem = tmp;
 	}
@@ -130,6 +131,7 @@ int		term_tabulator(t_editor *ed, char **env, e_prompt *prompt)
 			ret = tabulator_put_row(ed, tabu, prompt);
 	}
 	free_tab(tabu);
-	ft_strdel(&ed->key);
+	if (!CTRL_C)
+		ft_strdel(&ed->key);
 	return (ret);
 }

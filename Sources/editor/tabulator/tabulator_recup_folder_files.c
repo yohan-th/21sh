@@ -6,42 +6,22 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 19:13:26 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/19 21:40:05 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-int		tabulator_check_executable(t_tab *tabu, t_dirent **dirent, char *bin)
+char	*build_full_path(char *path, char *d_name)
 {
-	t_stat	buf;
-	char	*path;
-	DIR		*dir;
+	char *full_path;
 
-	path = ft_strdup(bin ? bin : tabu->path);
-	if (path && path[ft_strlen(path) - 1] != '/')
-		ft_strjoin_free(&path, "/");
-	ft_strjoin_free(&path, (*dirent)->d_name);
-	dprintf(2, "path: %s\n", path);
-	lstat(path, &buf);
-	if ((dir = opendir(path)) &&
-	((*dirent)->d_type = 4))
-		closedir(dir);
-	ft_strdel(&path);
-	if (!tabu->mode || bin || (!bin && (*dirent)->d_type == 4))
-		return (1);
-	else if (!bin || tabu->mode == 2)
-	{
-		if (tabu->path && (*dirent)->d_type == 8 && (buf.st_mode & S_IXUSR))
-		{
-			(*dirent)->d_type = 16;
-			return (1);
-		}
-		if ((buf.st_mode & S_IFMT) == S_IFDIR || tabu->mode == 2)
-			return (1);
-	}
-	return (0);
+	full_path = ft_strdup(path);
+	if (full_path && full_path[ft_strlen(path) - 1] != '/')
+		ft_strjoin_free(&full_path, "/");
+	ft_strjoin_free(&full_path, d_name);
+	return (full_path);
 }
 
 void	tabulator_autocomplete(char **comp, char *d_name)
@@ -60,19 +40,21 @@ void	tabulator_autocomplete(char **comp, char *d_name)
 	*comp = ft_strsub(d_name, 0, i);
 }
 
-int		check_if_true_file(t_tab *tabu, struct dirent **dir, char *bin)
+int		check_if_true_file(t_tab *tabu, t_dirent *dir, char *bin)
 {
-	if ((((!tabu->data && ft_strcmp(".", (*dir)->d_name) &&
-	ft_strcmp("..", (*dir)->d_name))) || (((bin &&
-	ft_strcmp(".", (*dir)->d_name) && ft_strcmp("..", (*dir)->d_name)) || !bin)
-	&& tabu->data && !ft_strncmp((*dir)->d_name, tabu->data,
+	if ((((!tabu->data && ft_strcmp(".", dir->d_name) &&
+	ft_strcmp("..", dir->d_name))) || (((bin &&
+	ft_strcmp(".", dir->d_name) && ft_strcmp("..", dir->d_name)) || !bin)
+	&& tabu->data && !ft_strncmp(dir->d_name, tabu->data,
 	ft_strlen(tabu->data)))) && tabulator_check_executable(tabu, dir, bin))
 		return (1);
 	return (0);
 }
 
-void	tabulator_fill_list(t_tab *ta, struct dirent *dir, t_tab_elem **list)
+void	tabulator_fill_list(t_tab *ta, struct dirent *dir,
+		t_tab_elem **list, char *bin)
 {
+	t_stat			buf;
 	t_tab_elem		*new;
 
 	if (!ta->comp || ft_strlen(ta->comp))
@@ -81,6 +63,9 @@ void	tabulator_fill_list(t_tab *ta, struct dirent *dir, t_tab_elem **list)
 	if (!(new = malloc(sizeof(t_tab_elem))))
 		return ;
 	new->d_name = ft_strdup(dir->d_name);
+	new->path = build_full_path(bin ? bin : ta->path, dir->d_name);
+	lstat(new->path, &buf);
+	new->st_mode = buf.st_mode;
 	new->d_namlen = dir->d_namlen;
 	new->d_type = dir->d_type;
 	new->next = NULL;
@@ -102,8 +87,8 @@ void	tabulator_recup_folder_files(t_tab *tabu, char *bin)
 
 	list = tabu->last_elem;
 	while ((dir = readdir(tabu->dir)))
-		if (check_if_true_file(tabu, &dir, bin))
-			tabulator_fill_list(tabu, dir, &list);
+		if (check_if_true_file(tabu, dir, bin))
+			tabulator_fill_list(tabu, dir, &list, bin);
 	tabu->last_elem = list;
 	closedir((tabu->dir));
 	tabu->dir = NULL;
