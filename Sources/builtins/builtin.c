@@ -44,21 +44,21 @@ void	check_builtin_env(char ***envp, char **cmd)
 ** pour ne pas lancer de fork
 */
 
-char	*check_builtin(char **cmd, char ***envp)
+int		shell_builtin(t_cmd *link, t_shell *shell)
 {
-	if (*cmd && ft_strcmp("echo", cmd[0]) == 0)
-		builtin_echo(cmd);
-	else if (*cmd && ft_strcmp("cd", cmd[0]) == 0)
-		builtin_cd(cmd, envp);
-	else if (*cmd && ft_strcmp("setenv", cmd[0]) == 0)
-		check_builtin_setenv(envp, cmd);
-	else if (*cmd && ft_strcmp("unsetenv", cmd[0]) == 0)
-		check_builtin_unsetenv(envp, cmd);
-	else if (*cmd && ft_strcmp("env", cmd[0]) == 0)
-		check_builtin_env(envp, cmd);
-	else if (*cmd && ft_strcmp("exit", cmd[0]) == 0)
-		return ("exit");
+	if (link->args && ft_strcmp("echo", link->args[0]) == 0)
+		builtin_echo(link->args);
+	else if (link->args && ft_strcmp("cd", link->args[0]) == 0)
+		builtin_cd(link->args, &shell->envp);
+	else if (link->args && ft_strcmp("setenv", link->args[0]) == 0)
+		check_builtin_setenv(&shell->envp, link->args);
+	else if (link->args && ft_strcmp("unsetenv", link->args[0]) == 0)
+		check_builtin_unsetenv(&shell->envp, link->args);
+	else if (link->args && ft_strcmp("env", link->args[0]) == 0)
+		check_builtin_env(&shell->envp, link->args);
+	else if (link->args && ft_strcmp("exit", link->args[0]) == 0)
+		return (-1);
 	else
-		return (NULL);
-	return ("build done");
+		return (0);
+	return (1);
 }

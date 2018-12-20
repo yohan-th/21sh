@@ -90,7 +90,7 @@ void	builtin_echo(char **cmd);
 
 int		shell_error(char *type, int n, ...);
 
-char	*check_builtin(char **cmd, char ***envp);
+int		shell_builtin(t_cmd *link, t_shell *shell);
 char	*get_envp(char **envp, char *var);
 char	*get_var(char *var_key);
 char	*get_cur_dir(void);
@@ -103,10 +103,10 @@ void	*shl_mlc(char *type, int n, ...);
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-t_shell	*init_shell(char **envp);
-void	clean_shell(t_shell **shell);
-int		ft_isfile(char *file_path);
-int 	ft_isdir(char *path);
+t_shell		*init_shell(char **envp);
+void		clean_shell(t_shell **shell);
+int			ft_isfile(char *file_path);
+int 		ft_isdir(char *path);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -224,9 +224,10 @@ int			shell_error_prepare(char *msg, char *elem);
 */
 
 /*
-** HARD TEST
+** HARD TEST (et inutile)
 ** echo ~root
 ** exit 30 {ENTER} echo $? -> valeur 30 et 1 pour {exit 257}
+** exit 2>file
 */
 
 #endif

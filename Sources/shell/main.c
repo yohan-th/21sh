@@ -92,25 +92,32 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 	return (1);
 }
 
-void	my_handler(int sig)
+void	shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd, char ** env)
 {
+	init_terminal_data();
+	*shell = init_shell(env);
+	*prompt = PROMPT;
+	*cmd = NULL;
+}
 
-	printf("OK <%d>\n", sig);
+int	shell_exit(t_cmd **cmd, t_shell **shell)
+{
+	clean_cmd(cmd);
+	if ((*shell)->hist)
+		fill_hist_file((*shell)->hist);
+	clean_shell(shell);
+	return (5);
 }
 
 int		main(void)
 {
 	extern char **environ;
+	t_shell		*shl;
 	e_prompt	prmpt;
 	t_cmd		*cmd;
-	t_shell		*shl;
 	e_shortcut	ret;
 
-	init_terminal_data();
-	shl = init_shell(environ);
-	prmpt = PROMPT;
-	cmd = NULL;
-	//signal(SIGINT, my_handler);
+	shell_init(&shl, &prmpt, &cmd, environ);
 	while ((ret = get_stdin(&shl->str, &prmpt, &shl->hist, shl->envp)) != -1)
 	{
 		if (!hrdc_fill(&prmpt, &cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
@@ -130,9 +137,5 @@ int		main(void)
 				break ;
 		}
 	}
-	printf("<ft_exit>\n");// + clean all
-	//ft_exit
-	if (shl->hist)
-		fill_hist_file(shl->hist);
-	return (1);
+	return (shell_exit(&cmd, &shl));
 }

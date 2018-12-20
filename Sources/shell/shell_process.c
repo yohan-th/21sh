@@ -59,11 +59,21 @@ void	shell_prcs_sigint(int signum)
 	write(1, "\n", 1);
 }
 
-void	shell_prcs_sigtstp(int signum)
+void	shell_child(t_cmd *link, t_shell *shell, int tmp_fd[3])
 {
-	(void)signum;
-	write(1, "\n[n]+  Stopped            process_name", 39);
-	kill(0, SIGINT);
+	if (link->std_in)
+		shell_prcs_get_stdin(tmp_fd);
+	//if (link->std_out)
+	//	shell_send_stdout(tmp_fd, link->std_out);
+	execve(link->exec, link->args, shell->envp);
+}
+
+void	shell_father(t_cmd *link, int tmp_fd[3], int pid_child,int fd[3])
+{
+	if (link->std_in)
+		shell_send_stdin(link->std_in, tmp_fd);
+	reinit_fd(fd);
+	wait(&pid_child);
 }
 
 int		shell_process(t_cmd **cmd, t_shell *shell)
@@ -72,41 +82,24 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	int			father;
 	int 		fd[3];
 	int			tmp_fd[3];
+	int			built_in;
 
 	if (!shell_prepare(*cmd, shell))
 		return (shell_clean_data(cmd, shell, 1, 1));
 	shell_save_fd(fd);
-	read_lexing(*cmd);
+	//read_lexing(*cmd);
+	built_in = 0;
+	signal(SIGINT, shell_prcs_sigint);
 	link = *cmd;
 	while ((link = link->next_cmd))
 	{
+		if (link->args && (built_in = shell_builtin(link, shell)) == -1)
+			return (-1);
 		pipe(tmp_fd);
-		signal(SIGINT, shell_prcs_sigint);
-		signal(SIGTSTP, shell_prcs_sigtstp);
-		if (link->args && link->exec && (father = fork()) == 0)
-		{
-			if (link->std_in)
-				shell_prcs_get_stdin(tmp_fd);
-			//if (link->std_out)
-			//	shell_send_stdout(tmp_fd, link->std_out);
-			execve(link->exec, link->args, shell->envp);
-		}
-		else
-		{
-			if (link->std_in)
-				shell_send_stdin(link->std_in, tmp_fd);
-			reinit_fd(fd);
-			wait(&father);
-		}
-		//shell_quotesub(*cmd);
-		//shell_envpsub(&arg, envp, quote);
-	}
-	if (shell->str && ft_strcmp(shell->str, "exit") == 0)
-	{
-		clean_shell(&shell);
-		clean_cmd(cmd);
-		exit(1);
-		//return((*cmd)->args[1]);
+		if (!built_in && link->args && link->exec && (father = fork()) == 0)
+			shell_child(link, shell, tmp_fd);
+		else if (!built_in)
+			shell_father(link, tmp_fd, father, fd);
 	}
 	clean_cmd(cmd);
 	ft_strdel(&shell->str);
