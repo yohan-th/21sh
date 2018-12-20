@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 04:10:17 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 22:36:18 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 08:08:05 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,7 +22,7 @@ int		last_char_pos(t_editor *ed)
 	pos = ed->first_char;
 	while (ed->hist->cmd && ed->hist->cmd[i])
 	{
-		if (ed->hist->cmd[i] == '\n' || (pos) == (int)ed->ws_col)
+		if (ed->hist->cmd[i] == '\n' || pos == ed->ws_col)
 			pos = 0;
 		pos++;
 		i++;
@@ -48,9 +48,9 @@ int		backspace(t_editor *ed)
 	else
 		ft_strdel(&tmp);
 	ft_putstr("\E[0J");
-	ft_putstr(ed->hist->cmd + ed->cursor_str_pos);
 	ed->last_row = ed->first_row +
 	nb_line(ed->hist->cmd, ed->first_char, ed->ws_col);
+	print_line(ed->hist->cmd + ed->cursor_str_pos, 0, ed->cur_col, ed->ws_col);
 	tputs(tgoto(tgetstr("cm", NULL), ed->cur_col - 1,
 	ed->cur_row - 1), 1, ft_putchar);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/06 17:20:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 22:52:52 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 03:20:05 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,7 @@ void	term_history_put_cmd(t_editor *ed)
 	go_to_begin_of_line(ed);
 	ft_putstr("\E[J");
 	if (ed->hist->cmd)
-		print_line(ed->hist->cmd, 0, ed->first_char - 1, ed->ws_col);
+		print_line(ed->hist->cmd, 0, ed->first_char, ed->ws_col);
 	ed->cursor_str_pos = ft_strlen(ed->hist->cmd);
 	ed->last_char = last_char_pos(ed);
 	if (ed->last_char - 1 == ed->ws_col)

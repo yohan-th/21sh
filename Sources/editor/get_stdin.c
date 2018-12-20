@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/19 21:50:04 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 06:55:10 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -44,7 +44,7 @@ static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p)
 		clear_window(ed, *p);
 	else if (CTRL_K && (ft_strlen(ed->hist->cmd) + ed->cursor_str_pos))
 		delete_from_cursor_to_end(ed);
-	else if (CTRL_P)
+	else if (CTRL_P && enough_space_on_screen(ed))
 		paste_clipboard(ed);
 }
 

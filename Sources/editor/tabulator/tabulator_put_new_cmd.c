@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 22:13:29 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/19 21:34:01 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 06:10:52 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,10 +34,10 @@ void	tabulator_put_new_cmd_next(t_editor *ed, char **new)
 	ft_putstr("\E[J");
 	ft_strdel(&ed->hist->cmd);
 	ed->hist->cmd = *new;
-	print_line(ed->hist->cmd, 0, ed->first_char - 1, ed->ws_col);
+	print_line(ed->hist->cmd, 0, ed->first_char, ed->ws_col);
 	ed->cursor_str_pos = ft_strlen(*new);
-	ed->cur_col = last_char_pos(ed);
-	ed->last_char = ed->cur_col;
+	ed->last_char = last_char_pos(ed);
+	ed->cur_col = ed->last_char;
 	calculate_first_and_last_row(ed);
 	ed->cur_row = ed->last_row;
 	while (ed->cursor_str_pos > tmp_pos)
@@ -65,8 +65,8 @@ void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed)
 	check_data_with_space_after(&new, tabu->path);
 	if (tabu->nb_node == 1 && (dir = opendir(tabu->path)) && !closedir(dir))
 		ft_strjoin_free(&new, "/");
-	else if (!ft_strlen(ed->hist->cmd + ed->cursor_str_pos) &&
-		tabu->nb_node == 1)
+	else if (tabu->nb_node == 1 &&
+	!ft_strlen(ed->hist->cmd + ed->cursor_str_pos))
 		ft_strjoin_free(&new, " ");
 	tabulator_put_new_cmd_next(ed, &new);
 }

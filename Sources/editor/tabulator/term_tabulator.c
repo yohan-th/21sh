@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/19 21:54:06 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 08:09:45 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -67,7 +67,6 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 
 int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
 {
-	int		nb_l;
 	int		ret;
 
 	ret = 0;
@@ -79,15 +78,13 @@ int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
 		return (ret);
 	tputs(tgetstr("vi", NULL), 1, ft_putchar);
 	ed->prompt_size = display_prompt(*prompt);
-	nb_l = nb_line(ed->hist->cmd, ed->first_char, ed->ws_col);
-	ft_putstr(ed->hist->cmd);
-	ed->last_row = get_cursor_position(1);
-	ed->first_row = ed->last_row - nb_l;
+	print_line(ed->hist->cmd, 0, ed->first_char, ed->ws_col);
+	ed->first_row = get_cursor_position(1);
+	ed->first_char = get_cursor_position(0);
+	calculate_first_and_last_row(ed);
+	ed->last_char = last_char_pos(ed);
 	ed->cur_row = ed->last_row;
 	ed->cursor_str_pos = ft_strlen(ed->hist->cmd);
-	if (get_cursor_position(0) == ed->ws_col
-	&& ed->cur_col < ed->ws_col)
-		tputs(tgetstr("do", NULL), 1, ft_putchar);
 	ed->cur_col = ed->last_char;
 	while (ed->cursor_str_pos > tabu->save_pos)
 		move_cursor_left(ed);

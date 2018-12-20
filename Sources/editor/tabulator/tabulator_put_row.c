@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/19 22:03:04 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 07:42:37 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -53,10 +53,11 @@ void	tabulator_put_type(t_tab_elem *el)
 		ft_putchar(' ');
 }
 
-void	tabulator_put_elem(t_tab_elem *list, int index)
+void	tabulator_put_elem(t_tab_elem *list, int index, t_tab *ta, int cur_col)
 {
 	int i;
 	int j;
+	int space;
 
 	i = 0;
 	j = 0;
@@ -69,7 +70,10 @@ void	tabulator_put_elem(t_tab_elem *list, int index)
 	{
 		tabulator_put_color(list);
 		tabulator_put_type(list);
+		space = ft_strlen(list->d_name);
 	}
+	while (list && cur_col < ta->nb_col - 1 && space++ < ta->max_len + 1)
+		ft_putchar(' ');
 }
 
 void	tabulator_one_row(t_tab_elem *elem, int max_len)
@@ -107,9 +111,8 @@ int		tabulator_multi_row(t_tab *tabu, t_editor *ed)
 		while (tabu->nb_row && i < tabu->nb_col
 		&& (n + (i * tabu->nb_row)) <= tabu->nb_node)
 		{
-			tabulator_put_elem(tabu->elem, n + (i++ * tabu->nb_row));
-			tputs(tgoto(tgetstr("ch", NULL), 0, i *
-			(tabu->max_len + 2)), 1, ft_putchar);
+			tabulator_put_elem(tabu->elem, n + (i * tabu->nb_row), tabu, i);
+			i++;
 			tabu->nb_node++;
 		}
 		write(1, "\n", 1);
