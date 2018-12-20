@@ -17,70 +17,101 @@
 
 #include "../../Include/shell.h"
 
+#include <sys/types.h>
+#include <signal.h>
 
-BOOL	shell_runcmd(t_cmd *cmd, t_shell *shell)
+void	shell_send_stdin(char **std_in, int tmp_fd[3])
 {
-	execve(cmd->exec, cmd->args, shell->envp);
-	return (1);
+	int i;
+
+	close(tmp_fd[0]); // close the unused read side
+	dup2(tmp_fd[1], 1); // connect the write side with stdout
+	close(tmp_fd[1]); // close the write side
+	i = 0;
+	while (std_in && std_in[i])
+		ft_printf("%s\n", std_in[i++]);
+}
+
+void	shell_prcs_get_stdin(int *tmp_fd)
+{
+	close(tmp_fd[1]); // close the unused write side
+	dup2(tmp_fd[0], 0); // connect the read side with stdin
+	close(tmp_fd[0]); // close the read side
+}
+
+void	shell_save_fd(int fd[3])
+{
+	fd[0] = dup(0);
+	fd[1] = dup(1);
+	fd[2] = dup(2);
+}
+
+void	reinit_fd(int fd[3])
+{
+	dup2(fd[0], 0);
+	dup2(fd[1], 1);
+	dup2(fd[2], 2);
+}
+
+void	shell_prcs_sigint(int signum)
+{
+	(void)signum;
+	write(1, "\n", 1);
+}
+
+void	shell_prcs_sigtstp(int signum)
+{
+	(void)signum;
+	write(1, "\n[n]+  Stopped            process_name", 39);
+	kill(0, SIGINT);
 }
 
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
-	t_cmd	*link;
-	//int		father;
-	//int		pfd[2];
+	t_cmd		*link;
+	int			father;
+	int 		fd[3];
+	int			tmp_fd[3];
 
-	shell_prepare(*cmd, shell);
+	if (!shell_prepare(*cmd, shell))
+		return (shell_clean_data(cmd, shell, 1, 1));
+	shell_save_fd(fd);
 	read_lexing(*cmd);
 	link = *cmd;
-	/*
 	while ((link = link->next_cmd))
 	{
-		pipe(pfd);
-		father = vfork();
-		if (!father)
+		pipe(tmp_fd);
+		signal(SIGINT, shell_prcs_sigint);
+		signal(SIGTSTP, shell_prcs_sigtstp);
+		if (link->args && link->exec && (father = fork()) == 0)
 		{
-			if (link->args && link->exec)
-			{
-				close(pfd[1]);  //close the unused write side
-				dup2(pfd[0], 0); // connect the read side with stdin
-				close(pfd[0]);  //close the read side
-				shell_runcmd(link, shell);
-			}
-			else
-			{
-				printf("-<|exit|\n");
-				exit(0);
-			}
+			if (link->std_in)
+				shell_prcs_get_stdin(tmp_fd);
+			//if (link->std_out)
+			//	shell_send_stdout(tmp_fd, link->std_out);
+			execve(link->exec, link->args, shell->envp);
 		}
 		else
 		{
-			close(pfd[0]); // close the unused read side
-			dup2(pfd[1], 1); // connect the write side with stdout
-			close(pfd[1]); // close the write side
-			//if (link->std_in)
-			//	shell_prcs_send_stdin()
-			wait(NULL);
+			if (link->std_in)
+				shell_send_stdin(link->std_in, tmp_fd);
+			reinit_fd(fd);
+			wait(&father);
 		}
-
 		//shell_quotesub(*cmd);
 		//shell_envpsub(&arg, envp, quote);
 	}
-	 */
 	if (shell->str && ft_strcmp(shell->str, "exit") == 0)
 	{
 		clean_shell(&shell);
 		clean_cmd(cmd);
 		exit(1);
+		//return((*cmd)->args[1]);
 	}
 	clean_cmd(cmd);
-	printf("-<process|%p|\n", *cmd);
 	ft_strdel(&shell->str);
 	return (1);
-	//clean_shell(&shell);
 }
-
-
 
 void	read_lexing(t_cmd *cmd)
 {

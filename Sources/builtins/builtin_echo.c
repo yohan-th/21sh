@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../Include/shell.h"
+#include "../../Include/shell.h"
 
 void	builtin_echo(char **cmd)
 {
@@ -20,7 +20,7 @@ void	builtin_echo(char **cmd)
 
 	newl = 1;
 	i = 1;
-	if (ft_strcmp(cmd[1], "-e") == 0)
+	if (ft_strcmp(cmd[1], "-n") == 0)
 	{
 		newl = 0;
 		i = 2;

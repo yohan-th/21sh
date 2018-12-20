@@ -78,7 +78,7 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
-		return (clean_data(cmd, shell, 1, 1));
+		return (shell_clean_data(cmd, shell, 1, 1));
 	if (ret == CTRLD && *prompt == HRDC && !shell->str)
 	{
 		while (get_next_hrdc((*cmd)->hrdc))

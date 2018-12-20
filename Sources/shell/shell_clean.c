@@ -71,7 +71,7 @@ int		clean_cmd(t_cmd **cmd)
 	return (1);
 }
 
-int 	clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)
+int 	shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)
 {
 	if (t_cmd)
 		clean_cmd(cmd);

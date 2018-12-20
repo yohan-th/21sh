@@ -74,6 +74,8 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 {
 	char quote;
 
+	if (shortcut == CTRLC && prompt != PROMPT)
+		*prompt = PROMPT;
 	if (shortcut == CTRLD || shortcut == CTRLC)
 		ft_strdel(&shl->str);
 	if (shortcut == CTRLD && *prompt == PROMPT)
@@ -90,6 +92,12 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 	return (1);
 }
 
+void	my_handler(int sig)
+{
+
+	printf("OK <%d>\n", sig);
+}
+
 int		main(void)
 {
 	extern char **environ;
@@ -102,6 +110,7 @@ int		main(void)
 	shl = init_shell(environ);
 	prmpt = PROMPT;
 	cmd = NULL;
+	//signal(SIGINT, my_handler);
 	while ((ret = get_stdin(&shl->str, &prmpt, &shl->hist, shl->envp)) != -1)
 	{
 		if (!hrdc_fill(&prmpt, &cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
@@ -116,12 +125,12 @@ int		main(void)
 						ft_strcmp(shl->hist->prev->cmd, shl->str))))
 				shl->hist->cmd = ft_strdup(shl->str);
 			if (check_syntax_err(cmd))
-				clean_data(&cmd, shl, 1, 1);
+				shell_clean_data(&cmd, shl, 1, 1);
 			else if (shell_process(&cmd, shl) == -1)
 				break ;
 		}
 	}
-	printf("<exit>\n");
+	printf("<ft_exit>\n");// + clean all
 	//ft_exit
 	if (shl->hist)
 		fill_hist_file(shl->hist);

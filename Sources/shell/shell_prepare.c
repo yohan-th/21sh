@@ -13,27 +13,6 @@
 
 #include "../../Include/shell.h"
 
-int		complete_stdout(t_stdout *std_out, t_shell *shell)
-{
-	char 		*tmp;
-	t_stdout 	*link;
-
-	link = std_out;
-	while (link != NULL)
-	{
-		shell_envpsub(&link->to, shell->envp);
-		shl_quotesub(link->to);
-		if (link->to[0] != '/' && link->to[0] != '&')
-		{
-			tmp = link->to;
-			link->to = ft_strjoin_mltp(3, shell->cur_dir_run, "/", link->to);
-			ft_strdel(&tmp);
-		}
-		link = link->next;
-	}
-	return (1);
-}
-
 /*
 ** complete_stdout fail si $HOME n'existe pas et ~ est appellé (pw_name vide)
 */
@@ -50,17 +29,43 @@ int		shell_prepare_stdout(t_cmd *cmd, t_shell *shell)
 		std_out = link->std_out;
 		while (std_out != NULL)
 		{
-			complete_stdout(std_out, shell);
-			if ((ft_isdir(std_out->to) && write(2, "21sh: ", 6) &&
-				 write(2, std_out->to, (size_t)ft_strlen(std_out->to)) &&
-				 write(2, ": Is a directory\n", 18)) ||
-				((std_out->append && (fd = open(std_out->to, O_WRONLY |
-										O_CREAT | O_APPEND, 0644)) < 0) ||
-				 (!std_out->append && (fd = open(std_out->to, O_WRONLY |
-										O_TRUNC | O_CREAT, 0644)) < 0)))
-				return (0);
-			close(fd);
-			std_out = std_out->next;
+			complete_stdout_path(std_out, shell);
+			if (ft_isdir(std_out->to))
+				return (shell_error_prepare("Is directory", std_out->to));
+			else if ((std_out->append && (fd = open(std_out->to, O_WRONLY |
+							O_CREAT | O_APPEND, 0644)) < 0 && close(fd)) ||
+					((!std_out->append && (fd = open(std_out->to, O_WRONLY |
+							O_TRUNC | O_CREAT, 0644)) < 0) && close(fd)))
+				return (shell_error_prepare("denied", std_out->to));
+			else
+				std_out = std_out->next;
+		}
+	}
+	return (1);
+}
+
+int 	shell_prepare_stdin(t_cmd *cmd, t_shell *shell)
+{
+	t_cmd		*link;
+	int			fd;
+	int 		i;
+
+	link = cmd;
+	while ((link = link->next_cmd))
+	{
+		complete_stdin_path(link->std_in, shell);
+		i = 0;
+		while (link->std_in && link->std_in[i])
+		{
+			if (ft_isdir(link->std_in[i]))
+				return (shell_error_prepare("Is directory", link->std_in[i]));
+			else if ((fd = open(link->std_in[i], O_RDONLY, 0644) < 0))
+				return (shell_error_prepare("denied", link->std_in[i]));
+			else
+			{
+				close(fd);
+				i++;
+			}
 		}
 	}
 	return (1);
@@ -116,9 +121,12 @@ void	shell_prepare_args(t_cmd *cmd, t_shell *shell)
 ** et bien plus encore !
 */
 
-void	shell_prepare(t_cmd *cmd, t_shell *shell)
+int		shell_prepare(t_cmd *cmd, t_shell *shell)
 {
-	shell_prepare_stdout(cmd->start, shell);
-	shell_clean_emptyargs(cmd->start);
+	shell_clean_emptyargs(cmd);
 	shell_prepare_args(cmd, shell);
+	if (!shell_prepare_stdin(cmd, shell) || !shell_prepare_stdout(cmd, shell))
+		return (0);
+	else
+		return (1);
 }

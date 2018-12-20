@@ -35,6 +35,7 @@ SRCS =  shell/main.c \
  		shell/shell_split_stdtools.c \
  		shell/shell_prepare.c \
         shell/shell_process.c \
+        shell/shell_process_tools.c \
         shell/shell_process_getpathcmd.c \
         shell/shell_error.c \
  		shell/shell_hrdc.c \

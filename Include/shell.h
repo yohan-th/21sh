@@ -138,7 +138,8 @@ char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote);
 void		complete_stdin(char **arg, char quote, char ***std_in);
 int			shell_stdin_sub(char **arg, int i, char ***std_in);
 char		**add_stdin(char **hrdc);
-int 		clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str);
+int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd,
+							BOOL shl_str);
 int			len_stdin(char *str, char quote);
 
 void		read_lexing(t_cmd *cmd);
@@ -149,9 +150,12 @@ void		read_lexing(t_cmd *cmd);
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-void		shell_prepare(t_cmd *cmd, t_shell *shell);
+int			shell_prepare(t_cmd *cmd, t_shell *shell);
 char		*shell_getpathexec(char *exec, char **envp);
 void		shell_clean_emptyargs(t_cmd *link);
+int			complete_stdout_path(t_stdout *std_out, t_shell *shell);
+void 		complete_stdin_path(char **std_in, t_shell *shell);
+int			shell_error_prepare(char *msg, char *elem);
 
 /*
 ** Hard test
@@ -195,7 +199,7 @@ void		shell_clean_emptyargs(t_cmd *link);
 ** {t &&} --> prompt
 ** >>>
 ** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
-** << EOF cat nofile ;; --> les EOF sont prio puis ;; puis erreur de cat
+** << EOF cat nofile ;; --> les EOF puis ;; puis erreur de cat
 ** ;; "test {ENTER} " --> les fermetures des quotes sont prio face au ;;
 ** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
 ** echo test > file && cat < file>>file2
@@ -216,12 +220,13 @@ void		shell_clean_emptyargs(t_cmd *link);
 ** export VAR file && echo test >~/$VAR
 ** unsetenv $HOME && echo "pwd.h get the *pw_name" >~/file
 ** echo file_line > file && cat << EOF1 < file << EOF2 puis line1 \n EOF1 \n line2 \n EOF2 --> dernier element avec bash et en suivant l'ordre pour zsh
+** exit 1arg 2arg --> no exit
 */
 
 /*
 ** HARD TEST
 ** echo ~root
-** exit 30 {ENTER} echo $?
+** exit 30 {ENTER} echo $? -> valeur 30 et 1 pour {exit 257}
 */
 
 #endif

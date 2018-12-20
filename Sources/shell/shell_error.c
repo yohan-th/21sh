@@ -13,14 +13,36 @@
 
 #include "../../Include/shell.h"
 
+int		shell_error_prepare(char *msg, char *elem)
+{
+	char *last_elem_path;
+
+	last_elem_path = elem;
+	while (ft_strchr(last_elem_path, '/'))
+		last_elem_path = ft_strchr(last_elem_path, '/') + 1;
+	if (ft_strcmp(msg, "Is directory") == 0)
+	{
+		write(2, "21sh: ", 6);
+		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
+		write(2, ": Is a directory\n", 17);
+	}
+	else if (ft_strcmp(msg, "denied") == 0)
+	{
+		write(2, "21sh: ", 6);
+		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
+		write(2, ": Permission denied\n", 20);
+	}
+	return (0);
+}
+
 int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
 		dprintf(2, "shell: setenv: invalid argument\n"
-						"usage: setenv VAR VALUE\n");
+				   "usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
 		dprintf(2, "shell: unsetenv: invalid argument\n"
-						"usage: unsetenv VAR\n");
+				   "usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
 		dprintf(2, "shell: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)
@@ -29,6 +51,7 @@ int		shell_error_env(char *msg)
 		dprintf(2, "Error ENV : unknown msg type <%s>\n", msg);
 	return (0);
 }
+
 
 /*
 ** Print un message d'erreur ou/et exit le plus proprement possible.
