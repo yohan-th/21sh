@@ -42,9 +42,22 @@ void		shl_quotesub(char *arg)
 void		clean_shell(t_shell **shell)
 {
 	ft_arrdel((*shell)->envp);
-	ft_strdel(&(*shell)->cur_dir_run);
 	if ((*shell)->str)
 		ft_strdel(&(*shell)->str);
 	free(*shell);
 	*shell = NULL;
+}
+
+void	shell_save_fd(int fd[3])
+{
+	fd[0] = dup(0);
+	fd[1] = dup(1);
+	fd[2] = dup(2);
+}
+
+void	reinit_fd(int fd[3])
+{
+	dup2(fd[0], 0);
+	dup2(fd[1], 1);
+	dup2(fd[2], 2);
 }

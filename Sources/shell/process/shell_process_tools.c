@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 /*
 ** Ajoute la dossier courant
@@ -21,6 +21,7 @@ int		complete_stdout_path(t_stdout *std_out, t_shell *shell)
 {
 	char 		*tmp;
 	t_stdout 	*link;
+	char 		*cur_dir;
 
 	link = std_out;
 	while (link != NULL)
@@ -29,29 +30,38 @@ int		complete_stdout_path(t_stdout *std_out, t_shell *shell)
 		shl_quotesub(link->to);
 		if (link->to[0] != '/' && link->to[0] != '&')
 		{
+			cur_dir = get_cur_dir();
 			tmp = link->to;
-			link->to = ft_strjoin_mltp(3, shell->cur_dir_run, "/", link->to);
+			link->to = ft_strjoin_mltp(3, cur_dir, "/", link->to);
 			ft_strdel(&tmp);
+			ft_strdel(&cur_dir);
 		}
 		link = link->next;
 	}
 	return (1);
 }
 
-void 	complete_stdin_path(char **std_in, t_shell *shell)
+//)
+
+void 	complete_stdin_path(t_cmd *link, t_shell *shell)
 {
 	int		i;
 	char 	*tmp;
+	char 	*std_in;
+	char 	*cur_dir;
 
 	i = 0;
-	while (std_in && std_in[i])
+	while (link->std_in && link->std_in[i])
 	{
-		shell_envpsub(&std_in[i], shell->envp);
-		shl_quotesub(std_in[i]);
-		if (std_in[i][0] != '/' && std_in[i][0] != '&')
+		std_in = link->std_in[i];
+		shell_envpsub(&std_in, shell->envp);
+		shl_quotesub(std_in);
+		if (std_in[0] != '/' && std_in[0] != '&')
 		{
-			tmp = std_in[i];
-			std_in[i] = ft_strjoin_mltp(3, shell->cur_dir_run, "/", std_in[i]);
+			tmp = std_in;
+			cur_dir = get_cur_dir();
+			std_in = ft_strjoin_mltp(3, cur_dir, "/", std_in);
+			ft_strdel(&cur_dir);
 			ft_strdel(&tmp);
 		}
 		i++;

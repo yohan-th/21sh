@@ -26,7 +26,6 @@ t_shell		*init_shell(char **envp)
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
 	shell->hist = init_hist();
-	shell->cur_dir_run = get_cur_dir();
 	return (shell);
 }
 

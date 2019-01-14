@@ -46,17 +46,17 @@ void	check_builtin_env(char ***envp, char **cmd)
 
 int		shell_builtin(t_cmd *link, t_shell *shell)
 {
-	if (link->args && ft_strcmp("echo", link->args[0]) == 0)
+	if (link->args[0] && ft_strcmp("echo", link->args[0]) == 0)
 		builtin_echo(link->args);
-	else if (link->args && ft_strcmp("cd", link->args[0]) == 0)
+	else if (link->args[0] && ft_strcmp("cd", link->args[0]) == 0)
 		builtin_cd(link->args, &shell->envp);
-	else if (link->args && ft_strcmp("setenv", link->args[0]) == 0)
+	else if (link->args[0] && ft_strcmp("setenv", link->args[0]) == 0)
 		check_builtin_setenv(&shell->envp, link->args);
-	else if (link->args && ft_strcmp("unsetenv", link->args[0]) == 0)
+	else if (link->args[0] && ft_strcmp("unsetenv", link->args[0]) == 0)
 		check_builtin_unsetenv(&shell->envp, link->args);
-	else if (link->args && ft_strcmp("env", link->args[0]) == 0)
+	else if (link->args[0] && ft_strcmp("env", link->args[0]) == 0)
 		check_builtin_env(&shell->envp, link->args);
-	else if (link->args && ft_strcmp("exit", link->args[0]) == 0)
+	else if (link->args[0] && ft_strcmp("exit", link->args[0]) == 0)
 		return (-1);
 	else
 		return (0);

@@ -15,12 +15,12 @@
 ** ATTENTION shell->str peut etre vide apres un heredoc
 */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 #include <sys/types.h>
 #include <signal.h>
 
-void	shell_send_stdin(char **std_in, int tmp_fd[3])
+void	shell_send_stdin(t_cmd *link, int tmp_fd[3])
 {
 	int i;
 
@@ -28,8 +28,13 @@ void	shell_send_stdin(char **std_in, int tmp_fd[3])
 	dup2(tmp_fd[1], 1); // connect the write side with stdout
 	close(tmp_fd[1]); // close the write side
 	i = 0;
-	while (std_in && std_in[i])
-		ft_printf("%s\n", std_in[i++]);
+	while (link->std_in && link->std_in[i])
+	{
+		if (link->std_in[i] == link->hrdc_stdin)
+			ft_printf("%s\n", link->std_in[i++]);
+		else
+			; //read file
+	}
 }
 
 void	shell_prcs_get_stdin(int *tmp_fd)
@@ -37,20 +42,6 @@ void	shell_prcs_get_stdin(int *tmp_fd)
 	close(tmp_fd[1]); // close the unused write side
 	dup2(tmp_fd[0], 0); // connect the read side with stdin
 	close(tmp_fd[0]); // close the read side
-}
-
-void	shell_save_fd(int fd[3])
-{
-	fd[0] = dup(0);
-	fd[1] = dup(1);
-	fd[2] = dup(2);
-}
-
-void	reinit_fd(int fd[3])
-{
-	dup2(fd[0], 0);
-	dup2(fd[1], 1);
-	dup2(fd[2], 2);
 }
 
 void	shell_prcs_sigint(int signum)
@@ -68,26 +59,26 @@ void	shell_child(t_cmd *link, t_shell *shell, int tmp_fd[3])
 	execve(link->exec, link->args, shell->envp);
 }
 
-void	shell_father(t_cmd *link, int tmp_fd[3], int pid_child,int fd[3])
+void	shell_father(t_cmd *link, int tmp_fd[3], int pid_child, int fd[3])
 {
 	if (link->std_in)
-		shell_send_stdin(link->std_in, tmp_fd);
+		shell_send_stdin(link, tmp_fd);
 	reinit_fd(fd);
 	wait(&pid_child);
 }
 
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
-	t_cmd		*link;
-	int			father;
-	int 		fd[3];
-	int			tmp_fd[3];
-	int			built_in;
+	t_cmd	*link;
+	int		father;
+	int 	fd[3];
+	int		tmp_fd[3];
+	int		built_in;
 
 	if (!shell_prepare(*cmd, shell))
 		return (shell_clean_data(cmd, shell, 1, 1));
 	shell_save_fd(fd);
-	//read_lexing(*cmd);
+	read_lexing(*cmd);
 	built_in = 0;
 	signal(SIGINT, shell_prcs_sigint);
 	link = *cmd;
@@ -123,12 +114,17 @@ void	read_lexing(t_cmd *cmd)
 		}
 		dprintf(2, "\nRead stdout : ");
 		read = cmd->std_out;
+		if (read == NULL)
+			dprintf(2, "(NULL)");
 		while (read != NULL)
 		{
 			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
 			read = read->next;
 		}
+
 		dprintf(2, "\nRead stdin : ");
+		if (!cmd->std_in)
+			dprintf(2, "(NULL)");
 		i = 0;
 		while (cmd->std_in && (cmd->std_in)[i] != NULL)
 		{
@@ -138,6 +134,8 @@ void	read_lexing(t_cmd *cmd)
 				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
 		}
 		dprintf(2, "\nRead heredoc : ");
+		if (!cmd->hrdc)
+			dprintf(2, "(NULL)");
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{

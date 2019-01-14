@@ -37,12 +37,19 @@ void	cd_change_env(char ***envp, char *pwd, char *old_pwd, char *dir)
 {
 	if (!pwd || access(pwd, X_OK) == -1)
 	{
+		write(2, "21sh: cd: ", 10);
 		if (!pwd)
-			ft_printf("minishell: cd: $HOME env not set\n");
+			write(2, "$HOME env not set\n", 18);
 		else if (access(pwd, F_OK) == 0 && access(pwd, X_OK) == -1)
-			ft_printf("minishell: cd: %s: Permission denied\n", dir);
-		else
-			ft_printf("minishell: cd: %s: No such directory\n", dir);
+		{
+			write(2, pwd, (size_t)ft_strlen(pwd));
+			write(2, ": Permission denied\n", 20);
+		}
+		else if (dir)
+		{
+			write(2, dir, (size_t)ft_strlen(dir));
+			write(2, ": No such directory\n", 20);
+		}
 	}
 	else
 	{
@@ -123,7 +130,7 @@ void	builtin_cd(char **cmd, char ***envp)
 	if (cmd[i] == NULL || ft_strlen(cmd[i]) == 0)
 		cd_change_env(envp, get_envp(*envp, "HOME"), cur_dir, "HOME");
 	else if (ft_strcmp(cmd[i], "-") == 0 && get_envp(*envp, "OLDPWD") == NULL)
-		ft_printf("minishell: cd: OLDPWD not set\n");
+		write(2, "21sh: cd: OLDPWD not set\n", 25);
 	else if (ft_strcmp(cmd[i], "-") == 0)
 		cd_change_env(envp, get_envp(*envp, "OLDPWD"), cur_dir, "OLDPWD");
 	else if (ft_strcmp(cmd[i], "..") == 0 && ft_strcmp(cur_dir, "/") != 0)

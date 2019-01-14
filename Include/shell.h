@@ -62,7 +62,6 @@ typedef struct				s_shell
 	char 				**envp;
 	char 				*str;
 	t_history			*hist;
-	char 				*cur_dir_run;
 }							t_shell;
 
 typedef enum 				e_sep
@@ -154,8 +153,11 @@ int			shell_prepare(t_cmd *cmd, t_shell *shell);
 char		*shell_getpathexec(char *exec, char **envp);
 void		shell_clean_emptyargs(t_cmd *link);
 int			complete_stdout_path(t_stdout *std_out, t_shell *shell);
-void 		complete_stdin_path(char **std_in, t_shell *shell);
+void 		complete_stdin_path(t_cmd *link, t_shell *shell);
 int			shell_error_prepare(char *msg, char *elem);
+
+void		shell_save_fd(int fd[3]);
+void		reinit_fd(int fd[3]);
 
 /*
 ** Hard test

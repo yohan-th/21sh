@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 char	*shell_trim(char **str)
 {

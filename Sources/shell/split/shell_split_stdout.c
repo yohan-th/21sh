@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 /*
 ** Return NULL si redi est dans le prochain arg (si existant) ou si quote

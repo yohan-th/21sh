@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 int		get_sep(char **str)
 {
@@ -90,7 +90,7 @@ BOOL	iscomplet(char *str, e_prompt *prompt)
 
 /*
 ** Split line jusqu'au prochain delimiteur
-** Le premier maillon start (pointé par tous les autres) est vide.
+** Le premier maillon start de {cmd} (pointé par tous les autres) est vide.
 */
 
 t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)

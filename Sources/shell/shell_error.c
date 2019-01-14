@@ -17,6 +17,7 @@ int		shell_error_prepare(char *msg, char *elem)
 {
 	char *last_elem_path;
 
+	printf("-<elem|%s|\n", elem);
 	last_elem_path = elem;
 	while (ft_strchr(last_elem_path, '/'))
 		last_elem_path = ft_strchr(last_elem_path, '/') + 1;
@@ -31,6 +32,12 @@ int		shell_error_prepare(char *msg, char *elem)
 		write(2, "21sh: ", 6);
 		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
 		write(2, ": Permission denied\n", 20);
+	}
+	else if (ft_strcmp(msg, "not found") == 0)
+	{
+		write(2, "21sh: ", 7);
+		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
+		write(2, ": No such directory\n", 20);
 	}
 	return (0);
 }
@@ -76,7 +83,7 @@ int		shell_error(char *type, int n, ...)
 		ft_arrdel(va_arg(ap, char **));
 		va_end(ap);
 		write(1, " exit\n", 6);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	else if (type[0] == 'm' && type[1] == 'l' && type[2] == 'c')
 	{

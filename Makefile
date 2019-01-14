@@ -27,20 +27,20 @@ SRCS =  shell/main.c \
         shell/ft_tools.c \
         shell/shell_tools.c \
         shell/shell_envsub.c \
-        shell/shell_split.c \
-        shell/shell_split_getargs.c \
- 		shell/shell_split_tools.c \
- 		shell/shell_split_stdout.c \
- 		shell/shell_split_stdin.c \
- 		shell/shell_split_stdtools.c \
- 		shell/shell_prepare.c \
-        shell/shell_process.c \
-        shell/shell_process_tools.c \
-        shell/shell_process_getpathcmd.c \
         shell/shell_error.c \
- 		shell/shell_hrdc.c \
- 		shell/shell_check.c \
- 		shell/shell_clean.c \
+        shell/shell_hrdc.c \
+        shell/shell_check.c \
+        shell/shell_clean.c \
+        shell/split/shell_split.c \
+        shell/split/shell_split_getargs.c \
+ 		shell/split/shell_split_tools.c \
+ 		shell/split/shell_split_stdout.c \
+ 		shell/split/shell_split_stdin.c \
+ 		shell/split/shell_split_stdtools.c \
+ 		shell/shell_prepare.c \
+        shell/process/shell_process.c \
+        shell/process/shell_process_tools.c \
+        shell/process/shell_process_getpathcmd.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
@@ -76,7 +76,8 @@ SRCS =  shell/main.c \
 
 INCLUDES_FILE = shell.h
 
-OBJS_FOLDERS = builtins editor editor/tabulator editor/history shell
+OBJS_FOLDERS = builtins editor editor/tabulator editor/history shell \
+                shell/split shell/process
 OBJS = $(addprefix $(DIR_OBJ),$(SRCS:.c=.o))
 OBJS_FOLDERS_BIS = $(addprefix $(DIR_OBJ),$(OBJS_FOLDERS))
 

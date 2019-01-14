@@ -11,7 +11,7 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../../../Include/shell.h"
 
 /*
 ** Calcul la longueur de l'argument
@@ -120,6 +120,3 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 		cmd->args[i++] = get_arg(line, cmd);
 	return (cmd);
 }
-
-//TO DO : probleme lorsque < file1 << EOF < file2 car EOF == NULL, donc
-//peut etre le mettre à -1 pour faire défiller jusqu'à EOF puis ajouter file2

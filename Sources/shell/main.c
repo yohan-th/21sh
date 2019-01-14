@@ -106,26 +106,26 @@ int	shell_exit(t_cmd **cmd, t_shell **shell)
 	if ((*shell)->hist)
 		fill_hist_file((*shell)->hist);
 	clean_shell(shell);
-	return (5);
+	return (101);
 }
 
 int		main(void)
 {
 	extern char **environ;
 	t_shell		*shl;
-	e_prompt	prmpt;
+	e_prompt	prmt;
 	t_cmd		*cmd;
 	e_shortcut	ret;
 
-	shell_init(&shl, &prmpt, &cmd, environ);
-	while ((ret = get_stdin(&shl->str, &prmpt, &shl->hist, shl->envp)) != -1)
+	shell_init(&shl, &prmt, &cmd, environ);
+	while ((ret = get_stdin(&shl->str, &prmt, &shl->hist, shl->envp)) != -1)
 	{
-		if (!hrdc_fill(&prmpt, &cmd, shl, ret) && !check_shrt(&prmpt, ret, shl))
+		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;
-		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmpt))) ||
-				(prmpt == PROMPT && cmd && cmd->hrdc_stdin))
+		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
+				(prmt == PROMPT && cmd && cmd->hrdc_stdin))
 		{
-			if (cmd_check(&cmd, shl, &prmpt))
+			if (cmd_check(&cmd, shl, &prmt))
 				continue;
 			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
 						(shl->hist->prev && shl->hist->prev->cmd &&
