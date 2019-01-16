@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/03/13 19:41:55 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/01 09:36:54 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 22:14:19 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -40,7 +40,7 @@ char		*ft_strrev(char *str);
 char		**ft_strsplit(char const *s, char c);
 char		*ft_strstr(const char *haystack, const char *needle);
 char		*ft_strsub(char const *s, unsigned int start, size_t len);
-char		*ft_strsub_free(char const *s, unsigned int start, size_t len);
+char		*ft_strsub_free(char *s, unsigned int start, size_t len);
 char		*ft_strtrim(char const *s);
 int			ft_wstrcmp(const wchar_t *s1, const wchar_t *s2);
 wchar_t		*ft_wstrcpy(wchar_t *dst, const wchar_t *src);

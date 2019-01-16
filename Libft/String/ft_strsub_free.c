@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/03/13 23:38:05 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/03/13 23:38:05 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 22:14:00 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -21,7 +21,7 @@
 ** le comportement est indéterminé.
 */
 
-char	*ft_strsub_free(char const *s, unsigned int start, size_t len)
+char	*ft_strsub_free(char *s, unsigned int start, size_t len)
 {
 	char *str;
 
@@ -29,13 +29,13 @@ char	*ft_strsub_free(char const *s, unsigned int start, size_t len)
 	{
 		if (!(str = ft_strnew(len)))
 		{
-			free(s);
+			ft_strdel(&s);
 			return (NULL);
 		}
 		while (start--)
 			s++;
 		ft_strncpy(str, s, len);
-		free(s);
+		ft_strdel(&s);
 		str[len] = '\0';
 		return (str);
 	}

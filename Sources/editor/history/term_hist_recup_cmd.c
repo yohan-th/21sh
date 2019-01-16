@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 08:11:03 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/08 15:46:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,7 +55,7 @@ void		fill_hist_file(t_history *hist)
 
 t_history	*recup_hist_from_file(t_history *hist, int fd)
 {
-	int		c;
+	char	c;
 	char	buf[2];
 	char	*cmd;
 
@@ -76,10 +76,139 @@ t_history	*recup_hist_from_file(t_history *hist, int fd)
 		if (((buf[0] == '\'' || buf[0] == '\"' || buf[0] == '`') && c == 0)
 			|| ((c == '\'' && buf[0] == '\'') || (c == '\"' && buf[0] == '\"')
 			|| (c == '`' && buf[0] == '`')))
-			c = (c) ? 0 : buf[0];
+			c = c ? 0 : buf[0];
 	}
 	return (hist);
 }
+/*
+char	cmd_found(t_history **hist, int )
+{
+	char *tmp;
+
+	tmp = NULL;
+
+}
+*/
+/*
+int		check_quote(char *buf, char c, int i)
+{
+	if (((buf[i] == '\'' || buf[i] == '\"' || buf[i] == '`') && c == 0)
+	|| ((c == '\'' && buf[i] == '\'') || (c == '\"' && buf[i] == '\"')
+	|| (c == '`' && buf[i] == '`')))
+		return (1);
+	return (0);
+}
+
+void	add_cmd_to_hist(t_history **hist, char **cmd, char **tmp)
+{
+	if (*cmd)
+	{
+		ft_strjoin_free(cmd, *tmp);
+		ft_strdel(tmp);
+	}
+	else
+		*cmd = *tmp;
+	(*hist)->cmd = ft_strdup(*cmd);
+	*hist = hist_add(*hist);
+	ft_strdel(cmd);
+}
+
+void	recup_cmd_from_buf(t_history **hist, char *buf)
+{
+	int i;
+	int j;
+	char c;
+	char *cmd;
+	char *tmp;
+
+	cmd = NULL;
+	tmp = NULL;
+	i = 0;
+	j = 0;
+	c = 0;
+	while (buf[i])
+	{
+		if (buf[i] == '\n' && c == 0)
+		{
+			if (i - j)
+				tmp = ft_strsub(buf, j, i - j);
+			add_cmd_to_hist(hist, &cmd, &tmp);*/
+/*			if (cmd)
+			{
+				ft_strjoin_free(&cmd, tmp);
+				ft_strdel(&tmp);
+			}
+			else
+				cmd = tmp;
+			(*hist)->cmd = ft_strdup(cmd);
+			*hist = hist_add(*hist);
+			ft_strdel(&cmd);*//*
+			j = i + 1;
+		}
+		if (check_quote(buf, c, i))
+			c = c ? 0 : buf[i];
+		if ((buf[i] != '\n' && buf[i + 1] == '\0') || (c && buf[i] == '\n' && buf[i + 1] == '\0'))
+		{
+			tmp = ft_strsub(buf, j, i + 1);
+			ft_strjoin_free(&cmd, tmp);
+			ft_strdel(&tmp);
+		}
+		i++;
+	}
+}
+int		recup_hist_from_file(t_history **hist, int fd)
+{*/
+/*	int		i;
+	int		j;
+	char	c;*//*
+	int		ret;
+	char	buf[BUFF_READ + 1];
+	char	*cmd;
+	char	*tmp;
+
+	cmd = NULL;
+	tmp = NULL;
+	c = 0;
+	ret = 1;
+	dprintf(2, "buf: %d\n", BUFF_READ);
+	while (ret > 0)
+	{
+		ft_bzero(buf, BUFF_READ + 1);
+		ret = read(fd, buf, BUFF_READ);
+		recup_cmd_from_buf(hist, buf);*/
+/*		i = 0;
+		j = 0;
+		while (buf[i])
+		{
+			if (buf[i] == '\n' && c == 0)
+			{
+				if (i - j)
+					tmp = ft_strsub(buf, j, i - j);
+				if (cmd)
+				{
+					ft_strjoin_free(&cmd, tmp);
+					ft_strdel(&tmp);
+				}
+				else
+					cmd = tmp;
+				(*hist)->cmd = ft_strdup(cmd);
+				*hist = hist_add(*hist);
+				ft_strdel(&cmd);
+				j = i + 1;
+			}
+			if (check_quote(buf, c, i))
+				c = c ? 0 : buf[i];
+			if ((buf[i] != '\n' && buf[i + 1] == '\0') || (c && buf[i] == '\n' && buf[i + 1] == '\0'))
+			{
+				tmp = ft_strsub(buf, j, i + 1);
+				ft_strjoin_free(&cmd, tmp);
+				ft_strdel(&tmp);
+			}
+			i++;
+		}*//*
+	}
+	return (ret);
+}*/
 
 t_history	*init_hist(void)
 {

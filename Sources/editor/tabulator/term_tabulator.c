@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 08:09:45 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 14:53:08 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -78,9 +78,9 @@ int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
 		return (ret);
 	tputs(tgetstr("vi", NULL), 1, ft_putchar);
 	ed->prompt_size = display_prompt(*prompt);
-	print_line(ed->hist->cmd, 0, ed->first_char, ed->ws_col);
-	ed->first_row = get_cursor_position(1);
 	ed->first_char = get_cursor_position(0);
+	ed->first_row = get_cursor_position(1);
+	print_line(ed->hist->cmd, 0, ed->first_char, ed->ws_col);
 	calculate_first_and_last_row(ed);
 	ed->last_char = last_char_pos(ed);
 	ed->cur_row = ed->last_row;

@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 07:42:37 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 20:52:59 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,9 +55,9 @@ void	tabulator_put_type(t_tab_elem *el)
 
 void	tabulator_put_elem(t_tab_elem *list, int index, t_tab *ta, int cur_col)
 {
-	int i;
-	int j;
-	int space;
+	int				i;
+	int				j;
+	unsigned long	space;
 
 	i = 0;
 	j = 0;

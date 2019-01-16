@@ -6,12 +6,19 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:06:32 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 21:54:11 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/09 14:23:01 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
+
+int		check_separator(char c)
+{
+	if (c == '|' || c == '&' || c == ';' || c == '(')
+		return (1);
+	return (0);
+}
 
 int		check_if_cmd(t_editor *ed)
 {
@@ -24,8 +31,7 @@ int		check_if_cmd(t_editor *ed)
 		return (0);
 	while (start >= 0)
 	{
-		if (ed->hist->cmd[start] == '&' || ed->hist->cmd[start] == '|'
-		|| ed->hist->cmd[start] == ';')
+		if (check_separator(ed->hist->cmd[start]))
 			break ;
 		if (ed->hist->cmd[start] >= 33 && ed->hist->cmd[start] <= 126)
 			return (0);
@@ -39,13 +45,6 @@ int		check_if_cmd(t_editor *ed)
 		start++;
 	}
 	return (1);
-}
-
-int		check_separator(char c)
-{
-	if (c == '|' || c == '&' || c == ';')
-		return (1);
-	return (0);
 }
 
 int		tabulator_check_cmd(t_editor *ed, t_tab *tabu)
@@ -93,8 +92,8 @@ int		tabulator_get_path(t_editor *ed, t_tab *tabu)
 	if (!tabu->start || (tabu->start && check_if_cmd(ed)))
 		return (0);
 	else if (tabulator_check_cmd(ed, tabu))
-		return (1);
+		return (tabu->path && tabu->path[0] == '$' ? 3 : 1);
 	else
 		tabulator_check_argument(ed, tabu);
-	return (2);
+	return (tabu->path && tabu->path[0] == '$' ? 3 : 2);
 }

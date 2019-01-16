@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2018/12/18 23:28:10 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/01/16 21:27:16 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -37,10 +37,10 @@ SRCS =  shell/main.c \
  		shell/split/shell_split_stdout.c \
  		shell/split/shell_split_stdin.c \
  		shell/split/shell_split_stdtools.c \
- 		shell/shell_prepare.c \
         shell/process/shell_process.c \
         shell/process/shell_process_tools.c \
         shell/process/shell_process_getpathcmd.c \
+		shell/process/shell_process_prepare.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
@@ -71,6 +71,7 @@ SRCS =  shell/main.c \
 		editor/tabulator/tabulator_recup_folder_files.c \
 		editor/tabulator/term_tabulator.c \
 		editor/tabulator/tabulator_put_new_cmd.c \
+		editor/tabulator/tabulator_check_if_var.c \
 		editor/history/term_hist_recup_cmd.c \
 		editor/history/term_history.c
 

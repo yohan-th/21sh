@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 08:11:52 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 18:53:17 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -98,7 +98,7 @@ typedef struct		s_tab
 	DIR				*dir;
 	int				nb_col;
 	int				nb_row;
-	int				max_len;
+	unsigned long	max_len;
 	int				nb_node;
 	int				start;
 	int				end;
@@ -224,5 +224,7 @@ int		enough_space_on_screen(t_editor *ed);
 void	calculate_first_and_last_row(t_editor *ed);
 char	*build_full_path(char *path, char *d_name);
 int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin);
+int		tabulator_check_if_var(t_tab *tabu);
+void	tabulator_autocomplete(char **comp, char *d_name);
 
 #endif

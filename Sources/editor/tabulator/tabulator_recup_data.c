@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:00:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 21:52:23 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 21:09:39 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -121,15 +121,17 @@ void	tabulator_recup_data(t_editor *ed, t_tab *tabu)
 		if (tabu->dir || (tabu->dir = opendir(".")))
 			tabulator_recup_folder_files(tabu, NULL);
 	}
+	else if (tabu->mode == 3)
+		tabulator_check_if_var(tabu);
 	if (!(tabu->nb_col = (ed->ws_col) / (tabu->max_len + 2)))
 		tabu->nb_col = 1;
 	tabu->nb_row = tabu->nb_node / tabu->nb_col;
-	if (tabu->elem)
-		tabulator_sort_list(&tabu->elem);
-	while (tabu->nb_row &&
-	(tabu->nb_row * tabu->nb_col) < tabu->nb_node)
+	tabulator_sort_list(&tabu->elem);
+	while (tabu->nb_row && (tabu->nb_row * tabu->nb_col) < tabu->nb_node)
 		tabu->nb_row++;
 	if (tabu->comp && (tabu->nb_node == 1 ||
-	ft_strlen(tabu->comp) == ft_strlen(tabu->data)))
+	ft_strlen(tabu->comp) == ft_strlen(tabu->data) || (tabu->mode == 3 &&
+	ft_strlen(tabu->comp) ==
+	ft_strlen(tabu->path + (tabu->path[1] == '{' ? 2 : 1)))))
 		ft_strdel(&tabu->comp);
 }

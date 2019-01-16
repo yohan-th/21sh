@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2017/12/19 18:27:56 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2017/12/19 18:27:56 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/12/20 19:20:33 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,8 +20,8 @@ int		ft_putstr(char const *s)
 	i = 0;
 	if (s)
 	{
-		while (s[i] != '\0')
-			ft_putchar(s[i++]);
+		i = ft_strlen(s);
+		write(1, s, i);
 	}
 	return (i);
 }

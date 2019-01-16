@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 22:13:29 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 06:10:52 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 20:51:22 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -22,6 +22,8 @@ void	add_quote_to_data(t_tab *tabu)
 	ft_strjoin_free(&tmp, "'");
 	ft_strdel(&tabu->elem->d_name);
 	tabu->elem->d_name = tmp;
+	ft_strdel(&tabu->data);
+	tabu->data = ft_strdup(tabu->elem->d_name);
 }
 
 void	tabulator_put_new_cmd_next(t_editor *ed, char **new)
@@ -51,19 +53,21 @@ void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed)
 
 	new = ft_strsub(ed->hist->cmd, 0, tabu->start);
 	if (tabu->comp)
-		ft_strjoin_free(&tabu->data, tabu->comp + ft_strlen(tabu->data));
+		if (tabu->mode == 3)
+			ft_strjoin_free(&tabu->data, tabu->comp +
+			ft_strlen(tabu->path + (tabu->path[1] == '{' ? 2 : 1)));
+		else
+			ft_strjoin_free(&tabu->data, tabu->comp + ft_strlen(tabu->data));
 	else if (check_if_name_with_new_line(tabu->elem->d_name))
-	{
 		add_quote_to_data(tabu);
-		ft_strdel(&tabu->data);
-		tabu->data = ft_strdup(tabu->elem->d_name);
-	}
 	else
-		ft_strjoin_free(&tabu->data,
-		tabu->elem->d_name + ft_strlen(tabu->data));
+		ft_strjoin_free(&tabu->data, tabu->elem->d_name
+		+ ft_strlen(tabu->mode == 3 ? tabu->path : tabu->data));
 	ft_strjoin_free(&tabu->path, tabu->data);
 	check_data_with_space_after(&new, tabu->path);
-	if (tabu->nb_node == 1 && (dir = opendir(tabu->path)) && !closedir(dir))
+	tabu->home ? ft_strjoin_free(&tabu->home, tabu->path + 1) : 0;
+	if (tabu->nb_node == 1 && (dir = opendir(tabu->home
+	? tabu->home : tabu->path)) && !closedir(dir))
 		ft_strjoin_free(&new, "/");
 	else if (tabu->nb_node == 1 &&
 	!ft_strlen(ed->hist->cmd + ed->cursor_str_pos))
