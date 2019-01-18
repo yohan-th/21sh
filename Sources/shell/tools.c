@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/05 23:19:43 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 14:32:09 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 15:36:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -26,6 +26,8 @@ t_shell		*init_shell(char **envp)
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
 	shell->hist = init_hist();
+	if (!shell->hist)
+		return (NULL);
 	return (shell);
 }
 

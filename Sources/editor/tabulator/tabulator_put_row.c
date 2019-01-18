@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 11:32:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/16 20:52:59 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 15:50:09 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -23,9 +23,10 @@ void	tabulator_put_color(t_tab_elem *el)
 		ft_putstr(BLUE);
 	else if (el->d_type == 2 || el->d_type == 6)
 		ft_putstr(YEL);
-	else if (el->d_type == 8 && (el->st_mode & S_IXUSR))
+	else if (el->d_type == 8 && el->st_mode && (el->st_mode & S_IXUSR))
 		ft_putstr(GREEN);
-	else if (el->d_type == 4 || ((dir = opendir(el->path)) && !closedir(dir)))
+	else if (el->d_type == 4 ||
+	(el->path && (dir = opendir(el->path)) && !closedir(dir)))
 		ft_putstr(RED);
 	if (check_if_name_with_new_line(el->d_name))
 		while (el->d_name[++i])
@@ -45,9 +46,10 @@ void	tabulator_put_type(t_tab_elem *el)
 		ft_putchar('#');
 	else if (el->d_type == 10)
 		ft_putchar('@');
-	else if (el->d_type == 8 && (el->st_mode & S_IXUSR))
+	else if (el->d_type == 8 && el->st_mode && (el->st_mode & S_IXUSR))
 		ft_putchar('*');
-	else if (el->d_type == 4 || ((dir = opendir(el->path)) && !closedir(dir)))
+	else if (el->d_type == 4 ||
+	(el->path && (dir = opendir(el->path)) && !closedir(dir)))
 		ft_putchar('/');
 	else
 		ft_putchar(' ');

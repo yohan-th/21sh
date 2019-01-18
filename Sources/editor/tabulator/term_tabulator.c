@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/16 14:53:08 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 15:21:42 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -45,7 +45,7 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 	!mode ? ft_printf("Display all %d possibilities? (y or n)", tabu->nb_node)
 	: ft_putstr("--More--");
 	tputs(tgetstr("ve", NULL), 1, ft_putchar);
-	while ((ret = get_read_key(&ed->key)) > -1)
+	while ((ret = get_read_key(STDIN_FILENO, &ed->key)) > -1)
 	{
 		if (!mode && ret == 1 && ed->key[0] == 'y' && write(1, "\n", 1))
 			return (1);

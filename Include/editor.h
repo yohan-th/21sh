@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/16 18:53:17 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 16:02:13 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -219,10 +219,10 @@ void		fill_hist_file(t_history *hist);
 void	print_line(char *line, int str_pos, int cur_pos, int ws_col);
 int		last_char_pos(t_editor *ed);
 int		check_if_new_line_in_line(t_editor *ed);
-int		get_read_key(char **key);
+int		get_read_key(int fd, char **key);
 int		enough_space_on_screen(t_editor *ed);
 void	calculate_first_and_last_row(t_editor *ed);
-char	*build_full_path(char *path, char *d_name);
+char	*build_full_path(char *path, char *d_name, char **env);
 int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin);
 int		tabulator_check_if_var(t_tab *tabu);
 void	tabulator_autocomplete(char **comp, char *d_name);

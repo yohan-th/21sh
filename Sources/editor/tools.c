@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 21:17:16 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/16 16:16:05 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 15:33:24 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -88,18 +88,21 @@ int		enough_space_on_screen(t_editor *ed)
 	return (1);
 }
 
-int		get_read_key(char **key)
+int		get_read_key(int fd, char **key)
 {
 	int		ret;
 	char	buf[BUFF_READ + 1];
 
+	if (BUFF_READ < 1)
+		return (-1);
 	ft_bzero(buf, BUFF_READ + 1);
-	if ((ret = read(STDIN_FILENO, buf, BUFF_READ)))
+	if ((ret = read(fd, buf, BUFF_READ)))
 	{
 		buf[ret] = '\0';
-		ft_strjoin_free(key, buf);
+		if (!ft_strjoin_free(key, buf))
+			return (-1);
 	}
 	if (ret == BUFF_READ)
-		get_read_key(key);
+		get_read_key(fd, key);
 	return (ret);
 }

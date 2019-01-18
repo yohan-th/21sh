@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 16:53:36 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 16:53:36 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 15:06:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,7 +15,7 @@
 #ifndef SHELL_H
 # define SHELL_H
 
-# define BUFF_READ 4096
+# define BUFF_READ 10
 
 # include <unistd.h>
 # include <sys/types.h>

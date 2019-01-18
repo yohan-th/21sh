@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/01/08 17:22:56 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/16 21:05:21 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/16 22:30:24 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -98,5 +98,6 @@ int				tabulator_check_if_var(t_tab *tabu)
 		ft_strdel(&env_var_name);
 		i++;
 	}
+	ft_strdel(&var);
 	return (0);
 }
