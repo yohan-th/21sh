@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/17 14:25:47 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 21:34:03 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,7 +29,7 @@ static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt,
 		*hist = (*hist)->next;
 }
 
-static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p)
+static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p, char **env)
 {
 	if (CTRL_D && !ed->hist->cmd)
 		ed->ret = -2;
@@ -41,7 +41,7 @@ static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p)
 	else if (ed->first_row < 1)
 		return ;
 	else if (CTRL_L)
-		clear_window(ed, *p);
+		clear_window(ed, *p, env);
 	else if (CTRL_K && (ft_strlen(ed->hist->cmd) + ed->cursor_str_pos))
 		delete_from_cursor_to_end(ed);
 	else if (CTRL_P && enough_space_on_screen(ed))
@@ -51,7 +51,7 @@ static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p)
 static int		get_keyboard_key(t_editor *ed, e_prompt *prompt, char **env)
 {
 	if (CTRL_D || CTRL_C || CTRL_L || CTRL_K || CTRL_P)
-		get_keyboard_key_ctrl(ed, prompt);
+		get_keyboard_key_ctrl(ed, prompt, env);
 	else if (ed->first_row < 1)
 		return (0);
 	else if (LEFT_KEY || RIGHT_KEY)
@@ -79,7 +79,7 @@ int				get_stdin(char **line, e_prompt *prompt,
 	t_editor	*ed;
 
 	get_term_raw_mode(1);
-	if (!(ed = line_editor_init(line, *prompt, display_prompt(*prompt), hist)))
+	if (!(ed = line_editor_init(line, *prompt, display_prompt(*prompt, env), hist)))
 		return (-2);
 	term_size(ed);
 	while (ed->ret != -1)
@@ -87,7 +87,7 @@ int				get_stdin(char **line, e_prompt *prompt,
 		ed->ret = get_read_key(STDIN_FILENO, &ed->key);
 		tputs(tgetstr("vi", NULL), 1, ft_putchar);
 		if (term_size(ed) == EXIT_SUCCESS)
-			window_resize(ed, prompt);
+			window_resize(ed, prompt, env);
 		if (ed->ret && ed->key)
 			get_keyboard_key(ed, prompt, env);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);

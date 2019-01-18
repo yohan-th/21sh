@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 16:02:13 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 21:59:56 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,6 +20,7 @@
 # include <sys/ioctl.h>
 # include <unistd.h>
 # include <dirent.h>
+#include <sys/utsname.h>
 # define WHITE "\033[7;49;37m"
 # define RED "\033[1;31m"
 # define BLUE "\033[1;36m"
@@ -149,7 +150,7 @@ int		backspace(t_editor *ed);
  *******************************************************************************
  */
 
-int		clear_window(t_editor *ed, e_prompt prompt);
+int		clear_window(t_editor *ed, e_prompt prompt, char **env);
 void	myhandler_interrupt(int signal);
 
 /*
@@ -163,7 +164,7 @@ void	reset_cursor_position_escape_sequence(char **cursor_position);
 
 void	add_paste_into_line(t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
-int		display_prompt(e_prompt prompt);
+int		display_prompt(e_prompt prompt, char **env);
 int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env);
 void	myhandler_winsize_change(int signal);
 int		get_cursor_position(int mode);
@@ -188,7 +189,7 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_hist
 int		line_editor_delete(t_editor *ed, t_history **hist);
 void	init_t_tab(t_editor *ed);
 int		term_size(t_editor *ed);
-void	window_resize(t_editor *ed, e_prompt *prompt);
+void	window_resize(t_editor *ed, e_prompt *prompt, char **env);
 int		print_key(t_editor *ed);
 
 void	del_lines(int nb_line);

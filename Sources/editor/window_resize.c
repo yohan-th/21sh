@@ -6,20 +6,20 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/06 21:40:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 04:39:26 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 21:38:23 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	window_resize(t_editor *ed, e_prompt *prompt)
+void	window_resize(t_editor *ed, e_prompt *prompt, char **env)
 {
 	int	cursor_str_pos_tmp;
 
 	cursor_str_pos_tmp = ed->cursor_str_pos;
 	tputs(tgetstr("cl", NULL), 1, ft_putchar);
-	ed->prompt_size = display_prompt(*prompt);
+	ed->prompt_size = display_prompt(*prompt, env);
 	ed->first_char = get_cursor_position(0);
 	ed->first_row = get_cursor_position(1);
 	ed->cur_col = ed->first_char;
