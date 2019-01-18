@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 22:00:26 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/18 22:14:13 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,15 +49,18 @@ static int		prompt_type(e_prompt prompt)
 
 int				display_prompt(e_prompt prompt, char **env)
 {
+	char	*user;
 	int		len;
 	struct	utsname buf;
 
 	if (prompt != PROMPT)
 		return (prompt_type(prompt));
-	len = ft_putstrlen(get_envp(env, "USER"));
+	user = get_envp(env, "USER");
+	len = ft_putstrlen(user);
 	if (!uname(&buf))
 	{
-		len += ft_putstrlen("@");
+		if (user)
+			len += ft_putstrlen("@");
 		len += ft_putstrlen(buf.nodename);
 	}
 	len += ft_putstrlen("$ ");
