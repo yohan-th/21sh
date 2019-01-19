@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 21:59:56 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/19 21:01:00 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -227,5 +227,6 @@ char	*build_full_path(char *path, char *d_name, char **env);
 int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin);
 int		tabulator_check_if_var(t_tab *tabu);
 void	tabulator_autocomplete(char **comp, char *d_name);
+char	*get_user_name(void);
 
 #endif

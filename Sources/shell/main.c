@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/03 14:57:27 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/19 17:27:29 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,12 +19,8 @@ int		init_terminal_data(void)
 	char		*termtype;
 	int			success;
 
-	termtype = getenv("TERM");
-	if (termtype == 0)
-	{
-		ft_putstr("Specify a terminal type with `setenv TERM <yourtype>'.\n");
-		return (EXIT_FAILURE);
-	}
+	if (!(termtype = getenv("TERM")))
+		termtype = "xterm-256color";
 	success = tgetent(term_buffer, termtype);
 	if (success < 0)
 	{

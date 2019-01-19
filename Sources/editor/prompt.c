@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 22:14:13 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/19 21:32:34 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -47,19 +47,48 @@ static int		prompt_type(e_prompt prompt)
 	return (0);
 }
 
+char	*get_user_name()
+{
+	DIR		*dir;
+	uid_t	uid;
+	char	*full_path;
+	struct	stat buf;
+	struct	dirent *dirent;
+
+	dir = opendir("/Users");
+	uid = getuid();
+	while (dir && (dirent = readdir(dir)))
+	{
+		full_path = build_full_path("/Users", dirent->d_name, NULL);
+		if (full_path && !lstat(full_path, &buf)
+		&& buf.st_uid == uid && !closedir(dir))
+		{
+			ft_strdel(&full_path);
+			return (dirent->d_name);
+		}
+		ft_strdel(&full_path);
+	}
+	if (dir)
+		closedir(dir);
+	return (NULL);
+}
+
 int				display_prompt(e_prompt prompt, char **env)
 {
-	char	*user;
-	int		len;
-	struct	utsname buf;
+	(void)env;
+	//char			*user;
+	int				len;
+	struct utsname	buf;
+	//uid_t			uid;
 
 	if (prompt != PROMPT)
 		return (prompt_type(prompt));
-	user = get_envp(env, "USER");
-	len = ft_putstrlen(user);
+	//user = get_envp(env, "USER");
+//	len = ft_putstrlen(user);
+	len = ft_putstrlen(get_user_name());//42sh
 	if (!uname(&buf))
 	{
-		if (user)
+	//	if (user)
 			len += ft_putstrlen("@");
 		len += ft_putstrlen(buf.nodename);
 	}

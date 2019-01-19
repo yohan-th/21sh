@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 21:34:03 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/19 17:44:19 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -79,7 +79,8 @@ int				get_stdin(char **line, e_prompt *prompt,
 	t_editor	*ed;
 
 	get_term_raw_mode(1);
-	if (!(ed = line_editor_init(line, *prompt, display_prompt(*prompt, env), hist)))
+	if (!(ed = line_editor_init(line, *prompt,
+	display_prompt(*prompt, env), hist)))
 		return (-2);
 	term_size(ed);
 	while (ed->ret != -1)

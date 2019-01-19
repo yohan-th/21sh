@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 16:21:27 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/01/19 21:32:21 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -16,13 +16,17 @@
 char	*build_full_path(char *path, char *d_name, char **env)
 {
 	char *full_path;
+	char *user;
+	(void)env;
 
 	if (path && path[0] == '~')
 	{
-		if (path[1] == '/')
-			full_path = ft_strdup(get_envp(env, "HOME"));
-		else
+		//if (env && path[1] == '/')
+		//	full_path = ft_strdup(get_envp(env, "HOME"));
+		//else
 			full_path = ft_strdup("/Users/");
+			if (path[1] == '/' && (user = get_user_name())) //42sh
+				ft_strjoin_free(&full_path, user);
 		if (!full_path)
 			return (NULL);
 		ft_strjoin_free(&full_path, path + 1);
