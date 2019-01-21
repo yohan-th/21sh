@@ -63,7 +63,7 @@ int			get_stdout_from(char *redi, int pos)
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-int			shell_stdout_sub(char **arg, int i, t_stdout *redi)
+int			shell_stdout_sub(char **arg, int i, t_output *redi)
 {
 	redi->from = get_stdout_from(*arg, i);
 	ft_strdel(&redi->to);
@@ -86,12 +86,12 @@ int			shell_stdout_sub(char **arg, int i, t_stdout *redi)
 	return (i);
 }
 
-t_stdout	*add_stdout(t_stdout **first_redi)
+t_output	*add_stdout(t_output **first_redi)
 {
-	t_stdout	*new_redi;
-	t_stdout	*t_next;
+	t_output	*new_redi;
+	t_output	*t_next;
 
-	if (!(new_redi = malloc(sizeof(t_stdout))))
+	if (!(new_redi = malloc(sizeof(t_output))))
 		return (NULL);
 	new_redi->append = 0;
 	new_redi->from = 1;
@@ -118,10 +118,10 @@ t_stdout	*add_stdout(t_stdout **first_redi)
 ** On effectue un exit propre (à faire).
 */
 
-t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote)
+t_output	*shell_std_out(char **arg, t_output **first_redi, char quote)
 {
 	int			i;
-	t_stdout	*redi;
+	t_output	*redi;
 
 	if (*first_redi && (get_last_stdout(*first_redi))->to == NULL && *arg)
 		*arg = complete_stdout_to(arg, get_last_stdout(*first_redi), quote);

@@ -28,7 +28,7 @@ void	builtin_echo(char **cmd)
 	while (cmd[i] != NULL || cmd[i])
 	{
 		if (ft_strcmp(cmd[i], "") != 0)
-			ft_printf("%s ", cmd[i]);
+			ft_dprintf(1, "%s ", cmd[i]);
 		i++;
 	}
 	if (newl)

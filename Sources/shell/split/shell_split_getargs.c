@@ -92,8 +92,8 @@ char	*get_arg(char **str, t_cmd *cmd)
 		return (NULL);
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
-	shell_std_out(&arg, &cmd->std_out, quote);
-	shell_std_in(&arg, quote, &cmd->std_in, &cmd->hrdc, &cmd->hrdc_stdin);
+	shell_std_out(&arg, &cmd->output, quote);
+	shell_std_in(&arg, quote, &cmd->input, &cmd->hrdc, &(cmd->process).fd_stdin);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }
@@ -110,11 +110,13 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));
 	cmd->args = (char **)malloc(sizeof(char *) * (nb_arg + 1));
 	cmd->args[nb_arg] = NULL;
-	cmd->std_out = NULL;
-	cmd->std_in = NULL;
+	cmd->output = NULL;
+	cmd->input = NULL;
 	cmd->hrdc = NULL;
-	cmd->hrdc_stdin = NULL;
 	cmd->exec = NULL;
+	cmd->process.fd_stdin = ft_strdup("&0");
+	cmd->process.fd_stdout = ft_strdup("&1");
+	cmd->process.fd_stderr = ft_strdup("&2");
 	i = 0;
 	while (i < nb_arg)
 		cmd->args[i++] = get_arg(line, cmd);

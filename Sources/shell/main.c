@@ -57,7 +57,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 				write(2, "&&'\n", 4);
 			return (1);
 		}
-		if (!stdout_to(next->std_out))
+		if (!stdout_to(next->output))
 		{
 			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
 			return (1);
@@ -102,7 +102,7 @@ int	shell_exit(t_cmd **cmd, t_shell **shell)
 	if ((*shell)->hist)
 		fill_hist_file((*shell)->hist);
 	clean_shell(shell);
-	return (101);
+	return (101); //renvoyer bonne valeur du shell
 }
 
 int		main(void)
@@ -119,7 +119,7 @@ int		main(void)
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;
 		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
-				(prmt == PROMPT && cmd && cmd->hrdc_stdin))
+				(prmt == PROMPT && cmd && (cmd->process).fd_stdin))
 		{
 			if (cmd_check(&cmd, shl, &prmt))
 				continue;

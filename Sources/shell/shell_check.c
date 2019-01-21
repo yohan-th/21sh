@@ -42,7 +42,7 @@ BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 		if (next->hrdc && ((int)next->hrdc[0] < -3 || (int)next->hrdc[0] > -1))
 			return (shell_hrdc_quotesub((*cmd = next), &shell->str, prompt));
 		if ((next->hrdc && (int)next->hrdc[0] == -1) ||
-			(((next->std_in && (int)next->std_in[0] == -2) ||
+			(((next->input && (int)next->input[0] == -2) ||
 			(next->hrdc && (int)next->hrdc[0] == -2)) &&
 			next->next_cmd == NULL))
 		{

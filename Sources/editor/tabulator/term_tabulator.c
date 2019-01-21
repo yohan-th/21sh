@@ -42,7 +42,7 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 	int ret;
 
 	ft_strdel(&ed->key);
-	!mode ? ft_printf("Display all %d possibilities? (y or n)", tabu->nb_node)
+	!mode ? ft_dprintf(2, "Display all %d possibilities? (y or n)", tabu->nb_node)
 	: ft_putstr("--More--");
 	tputs(tgetstr("ve", NULL), 1, ft_putchar);
 	while ((ret = get_read_key(STDIN_FILENO, &ed->key)) > -1)

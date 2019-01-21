@@ -17,7 +17,7 @@
 # include "libft.h"
 
 int		ft_putchar(int c);
-void	ft_putchar_fd(char c, int fd);
+int		ft_putchar_fd(char c, int fd);
 int		ft_putnbr_signed(intmax_t nb);
 int		ft_putnbr_unsigned(uintmax_t nb);
 int		ft_putstr(char const *s);

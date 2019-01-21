@@ -54,7 +54,7 @@ typedef struct	s_pf_prints
 	int			free;
 }				t_pf_prints;
 
-int				ft_printf(const char *format, ...);
+int				ft_dprintf(int fd, const char *format, ...);
 t_pf_fields		pf_fields_reset(void);
 t_pf_fields		pf_parse(const char **format);
 intmax_t		pf_type(va_list ap, t_pf_fields *fields);

@@ -29,9 +29,9 @@ void	clean_arr_mlti(char **arr)
 		free(arr);
 }
 
-void	clean_redi(t_stdout **redi)
+void	clean_redi(t_output **redi)
 {
-	t_stdout	*tmp;
+	t_output	*tmp;
 
 	while ((*redi)->next != NULL)
 	{
@@ -60,9 +60,12 @@ int		clean_cmd(t_cmd **cmd)
 		if ((*cmd)->args)
 			ft_arrdel((*cmd)->args);
 		clean_arr_mlti((*cmd)->hrdc);
-		clean_arr_mlti((*cmd)->std_in);
-		if ((*cmd)->std_out)
-			clean_redi(&((*cmd)->std_out));
+		clean_arr_mlti((*cmd)->input);
+		ft_strdel(&(*cmd)->process.fd_stdin);
+		ft_strdel(&(*cmd)->process.fd_stdout);
+		ft_strdel(&(*cmd)->process.fd_stderr);
+		if ((*cmd)->output)
+			clean_redi(&((*cmd)->output));
 		free(tmp);
 		tmp = *cmd;
 	}

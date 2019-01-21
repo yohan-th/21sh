@@ -98,7 +98,7 @@ int		ft_undef_beha(const char **format)
 	return (0);
 }
 
-int		ft_printf(const char *format, ...)
+int		ft_dprintf(int fd, const char *format, ...)
 {
 	va_list		ap;
 	t_pf_fields	fields;
@@ -121,7 +121,7 @@ int		ft_printf(const char *format, ...)
 		else if (*format == '%' && ft_undef_beha(&format) == -1)
 			len_print += ft_undef_char(&format);
 		else if (ft_strlen(format) >= 1)
-			len_print += ft_putchar(*format++);
+			len_print += ft_putchar_fd(*format++, fd);
 	}
 	va_end(ap);
 	return (len_print);

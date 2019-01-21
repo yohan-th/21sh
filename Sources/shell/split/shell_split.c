@@ -30,9 +30,9 @@ int		get_sep(char **str)
 	return (sep);
 }
 
-BOOL	stdout_to(t_stdout *redis)
+BOOL	stdout_to(t_output *redis)
 {
-	t_stdout	*read;
+	t_output	*read;
 
 	read = redis;
 	while (read != NULL)
@@ -106,7 +106,7 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
-		if (!stdout_to(cmd->std_out)) //(!ft_strlen(cmd->args[0]) && cmd->sep) ||
+		if (!stdout_to(cmd->output)) //(!ft_strlen(cmd->args[0]) && cmd->sep) ||
 			break ;
 	}
 	if (!cmd->args || (ft_strlen(*cmd->args) && (cmd->sep == SPL_PIPE ||

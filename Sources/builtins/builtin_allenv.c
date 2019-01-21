@@ -118,10 +118,10 @@ void	builtin_env(char ***envp, char *key)
 	{
 		env_key = get_var((*envp)[i]);
 		if (key == NULL)
-			ft_printf("%s\n", (*envp)[i]);
+			ft_dprintf(1, "%s\n", (*envp)[i]);
 		else if (ft_strcmp(key, env_key) == 0)
 		{
-			ft_printf("%s\n", ft_strchr((*envp)[i], '=') + 1);
+			ft_dprintf(1, "%s\n", ft_strchr((*envp)[i], '=') + 1);
 			found = 1;
 			free(env_key);
 			break ;
@@ -130,5 +130,5 @@ void	builtin_env(char ***envp, char *key)
 		i++;
 	}
 	if (key != NULL && found == 0)
-		ft_printf("minishell: env: %s not found\n", key);
+		ft_dprintf(2, "minishell: env: %s not found\n", key);
 }

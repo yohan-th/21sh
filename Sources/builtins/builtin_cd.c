@@ -111,7 +111,7 @@ void	cd_clean_path(char *pwd)
 }
 
 /*
-** Par default cd suit les links (option -L)
+** Par default cd suit les liens (option -L)
 */
 
 void	builtin_cd(char **cmd, char ***envp)

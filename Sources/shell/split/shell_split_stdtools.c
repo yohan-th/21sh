@@ -30,14 +30,16 @@ int			len_stdout_to(char *str, char quote)
 			break ;
 		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
 			break ;
+		if (quote == ' ' && str[i] == '-' && i++)
+			break;
 		i += (str[i]) ? 1 : 0;
 	}
 	return (i);
 }
 
-t_stdout	*get_last_stdout(t_stdout *redi)
+t_output	*get_last_stdout(t_output *redi)
 {
-	t_stdout	*t_next;
+	t_output	*t_next;
 
 	t_next = redi;
 	while (t_next->next)
@@ -45,7 +47,7 @@ t_stdout	*get_last_stdout(t_stdout *redi)
 	return (t_next);
 }
 
-char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote)
+char		*complete_stdout_to(char **arg, t_output *add_to, char quote)
 {
 	char *ret;
 

@@ -25,6 +25,13 @@
 # include "editor.h"
 # include "../Libft/Includes/libft.h"
 
+typedef struct				s_process
+{
+	char 				*fd_stdin;
+	char 				*fd_stdout;
+	char 				*fd_stderr;
+}							t_process;
+
 typedef struct				s_stdout
 {
 	BOOL				append;
@@ -32,7 +39,7 @@ typedef struct				s_stdout
 	char 				*to;
 	struct s_stdout		*next;
 	struct s_stdout		*start;
-}							t_stdout;
+}							t_output;
 
 /*
 ** Le premier maillon de t_cmd est vide et est pointé par tous les autres
@@ -48,9 +55,10 @@ typedef struct				s_cmd
 {
 	char 				*exec;
 	char 				**args;
-	t_stdout			*std_out;
-	char 				**std_in;
+	t_output			*output;
+	char 				**input;
 	char 				**hrdc;
+	t_process			process;
 	char 				*hrdc_stdin;
 	int 				sep;
 	struct s_cmd		*next_cmd;
@@ -60,6 +68,7 @@ typedef struct				s_cmd
 typedef struct				s_shell
 {
 	char 				**envp;
+	char 				**envl;
 	char 				*str;
 	t_history			*hist;
 }							t_shell;
@@ -83,6 +92,7 @@ void	builtin_cd(char **cmd, char ***envp);
 void	builtin_setenv(char ***envp, char *key, char *value);
 void	builtin_unsetenv(char ***envp, char *key);
 void	builtin_delenv(char ***envp, char *key);
+int		builtin_env(char ***envp, char ***envl, char **args);
 char	**rmv_key_env(char **envp, char *key);
 void	builtin_env(char ***envp, char *key);
 void	builtin_echo(char **cmd);
@@ -117,7 +127,7 @@ t_cmd		*shell_split(char *line, char **envp, e_prompt *prompt);
 t_cmd 		*get_args(char **line, char **envp, e_prompt *prompt);
 void		shell_envpsub(char **arg, char **envp);
 int 		shell_process(t_cmd **cmd, t_shell *shell);
-t_stdout	*shell_std_out(char **arg, t_stdout **first_redi, char quote);
+t_output	*shell_std_out(char **arg, t_output **first_redi, char quote);
 void		shell_std_in(char **arg, char quote, char ***ptn_stdin,
 							char ***ptn_hrdc, char **hrdc_stdin);
 
@@ -130,10 +140,10 @@ int			clean_cmd(t_cmd **cmd);
 char		*shell_trim(char **str);
 int			check_last_quote(char *arg, char quote);
 void		shl_quotesub(char *arg);
-BOOL		stdout_to(t_stdout *redis);
+BOOL		stdout_to(t_output *redis);
 int			len_stdout_to(char *str, char quote);
-t_stdout	*get_last_stdout(t_stdout *redi);
-char		*complete_stdout_to(char **arg, t_stdout *add_to, char quote);
+t_output	*get_last_stdout(t_output *redi);
+char		*complete_stdout_to(char **arg, t_output *add_to, char quote);
 void		complete_stdin(char **arg, char quote, char ***std_in);
 int			shell_stdin_sub(char **arg, int i, char ***std_in);
 char		**add_stdin(char **hrdc);
@@ -149,15 +159,18 @@ void		read_lexing(t_cmd *cmd);
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-int			shell_prepare(t_cmd *cmd, t_shell *shell);
+void		shell_prepare(t_cmd *cmd, t_shell *shell);
 char		*shell_getpathexec(char *exec, char **envp);
 void		shell_clean_emptyargs(t_cmd *link);
-int			complete_stdout_path(t_stdout *std_out, t_shell *shell);
-void 		complete_stdin_path(t_cmd *link, t_shell *shell);
+int			complete_stdout_path(t_output *std_out, t_shell *shell);
 int			shell_error_prepare(char *msg, char *elem);
+int 		shell_read_input(t_cmd *elem, t_shell *shell);
+int			shell_set_output(t_cmd *elem, t_shell *shell);
 
 void		shell_save_fd(int fd[3]);
 void		reinit_fd(int fd[3]);
+void		shell_prcs_sigint(int signum);
+int			ft_read_file(char *filename, char **file_content);
 
 /*
 ** Hard test
@@ -223,6 +236,7 @@ void		reinit_fd(int fd[3]);
 ** unsetenv $HOME && echo "pwd.h get the *pw_name" >~/file
 ** echo file_line > file && cat << EOF1 < file << EOF2 puis line1 \n EOF1 \n line2 \n EOF2 --> dernier element avec bash et en suivant l'ordre pour zsh
 ** exit 1arg 2arg --> no exit
+** cat <&\2
 */
 
 /*

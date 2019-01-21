@@ -20,23 +20,6 @@
 #include <sys/types.h>
 #include <signal.h>
 
-void	shell_send_stdin(t_cmd *link, int tmp_fd[3])
-{
-	int i;
-
-	close(tmp_fd[0]); // close the unused read side
-	dup2(tmp_fd[1], 1); // connect the write side with stdout
-	close(tmp_fd[1]); // close the write side
-	i = 0;
-	while (link->std_in && link->std_in[i])
-	{
-		if (link->std_in[i] == link->hrdc_stdin)
-			ft_printf("%s\n", link->std_in[i++]);
-		else
-			; //read file
-	}
-}
-
 void	shell_prcs_get_stdin(int *tmp_fd)
 {
 	close(tmp_fd[1]); // close the unused write side
@@ -44,53 +27,65 @@ void	shell_prcs_get_stdin(int *tmp_fd)
 	close(tmp_fd[0]); // close the read side
 }
 
-void	shell_prcs_sigint(int signum)
+/*
+void	shell_send_stdout(int *tmp_fd, t_stdout *std_out)
 {
-	(void)signum;
-	write(1, "\n", 1);
+	;
 }
+*/
 
-void	shell_child(t_cmd *link, t_shell *shell, int tmp_fd[3])
+void	shell_child(t_cmd *elem, t_shell *shell, int tmp_fd[3])
 {
-	if (link->std_in)
+	if ((elem->process).fd_stdin)
 		shell_prcs_get_stdin(tmp_fd);
-	//if (link->std_out)
-	//	shell_send_stdout(tmp_fd, link->std_out);
-	execve(link->exec, link->args, shell->envp);
+//	if (elem->std_out)
+//		shell_send_stdout(tmp_fd, elem->std_out);
+	execve(elem->exec, elem->args, shell->envp);
 }
 
-void	shell_father(t_cmd *link, int tmp_fd[3], int pid_child, int fd[3])
+void	shell_send_stdin(t_cmd *elem, int tmp_fd[3])
 {
-	if (link->std_in)
-		shell_send_stdin(link, tmp_fd);
+	close(tmp_fd[0]); // close the unused read side
+	dup2(tmp_fd[1], 1); // connect the write side with stdout
+	close(tmp_fd[1]); // close the write side
+	ft_putstr((elem->process).fd_stdin);
+}
+
+
+void	shell_father(t_cmd *elem, int tmp_fd[3], int pid_child, int fd[3])
+{
+	if (elem->input)
+		shell_send_stdin(elem, tmp_fd);
 	reinit_fd(fd);
 	wait(&pid_child);
 }
 
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
-	t_cmd	*link;
+	t_cmd	*elem;
 	int		father;
 	int 	fd[3];
 	int		tmp_fd[3];
 	int		built_in;
 
-	if (!shell_prepare(*cmd, shell))
-		return (shell_clean_data(cmd, shell, 1, 1));
+	shell_prepare(*cmd, shell);
 	shell_save_fd(fd);
-	read_lexing(*cmd);
 	built_in = 0;
 	signal(SIGINT, shell_prcs_sigint);
-	link = *cmd;
-	while ((link = link->next_cmd))
+	elem = *cmd;
+	while ((elem = elem->next_cmd))
 	{
-		if (link->args && (built_in = shell_builtin(link, shell)) == -1)
-			return (-1);
-		pipe(tmp_fd);
-		if (!built_in && link->args && link->exec && (father = fork()) == 0)
-			shell_child(link, shell, tmp_fd);
-		else if (!built_in)
-			shell_father(link, tmp_fd, father, fd);
+		if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
+		{
+			read_lexing(*cmd);
+			if (elem->args && (built_in = shell_builtin(elem, shell)) == -1)
+				return (-1);
+			pipe(tmp_fd);
+			if (!built_in && elem->args && elem->exec && (father = fork()) == 0)
+				shell_child(elem, shell, tmp_fd);
+			else if (!built_in && elem->args && elem->exec)
+				shell_father(elem, tmp_fd, father, fd);
+		}
 	}
 	clean_cmd(cmd);
 	ft_strdel(&shell->str);
@@ -99,56 +94,56 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 
 void	read_lexing(t_cmd *cmd)
 {
-	t_stdout	*read;
+	t_output	*read;
 	int 		i;
 
 	while ((cmd = cmd->next_cmd))
 	{
-		dprintf(2, "Read exec : %s\n", cmd->exec);
+		ft_dprintf(2, "Read exec : %s\n", cmd->exec);
 		i = 0;
-		dprintf(2, "Read array : ");
+		ft_dprintf(2, "Read array : ");
 		while (cmd->args[i])
 		{
-			dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
+			ft_dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
 			i++;
 		}
-		dprintf(2, "\nRead stdout : ");
-		read = cmd->std_out;
+		ft_dprintf(2, "\nRead stdout : ");
+		read = cmd->output;
 		if (read == NULL)
-			dprintf(2, "(NULL)");
+			ft_dprintf(2, "(NULL)");
 		while (read != NULL)
 		{
-			dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
+			ft_dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
 			read = read->next;
 		}
 
-		dprintf(2, "\nRead stdin : ");
-		if (!cmd->std_in)
-			dprintf(2, "(NULL)");
+		ft_dprintf(2, "\nRead stdin : ");
+		if (!cmd->input)
+			ft_dprintf(2, "(NULL)");
 		i = 0;
-		while (cmd->std_in && (cmd->std_in)[i] != NULL)
+		while (cmd->input && (cmd->input)[i] != NULL)
 		{
-			if ((int)(cmd->std_in)[i] <= -1 && (int)(cmd->std_in)[i] >= -3)
-				dprintf(2, "<%d> -", (int)(cmd->std_in)[i++]);
+			if ((int)(cmd->input)[i] <= -1 && (int)(cmd->input)[i] >= -3)
+				ft_dprintf(2, "<%d> -", (int)(cmd->input)[i++]);
 			else
-				dprintf(2, "<%s> - ", (cmd->std_in)[i++]);
+				ft_dprintf(2, "<%s> - ", (cmd->input)[i++]);
 		}
-		dprintf(2, "\nRead heredoc : ");
+		ft_dprintf(2, "\nRead heredoc : ");
 		if (!cmd->hrdc)
-			dprintf(2, "(NULL)");
+			ft_dprintf(2, "(NULL)");
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{
 			if ((int)(cmd->hrdc)[i] <= -1 && (int)(cmd->hrdc)[i] >= -3)
-				dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
+				ft_dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
 			else
-				dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
+				ft_dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
 		}
-		if ((int)cmd->hrdc_stdin == -1)
-			dprintf(2, "\nRead heredoc stdin : <%d>\n", (int)cmd->hrdc_stdin);
+		if ((int)(cmd->process).fd_stdin == -1)
+			ft_dprintf(2, "\nRead fd stdin : <%d>\n", (int)cmd->process.fd_stdin);
 		else
-			dprintf(2, "\nRead heredoc stdin : <%s>\n", cmd->hrdc_stdin);
-		dprintf(2, "Et sep %d\n", cmd->sep);
-		dprintf(2, "-------------\n");
+			ft_dprintf(2, "\nRead fd stdin : <%s>\n", cmd->process.fd_stdin);
+		ft_dprintf(2, "Et sep %d\n", cmd->sep);
+		ft_dprintf(2, "-------------\n");
 	}
 }

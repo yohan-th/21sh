@@ -17,48 +17,38 @@ int		shell_error_prepare(char *msg, char *elem)
 {
 	char *last_elem_path;
 
-	printf("-<elem|%s|\n", elem);
 	last_elem_path = elem;
 	while (ft_strchr(last_elem_path, '/'))
 		last_elem_path = ft_strchr(last_elem_path, '/') + 1;
 	if (ft_strcmp(msg, "Is directory") == 0)
-	{
-		write(2, "21sh: ", 6);
-		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
-		write(2, ": Is a directory\n", 17);
-	}
+		ft_dprintf(2, "21sh: %s: : Is a directory\n", last_elem_path);
 	else if (ft_strcmp(msg, "denied") == 0)
-	{
-		write(2, "21sh: ", 6);
-		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
-		write(2, ": Permission denied\n", 20);
-	}
+		ft_dprintf(2, "21sh: %s: Permission denied\n", last_elem_path);
 	else if (ft_strcmp(msg, "not found") == 0)
-	{
-		write(2, "21sh: ", 7);
-		write(2, last_elem_path, (size_t)ft_strlen(last_elem_path));
-		write(2, ": No such directory\n", 20);
-	}
+		ft_dprintf(2, "21sh: %s: No such file or directory\n", last_elem_path);
+	else if (ft_strcmp(msg, "bad fd") == 0)
+		ft_dprintf(2, "21sh: %s: Bad file descriptor\n", last_elem_path + 1);
+	else if (ft_strcmp(msg, "ambiguous") == 0)
+		ft_dprintf(2, "21sh: %s: ambiguous redirect\n", last_elem_path + 1);
 	return (0);
 }
 
 int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
-		dprintf(2, "shell: setenv: invalid argument\n"
+		ft_dprintf(2, "shell: setenv: invalid argument\n"
 				   "usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
-		dprintf(2, "shell: unsetenv: invalid argument\n"
+		ft_dprintf(2, "shell: unsetenv: invalid argument\n"
 				   "usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
-		dprintf(2, "shell: env: invalid argument\nusage: env VAR\n");
+		ft_dprintf(2, "shell: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)
-		dprintf(2, "shell: $HOME env not set\n");
+		ft_dprintf(2, "shell: $HOME env not set\n");
 	else
-		dprintf(2, "Error ENV : unknown msg type <%s>\n", msg);
+		ft_dprintf(2, "Error ENV : unknown msg type <%s>\n", msg);
 	return (0);
 }
-
 
 /*
 ** Print un message d'erreur ou/et exit le plus proprement possible.
@@ -89,7 +79,8 @@ int		shell_error(char *type, int n, ...)
 	{
 		ft_strdel(va_arg(ap, char **));
 		ft_arrdel(va_arg(ap, char **));
-		dprintf(2, "Fatal: failed to allocate %zu bytes\n", va_arg(ap, size_t));
+		ft_dprintf(2, "Fatal: failed to allocate %zu bytes\n",
+				va_arg(ap, size_t));
 		va_end(ap);
 		exit(EXIT_FAILURE);
 	}
