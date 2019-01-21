@@ -70,12 +70,6 @@ char 	*check_path_cmd(char *exec_path, char *exec)
 		write(2, exec, (size_t)ft_strlen(exec));
 		write(2, ": is a directory\n", 17);
 	}
-	else
-	{
-		write(2, "21sh: ", 6);
-		write(2, exec, (size_t)ft_strlen(exec));
-		write(2, ": command not found\n", 20);
-	}
 	ft_strdel(&exec_path);
 	return (ret);
 }

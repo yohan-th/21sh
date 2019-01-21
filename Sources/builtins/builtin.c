@@ -32,9 +32,9 @@ void	check_builtin_unsetenv(char ***envp, char **cmd)
 void	check_builtin_env(char ***envp, char **cmd)
 {
 	if (cmd[1] == NULL)
-		builtin_env(envp, NULL);
+		builtin_env(*envp, NULL);
 	else if (cmd[1] != NULL && cmd[2] == NULL)
-		builtin_env(envp, cmd[1]);
+		builtin_env(*envp, cmd[1]);
 	else
 		shell_error("env usage", 0);
 }

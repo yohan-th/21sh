@@ -13,33 +13,29 @@
 
 #include "../../../Include/shell.h"
 
-/*
-** Ajoute le dossier courant
-*/
-
-int		complete_stdout_paths(t_output *output, t_shell *shell)
+int		check_fd_output(char *output, t_shell *shell)
 {
-	char 		*tmp;
-	t_output 	*elem;
-	char 		*cur_dir;
+	int 	fd;
+	int 	i;
 
-	elem = output;
-	while (elem != NULL)
+	if (output[0] == '&')
 	{
-		shell_envpsub(&elem->to, shell->envp);
-		shl_quotesub(elem->to);
-		if (elem->to[0] != '/' && elem->to[0] != '&')
-		{
-			cur_dir = get_cur_dir();
-			tmp = elem->to;
-			elem->to = ft_strjoin_mltp(3, cur_dir, "/", elem->to);
-			ft_strdel(&tmp);
-			ft_strdel(&cur_dir);
-		}
-		elem = elem->next;
+		shell_envpsub(&output, shell->envp);
+		shl_quotesub(output);
+		i = 1;
+		while (ft_isdigit(output[i]))
+			i++;
+		if (output[i] != '\0')
+			return (shell_error_prepare("ambiguous", output) - 1);
+		fd = ft_atoi(output + 1);
+		if (fd < 0 || fd > 2)
+			return (shell_error_prepare("bad fd", output) - 1);
+		else
+			return (1);
 	}
-	return (1);
+	return (0);
 }
+
 
 int 	check_output_recheable(t_output *output)
 {
@@ -66,28 +62,71 @@ int 	check_output_recheable(t_output *output)
 	return (1);
 }
 
+int 	is_recheable_output(t_output *output, t_shell *shell)
+{
+	int fd_open;
+
+	fd_open = 0;
+	complete_output_paths(&output->to, shell);
+	if (ft_isdir(output->to))
+		return (shell_error_prepare("Is directory", output->to));
+	else if (!path_to_output_exist(output->to))
+		return (shell_error_prepare("not found", output->to));
+	else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
+		return (shell_error_prepare("denied", output->to));
+	else if (access(output->to, F_OK) == -1)
+	{
+		if (output->append)
+			fd_open = open(output->to, O_WRONLY | O_APPEND);
+		else
+			fd_open = open(output->to, O_WRONLY | O_CREAT);
+	}
+	return (fd_open);
+}
+
+void 	shell_set_output_file(t_output *output, t_cmd *elem, int fd_file)
+{
+		if (output->from == 1)
+		{
+			(elem->process).fd_stdout = ft_strdup(output->to);
+			(elem->process).fd_fileout = fd_file;
+		}
+		else if (output->from == 2)
+		{
+			(elem->process).fd_stderr = ft_strdup(output->to);
+			(elem->process).fd_fileerr = fd_file;
+		}
+}
+
 /*
-** complete_stdout fail si $HOME n'existe pas et ~ appellé (getpwnam interdit)
+** complete_output fail si $HOME n'existe pas (getpwnam interdit)
 */
 
 int		shell_set_output(t_cmd *elem, t_shell *shell)
 {
-	t_output	*std_out;
+	t_output	*output;
+	int 		is_fd;
+	int 		fd_file;
 
-	std_out = elem->output;
-	while (std_out != NULL)
+	output = elem->output;
+	while (output != NULL)
 	{
-		complete_stdout_paths(std_out, shell);
-		check_output_recheable(std_out);
-
-		//	if (std_out->to[0] == '&' && ft_atoi(std_out->to + 1) == 1)
-		//	elem->process.file_stdout = std_out->append ?
-		//			open(std_out->to, O_WRONLY | O_APPEND) :
-		//			open(std_out->to, O_WRONLY | O_CREAT);
-
-
-		//}
-		std_out = std_out->next;
+		if (output->from == 1 && (elem->process).fd_stdout)
+			ft_strdel(&(elem->process).fd_stdout);
+		else if (output->from == 2 && (elem->process).fd_stderr)
+			ft_strdel(&(elem->process).fd_stderr);
+		if (((is_fd = check_fd_output(output->to, shell)) == 1))
+		{
+			if (output->from == 1)
+				(elem->process).fd_stdout = ft_strdup(output->to);
+			else if (output->from == 2)
+				(elem->process).fd_stderr = ft_strdup(output->to);
+		}
+		else if (!is_fd && (fd_file = is_recheable_output(output, shell)))
+			shell_set_output_file(output, elem, fd_file);
+		else
+			return (0);
+		output = output->next;
 	}
 	return (1);
 }

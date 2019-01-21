@@ -59,8 +59,7 @@ void	shell_prepare_args(t_cmd *cmd, t_shell *shell)
 }
 
 /*
-** Clean des arg vide, creation des fichier stdout, get exec path
-** et bien plus encore !
+** Clean des arg vide get exec path
 */
 
 void	shell_prepare(t_cmd *cmd, t_shell *shell)

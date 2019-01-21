@@ -86,4 +86,3 @@ int 	shell_read_input(t_cmd *elem, t_shell *shell)
 	}
 	return (1);
 }
-

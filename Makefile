@@ -40,9 +40,11 @@ SRCS =  shell/main.c \
         shell/process/shell_process.c \
         shell/process/shell_process_prepare.c \
         shell/process/shell_process_output.c \
+        shell/process/shell_process_output_tools.c \
         shell/process/shell_process_input.c \
         shell/process/shell_process_tools.c \
         shell/process/shell_process_getpathcmd.c \
+        shell/process/shell_process_exec.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \

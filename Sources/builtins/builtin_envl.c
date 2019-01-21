@@ -1,7 +1,7 @@
 
 #include "../../Include/shell.h"
 
-int	builtin_env(char ***envp, char ***envl, char **args)
+int	builtin_enpv(char ***envp, char ***envl, char **args)
 {
 	;
 }

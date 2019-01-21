@@ -17,53 +17,9 @@
 
 #include "../../../Include/shell.h"
 
-#include <sys/types.h>
-#include <signal.h>
-
-void	shell_prcs_get_stdin(int *tmp_fd)
-{
-	close(tmp_fd[1]); // close the unused write side
-	dup2(tmp_fd[0], 0); // connect the read side with stdin
-	close(tmp_fd[0]); // close the read side
-}
-
-/*
-void	shell_send_stdout(int *tmp_fd, t_stdout *std_out)
-{
-	;
-}
-*/
-
-void	shell_child(t_cmd *elem, t_shell *shell, int tmp_fd[3])
-{
-	if ((elem->process).fd_stdin)
-		shell_prcs_get_stdin(tmp_fd);
-//	if (elem->std_out)
-//		shell_send_stdout(tmp_fd, elem->std_out);
-	execve(elem->exec, elem->args, shell->envp);
-}
-
-void	shell_send_stdin(t_cmd *elem, int tmp_fd[3])
-{
-	close(tmp_fd[0]); // close the unused read side
-	dup2(tmp_fd[1], 1); // connect the write side with stdout
-	close(tmp_fd[1]); // close the write side
-	ft_putstr((elem->process).fd_stdin);
-}
-
-
-void	shell_father(t_cmd *elem, int tmp_fd[3], int pid_child, int fd[3])
-{
-	if (elem->input)
-		shell_send_stdin(elem, tmp_fd);
-	reinit_fd(fd);
-	wait(&pid_child);
-}
-
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
-	int		father;
 	int 	fd[3];
 	int		tmp_fd[3];
 	int		built_in;
@@ -80,17 +36,17 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 			read_lexing(*cmd);
 			if (elem->args && (built_in = shell_builtin(elem, shell)) == -1)
 				return (-1);
-			pipe(tmp_fd);
-			if (!built_in && elem->args && elem->exec && (father = fork()) == 0)
-				shell_child(elem, shell, tmp_fd);
-			else if (!built_in && elem->args && elem->exec)
-				shell_father(elem, tmp_fd, father, fd);
+			if (!built_in && !elem->exec)
+				ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
+			else if (!built_in && elem->exec)
+				shell_exec(tmp_fd, elem, shell);
 		}
 	}
 	clean_cmd(cmd);
 	ft_strdel(&shell->str);
 	return (1);
 }
+
 
 void	read_lexing(t_cmd *cmd)
 {

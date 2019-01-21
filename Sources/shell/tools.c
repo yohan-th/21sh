@@ -26,7 +26,8 @@ t_shell		*init_shell(char **envp)
 	shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
 	shell->hist = init_hist();
-	shell->envl = NULL;
+	shell->envl = malloc(sizeof(char *));
+	shell->envl[0] = NULL;
 	if (!shell->hist)
 		return (NULL);
 	return (shell);

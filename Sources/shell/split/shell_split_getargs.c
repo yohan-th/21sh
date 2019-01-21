@@ -117,6 +117,8 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->process.fd_stdin = ft_strdup("&0");
 	cmd->process.fd_stdout = ft_strdup("&1");
 	cmd->process.fd_stderr = ft_strdup("&2");
+	cmd->process.fd_fileerr = 0;
+	cmd->process.fd_fileout = 0;
 	i = 0;
 	while (i < nb_arg)
 		cmd->args[i++] = get_arg(line, cmd);

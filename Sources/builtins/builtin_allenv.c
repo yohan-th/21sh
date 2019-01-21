@@ -106,7 +106,7 @@ void	builtin_setenv(char ***envp, char *key, char *value)
 		*envp = append_key_env(*envp, key, value);
 }
 
-void	builtin_env(char ***envp, char *key)
+void	builtin_env(char **envp, char *key)
 {
 	int		i;
 	BOOL	found;
@@ -114,14 +114,14 @@ void	builtin_env(char ***envp, char *key)
 
 	i = 0;
 	found = 0;
-	while ((*envp)[i] != NULL)
+	while (envp[i] != NULL)
 	{
-		env_key = get_var((*envp)[i]);
+		env_key = get_var(envp[i]);
 		if (key == NULL)
-			ft_dprintf(1, "%s\n", (*envp)[i]);
+			ft_dprintf(1, "%s\n", envp[i]);
 		else if (ft_strcmp(key, env_key) == 0)
 		{
-			ft_dprintf(1, "%s\n", ft_strchr((*envp)[i], '=') + 1);
+			ft_dprintf(1, "%s\n", ft_strchr(envp[i], '=') + 1);
 			found = 1;
 			free(env_key);
 			break ;
