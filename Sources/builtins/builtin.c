@@ -44,6 +44,17 @@ void	check_builtin_env(char ***envp, char **cmd)
 ** pour ne pas lancer de fork
 */
 
+int 	check_shell_variable(char *arg)
+{
+	int i;
+
+	i = -1;
+	while (arg[++i])
+		if (arg[i] == '=')
+			return (1);
+	return (0);
+}
+
 int		shell_builtin(t_cmd *link, t_shell *shell)
 {
 	if (link->args[0] && ft_strcmp("echo", link->args[0]) == 0)
@@ -56,6 +67,8 @@ int		shell_builtin(t_cmd *link, t_shell *shell)
 		check_builtin_unsetenv(&shell->envp, link->args);
 	else if (link->args[0] && ft_strcmp("env", link->args[0]) == 0)
 		check_builtin_env(&shell->envp, link->args);
+	else if (link->args[0] && check_shell_variable(link->args[0]))
+		builtin_env_all(&shell->envp, &shell->envl, link->args);
 	else if (link->args[0] && ft_strcmp("exit", link->args[0]) == 0)
 		return (-1);
 	else

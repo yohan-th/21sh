@@ -48,6 +48,7 @@ SRCS =  shell/main.c \
 		builtins/builtin_cd.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
+        builtins/builtin_envl.c \
         builtins/builtin.c \
         editor/get_stdin.c \
 		editor/prompt.c \

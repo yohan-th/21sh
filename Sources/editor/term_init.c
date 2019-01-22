@@ -64,8 +64,8 @@ t_history	*hist_add(t_history *hist)
 	return (new);
 }
 
-t_editor	*line_editor_init(char **line, e_prompt prompt,
-			int prompt_size, t_history **hist)
+t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size,
+			t_history **hist)
 {
 	t_editor *ed;
 

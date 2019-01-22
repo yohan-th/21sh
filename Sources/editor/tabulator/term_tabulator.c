@@ -13,7 +13,7 @@
 
 #include "shell.h"
 
-t_tab	*tabulator_init(int cursor_pos, char **env)
+t_tab	*tabulator_init(int cursor_pos, char **envp, char **envl)
 {
 	t_tab *tabu;
 
@@ -26,7 +26,8 @@ t_tab	*tabulator_init(int cursor_pos, char **env)
 	tabu->dir = NULL;
 	tabu->elem = NULL;
 	tabu->last_elem = NULL;
-	tabu->env = env;
+	tabu->env = envp;
+	tabu->envl = envl;
 	tabu->nb_col = 0;
 	tabu->nb_row = 0;
 	tabu->max_len = 0;
@@ -42,8 +43,8 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 	int ret;
 
 	ft_strdel(&ed->key);
-	!mode ? ft_dprintf(2, "Display all %d possibilities? (y or n)", tabu->nb_node)
-	: ft_putstr("--More--");
+	!mode ? ft_dprintf(2, "Display all %d possibilities? (y or n)",
+			tabu->nb_node) : ft_putstr("--More--");
 	tputs(tgetstr("ve", NULL), 1, ft_putchar);
 	while ((ret = get_read_key(STDIN_FILENO, &ed->key)) > -1)
 	{
@@ -112,13 +113,13 @@ void	free_tab(t_tab *tabu)
 	free(tabu);
 }
 
-int		term_tabulator(t_editor *ed, char **env, e_prompt *prompt)
+int		term_tabulator(t_editor *ed, e_prompt *prompt, char **envp, char **envl)
 {
 	t_tab	*tabu;
 	int		ret;
 
 	ret = 0;
-	tabu = tabulator_init(ed->cursor_str_pos, env);
+	tabu = tabulator_init(ed->cursor_str_pos, envp, envl);
 	tabulator_recup_data(ed, tabu);
 	if (tabu->nb_node)
 	{

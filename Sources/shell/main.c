@@ -114,7 +114,7 @@ int		main(void)
 	e_shortcut	ret;
 
 	shell_init(&shl, &prmt, &cmd, environ);
-	while ((ret = get_stdin(&shl->str, &prmt, &shl->hist, shl->envp)) != -1)
+	while ((ret = get_stdin(shl, &prmt)) != -1)
 	{
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;

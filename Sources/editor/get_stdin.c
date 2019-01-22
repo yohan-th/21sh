@@ -48,10 +48,11 @@ static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p, char **env)
 		paste_clipboard(ed);
 }
 
-static int		get_keyboard_key(t_editor *ed, e_prompt *prompt, char **env)
+static int		get_keyboard_key(t_editor *ed, e_prompt *prompt,
+				char **envp, char **envl)
 {
 	if (CTRL_D || CTRL_C || CTRL_L || CTRL_K || CTRL_P)
-		get_keyboard_key_ctrl(ed, prompt, env);
+		get_keyboard_key_ctrl(ed, prompt, envp);
 	else if (ed->first_row < 1)
 		return (0);
 	else if (LEFT_KEY || RIGHT_KEY)
@@ -67,20 +68,19 @@ static int		get_keyboard_key(t_editor *ed, e_prompt *prompt, char **env)
 	else if (BACKSPACE && ed->hist->cmd && ed->cursor_str_pos)
 		backspace(ed);
 	else if (TAB_KEY)
-		ed->ret = term_tabulator(ed, env, prompt);
+		ed->ret = term_tabulator(ed, prompt, envp, envl);
 	else if ((UP_KEY || DOWN_KEY))
 		term_history(ed);
 	return (EXIT_SUCCESS);
 }
 
-int				get_stdin(char **line, e_prompt *prompt,
-				t_history **hist, char **env)
+int				get_stdin(t_shell *shell, e_prompt *prompt)
 {
 	t_editor	*ed;
 
 	get_term_raw_mode(1);
-	if (!(ed = line_editor_init(line, *prompt,
-	display_prompt(*prompt, env), hist)))
+	if (!(ed = line_editor_init(&shell->str, *prompt,
+			display_prompt(*prompt, shell->envp), &shell->hist)))
 		return (-2);
 	term_size(ed);
 	while (ed->ret != -1)
@@ -88,16 +88,16 @@ int				get_stdin(char **line, e_prompt *prompt,
 		ed->ret = get_read_key(STDIN_FILENO, &ed->key);
 		tputs(tgetstr("vi", NULL), 1, ft_putchar);
 		if (term_size(ed) == EXIT_SUCCESS)
-			window_resize(ed, prompt, env);
+			window_resize(ed, prompt, shell->envp);
 		if (ed->ret && ed->key)
-			get_keyboard_key(ed, prompt, env);
+			get_keyboard_key(ed, prompt, shell->envp, shell->envl);
 		tputs(tgetstr("ve", NULL), 1, ft_putchar);
 		if (ed->key && (ENTER_KEY ||
 		(CTRL_D && !ed->hist->cmd) || CTRL_C))
 			break ;
 		ft_strdel(&ed->key);
 	}
-	get_stdin_next(line, ed, prompt, hist);
+	get_stdin_next(&shell->str, ed, prompt, &shell->hist);
 	get_term_raw_mode(0);
-	return (line_editor_delete(ed, hist));
+	return (line_editor_delete(ed, &shell->hist));
 }

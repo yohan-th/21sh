@@ -78,26 +78,34 @@ void			tabulator_check_if_var_fill_list(t_tab *tb,
 	tb->nb_node++;
 }
 
-int				tabulator_check_if_var(t_tab *tabu)
+void			tabulator_check_if_var_recup_data(t_tab *tb, t_tab_elem **list,
+				char **env, char *var)
 {
-	char		*var;
-	char		*env_var_name;
-	int			i;
-	t_tab_elem	*list;
+	int		i;
+	char	*env_var_name;
 
-	var = get_path_var(tabu->path);
 	env_var_name = NULL;
 	i = 0;
-	list = NULL;
-	while (tabu && tabu->env[i])
+	while (env && env[i])
 	{
-		env_var_name = get_var_name(tabu->env[i]);
-		if (!var || (env_var_name &&
+		env_var_name = get_var_name(env[i]);
+		if (!var || (env_var_name && var &&
 		!ft_strncmp(env_var_name, var, ft_strlen(var))))
-			tabulator_check_if_var_fill_list(tabu, &list, env_var_name);
+			tabulator_check_if_var_fill_list(tb, list, env_var_name);
 		ft_strdel(&env_var_name);
 		i++;
 	}
+}
+
+int				tabulator_check_if_var(t_tab *tabu)
+{
+	char		*var;
+	t_tab_elem	*list;
+
+	var = get_path_var(tabu->path);
+	list = NULL;
+	tabulator_check_if_var_recup_data(tabu, &list, tabu->env, var);
+	tabulator_check_if_var_recup_data(tabu, &list, tabu->envl, var);
 	ft_strdel(&var);
 	return (0);
 }

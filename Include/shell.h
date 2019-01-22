@@ -99,6 +99,7 @@ int		builtin_eewefnv(char ***envp, char ***envl, char **args);
 char	**rmv_key_env(char **envp, char *key);
 void	builtin_env(char **envp, char *key);
 void	builtin_echo(char **cmd);
+void 	builtin_env_all(char ***envp, char ***envl, char **args);
 
 int		shell_error(char *type, int n, ...);
 
@@ -178,6 +179,9 @@ int			ft_read_file(char *filename, char **file_content);
 int 		path_to_output_exist(char *output);
 int			complete_output_paths(char **output_to, t_shell *shell);
 
+
+char	**append_key_env(char **envp, char *key, char *value);
+int		get_stdin(t_shell *shell, e_prompt *prompt);
 /*
 ** Hard test
 ** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>

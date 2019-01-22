@@ -96,6 +96,7 @@ typedef struct		s_tab
 	char			*comp;
 	char			*home;
 	char			**env;
+	char 			**envl;
 	DIR				*dir;
 	int				nb_col;
 	int				nb_row;
@@ -165,7 +166,7 @@ void	reset_cursor_position_escape_sequence(char **cursor_position);
 void	add_paste_into_line(t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt, char **env);
-int		get_stdin(char **line, e_prompt *prompt, t_history **hist, char **env);
+//int		get_stdin(t_shell *shell, e_prompt *prompt);
 void	myhandler_winsize_change(int signal);
 int		get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
@@ -202,7 +203,7 @@ t_history	*hist_add(t_history *hist);
  *******************************************************************************
  */
 
-int		term_tabulator(t_editor *ed, char **env, e_prompt *prompt);
+int		term_tabulator(t_editor *ed, e_prompt *prompt, char **envp, char **envl);
 int		tabulator_read(t_tab *tabu, t_editor *ed, int mode);
 void	check_data_with_space_after(char **new_cmd, char *d_name);
 void	check_data_with_space_before(char **path);

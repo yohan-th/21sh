@@ -47,7 +47,7 @@ static int		prompt_type(e_prompt prompt)
 	return (0);
 }
 
-char	*get_user_name()
+char			*get_user_name()
 {
 	DIR		*dir;
 	uid_t	uid;

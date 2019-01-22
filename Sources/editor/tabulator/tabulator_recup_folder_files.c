@@ -18,7 +18,6 @@ char	*build_full_path(char *path, char *d_name, char **env)
 	char *full_path;
 	char *user;
 	(void)env;
-
 	if (path && path[0] == '~')
 	{
 		//if (env && path[1] == '/')
