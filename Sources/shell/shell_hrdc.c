@@ -47,8 +47,8 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 	char	*hrdc;
 	int 	last;
 
-	if ((int)((*cmd)->process).fd_stdin == -1)
-		((*cmd)->process).fd_stdin = ft_strdup("");
+	if ((int)((*cmd)->process).stdin_send == -1)
+		((*cmd)->process).stdin_send = ft_strdup("");
 	hrdc = get_next_hrdc((*cmd)->hrdc);
 	if (hrdc && shell->str && ft_strcmp(hrdc, shell->str) == 0)
 	{
@@ -59,13 +59,13 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 			last = 0;
 			while ((int)(*cmd)->input[last] != -1)
 				last++;
-			(*cmd)->input[last] = ((*cmd)->process).fd_stdin;
+			(*cmd)->input[last] = (char *)-3;
 		}
 	}
-	else if ((int)((*cmd)->process).fd_stdin != -1)
+	else if ((int)((*cmd)->process).stdin_send != -1)
 	{
-		ft_strjoin_free(&((*cmd)->process).fd_stdin, shell->str);
-		ft_strjoin_free(&((*cmd)->process).fd_stdin, "\n");
+		ft_strjoin_free(&((*cmd)->process).stdin_send, shell->str);
+		ft_strjoin_free(&((*cmd)->process).stdin_send, "\n");
 	}
 	ft_strdel(&shell->str);
 }

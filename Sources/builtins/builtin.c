@@ -18,7 +18,7 @@ void	check_builtin_setenv(char ***envp, char **cmd)
 	if (cmd[1] != NULL && cmd[2] != NULL && cmd[3] == NULL)
 		builtin_setenv(envp, cmd[1], cmd[2]);
 	else
-		shell_error("env set usage", 0);
+		shell_error_env("env set usage");
 }
 
 void	check_builtin_unsetenv(char ***envp, char **cmd)
@@ -26,7 +26,7 @@ void	check_builtin_unsetenv(char ***envp, char **cmd)
 	if (cmd[1] != NULL && cmd[2] == NULL && get_envp(*envp, cmd[1]))
 		*envp = rmv_key_env(*envp, cmd[1]);
 	else
-		shell_error("env unset usage", 0);
+		shell_error_env("env unset usage");
 }
 
 void	check_builtin_env(char ***envp, char **cmd)
@@ -36,13 +36,8 @@ void	check_builtin_env(char ***envp, char **cmd)
 	else if (cmd[1] != NULL && cmd[2] == NULL)
 		builtin_env(*envp, cmd[1]);
 	else
-		shell_error("env usage", 0);
+		shell_error_env("env usage");
 }
-
-/*
-** Si on on rentre dans un builtin on retourne NULL
-** pour ne pas lancer de fork
-*/
 
 int 	check_shell_variable(char *arg)
 {

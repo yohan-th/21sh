@@ -106,9 +106,8 @@ int 		shell_get_hrdc(char ***ptn_hrdc, char **arg, int i,
 
 /*
 ** {hrdc[i] et std_in[i]} peuvent valoir soit une string, soit -1 si non rempli
-** soit -2 si la chaine de char se trouve dans le prochain arg.
-** Dans shell_hrdc, {hrdc[i]} prendra la valeur de -3 pour être indiqué
-** comme rempli par l'utilisateur.
+** soit -2 si la chaine de char se trouve dans le prochain arg soit -3 pour
+** être indiqué comme rempli par l'utilisateur.
 ** hrdc_stdin (dont son adresse sera rentré dans **stdin) prend la valeur -1
 ** pour ne pas stopper la lecture de stdin et prendra la valeur rentré par user
 */

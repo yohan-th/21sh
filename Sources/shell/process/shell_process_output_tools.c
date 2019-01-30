@@ -33,6 +33,27 @@ int 	path_to_output_exist(char *output)
 	return (exist);
 }
 
+int 	path_to_output_recheable(char *output)
+{
+	int	i;
+	int recheable;
+
+	i = ft_strlen(output);
+	while (i > 0)
+	{
+		if (output[i] == '/')
+		{
+			output[i] = '\0';
+			break ;
+		}
+		i--;
+	}
+	recheable = access(output, W_OK);
+	if (recheable == 0)
+		output[i] = '/';
+	return (recheable);
+}
+
 /*
 ** Ajoute le dossier courant
 */

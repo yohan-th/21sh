@@ -29,6 +29,7 @@
 typedef struct				s_process
 {
 	char 				*fd_stdin;
+	char 				*stdin_send;
 	char 				*fd_stdout;
 	int 				fd_fileout;
 	char 				*fd_stderr;
@@ -62,8 +63,8 @@ typedef struct				s_cmd
 	char 				**input;
 	char 				**hrdc;
 	t_process			process;
-	char 				*hrdc_stdin;
 	int 				sep;
+	int 				ret;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
 }							t_cmd;
@@ -102,6 +103,7 @@ void	builtin_echo(char **cmd);
 void 	builtin_env_all(char ***envp, char ***envl, char **args);
 
 int		shell_error(char *type, int n, ...);
+int		shell_error_env(char *msg);
 
 int		shell_builtin(t_cmd *link, t_shell *shell);
 char	*get_envp(char **envp, char *var);
@@ -170,18 +172,19 @@ int			complete_stdout_path(t_output *std_out, t_shell *shell);
 int			shell_error_prepare(char *msg, char *elem);
 int 		shell_read_input(t_cmd *elem, t_shell *shell);
 int			shell_set_output(t_cmd *elem, t_shell *shell);
-int 		shell_exec(int tmp_fd[3], t_cmd *elem, t_shell *shell);
+int 		shell_exec(t_cmd *elem, t_shell *shell);
 
 void		shell_save_fd(int fd[3]);
-void		reinit_fd(int fd[3]);
+void		shell_reinit_fd(int *fd);
 void		shell_prcs_sigint(int signum);
 int			ft_read_file(char *filename, char **file_content);
 int 		path_to_output_exist(char *output);
 int			complete_output_paths(char **output_to, t_shell *shell);
+int 		path_to_output_recheable(char *output);
 
 
-char	**append_key_env(char **envp, char *key, char *value);
-int		get_stdin(t_shell *shell, e_prompt *prompt);
+char		**append_key_env(char **envp, char *key, char *value);
+int			get_stdin(t_shell *shell, e_prompt *prompt);
 /*
 ** Hard test
 ** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>
@@ -248,6 +251,7 @@ int		get_stdin(t_shell *shell, e_prompt *prompt);
 ** exit 1arg 2arg --> no exit
 ** cat <&\2
 ** echo test >folder/unfind_folder/file
+** echo test >&0
 */
 
 /*

@@ -17,12 +17,13 @@ int		shell_error_prepare(char *msg, char *elem)
 {
 	char *last_elem_path;
 
+	printf("-<msg|%s|>\n", msg);
 	last_elem_path = elem;
-	while (ft_strchr(last_elem_path, '/'))
+	while (ft_strchr(last_elem_path, '/') && ft_strcmp(msg, "pathdenied") != 0)
 		last_elem_path = ft_strchr(last_elem_path, '/') + 1;
 	if (ft_strcmp(msg, "Is directory") == 0)
 		ft_dprintf(2, "21sh: %s: : Is a directory\n", last_elem_path);
-	else if (ft_strcmp(msg, "denied") == 0)
+	else if (ft_strcmp(msg, "denied") == 0 || !ft_strcmp(msg, "pathdenied"))
 		ft_dprintf(2, "21sh: %s: Permission denied\n", last_elem_path);
 	else if (ft_strcmp(msg, "not found") == 0)
 		ft_dprintf(2, "21sh: %s: No such file or directory\n", last_elem_path);
@@ -69,16 +70,12 @@ int		shell_error(char *type, int n, ...)
 		return (shell_error_env(type));
 	else if (type[0] == 'g' && type[1] == 'n' && type[2] == 'l')
 	{
-		ft_strdel(va_arg(ap, char **));
-		ft_arrdel(va_arg(ap, char **));
 		va_end(ap);
 		write(1, " exit\n", 6);
 		exit(EXIT_FAILURE);
 	}
 	else if (type[0] == 'm' && type[1] == 'l' && type[2] == 'c')
 	{
-		ft_strdel(va_arg(ap, char **));
-		ft_arrdel(va_arg(ap, char **));
 		ft_dprintf(2, "Fatal: failed to allocate %zu bytes\n",
 				va_arg(ap, size_t));
 		va_end(ap);

@@ -36,7 +36,6 @@ int		check_fd_output(char *output, t_shell *shell)
 	return (0);
 }
 
-
 int 	check_output_recheable(t_output *output)
 {
 	t_output 	*elem;
@@ -72,12 +71,14 @@ int 	is_recheable_output(t_output *output, t_shell *shell)
 		return (shell_error_prepare("Is directory", output->to));
 	else if (!path_to_output_exist(output->to))
 		return (shell_error_prepare("not found", output->to));
+	else if (path_to_output_recheable(output->to) == -1)
+		return (shell_error_prepare("pathdenied", output->to));
 	else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
 		return (shell_error_prepare("denied", output->to));
-	else if (access(output->to, F_OK) == -1)
+	else
 	{
 		if (output->append)
-			fd_open = open(output->to, O_WRONLY | O_APPEND);
+			fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
 		else
 			fd_open = open(output->to, O_WRONLY | O_CREAT);
 	}
@@ -86,16 +87,32 @@ int 	is_recheable_output(t_output *output, t_shell *shell)
 
 void 	shell_set_output_file(t_output *output, t_cmd *elem, int fd_file)
 {
-		if (output->from == 1)
-		{
-			(elem->process).fd_stdout = ft_strdup(output->to);
-			(elem->process).fd_fileout = fd_file;
-		}
-		else if (output->from == 2)
-		{
-			(elem->process).fd_stderr = ft_strdup(output->to);
-			(elem->process).fd_fileerr = fd_file;
-		}
+	if (output->from == 1)
+	{
+		(elem->process).fd_stdout = ft_strdup(output->to);
+		(elem->process).fd_fileout = fd_file;
+	}
+	else if (output->from == 2)
+	{
+		(elem->process).fd_stderr = ft_strdup(output->to);
+		(elem->process).fd_fileerr = fd_file;
+	}
+}
+
+void	shell_set_output_fd(t_output *output, t_cmd *elem)
+{
+	if (ft_atoi(output->to + 1) == 1 && output->from == 0)
+		(elem->process).fd_stdin = ft_strdup((elem->process).fd_stdout);
+	else if (ft_atoi(output->to + 1) == 1 && output->from == 1)
+		(elem->process).fd_stdout = ft_strdup((elem->process).fd_stdout);
+	else if (ft_atoi(output->to + 1) == 1 && output->from == 2)
+		(elem->process).fd_stderr = ft_strdup((elem->process).fd_stdout);
+	if (ft_atoi(output->to + 1) == 2 && output->from == 0)
+		(elem->process).fd_stdin = ft_strdup((elem->process).fd_stderr);
+	else if (ft_atoi(output->to + 1) == 2 && output->from == 1)
+		(elem->process).fd_stdout = ft_strdup((elem->process).fd_stderr);
+	else if (ft_atoi(output->to + 1) == 2 && output->from == 2)
+		(elem->process).fd_stderr = ft_strdup((elem->process).fd_stderr);
 }
 
 /*
@@ -111,17 +128,12 @@ int		shell_set_output(t_cmd *elem, t_shell *shell)
 	output = elem->output;
 	while (output != NULL)
 	{
-		if (output->from == 1 && (elem->process).fd_stdout)
+		if (output->from == 1)
 			ft_strdel(&(elem->process).fd_stdout);
-		else if (output->from == 2 && (elem->process).fd_stderr)
+		else if (output->from == 2)
 			ft_strdel(&(elem->process).fd_stderr);
 		if (((is_fd = check_fd_output(output->to, shell)) == 1))
-		{
-			if (output->from == 1)
-				(elem->process).fd_stdout = ft_strdup(output->to);
-			else if (output->from == 2)
-				(elem->process).fd_stderr = ft_strdup(output->to);
-		}
+			shell_set_output_fd(output, elem);
 		else if (!is_fd && (fd_file = is_recheable_output(output, shell)))
 			shell_set_output_file(output, elem, fd_file);
 		else
@@ -130,3 +142,5 @@ int		shell_set_output(t_cmd *elem, t_shell *shell)
 	}
 	return (1);
 }
+
+//Quelle logique dans "echo test 0>fichier" ?

@@ -98,6 +98,6 @@ char	*shell_getpathexec(char *exec, char **envp)
 			break ;
 		ft_strdel(&exec_path);
 	}
-	ft_arrdel(all_path);
+	ft_arrdel(&all_path);
 	return (check_path_cmd(exec_path, exec));
 }

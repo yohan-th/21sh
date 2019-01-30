@@ -13,13 +13,14 @@
 
 #include "../Includes/array.h"
 
-void	ft_arrdel(char **arr)
+void	ft_arrdel(char ***arr)
 {
 	int i;
 
 	i = 0;
-	while (arr != NULL && arr[i] != NULL)
-		free(arr[i++]);
-	if (arr != NULL)
-		free(arr);
+	while (arr && *arr != NULL && (*arr)[i] != NULL)
+		ft_strdel(&(*arr)[i++]);
+	if (arr && *arr != NULL)
+		free(*arr);
+	arr = NULL;
 }

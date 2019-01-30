@@ -35,7 +35,7 @@ char	**rmv_key_env(char **envp, char *key)
 			break ;
 		ret[i++] = ft_strdup(envp[y++]);
 	}
-	ft_arrdel(envp);
+	ft_arrdel(&envp);
 	ret[i] = NULL;
 	return (ret);
 }
@@ -74,7 +74,7 @@ char	**append_key_env(char **envp, char *key, char *value)
 		ret[i] = ft_strdup(envp[i]);
 		i++;
 	}
-	ft_arrdel(envp);
+	ft_arrdel(&envp);
 	ret[i++] = ft_strjoin_mltp(3, key, "=", value);
 	ret[i] = NULL;
 	return (ret);

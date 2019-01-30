@@ -21,7 +21,6 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
 	int 	fd[3];
-	int		tmp_fd[3];
 	int		built_in;
 
 	shell_prepare(*cmd, shell);
@@ -34,12 +33,9 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 		if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
 		{
 			read_lexing(*cmd);
-			if (elem->args && (built_in = shell_builtin(elem, shell)) == -1)
+			shell_exec(elem, shell);
+			if (elem->ret < 0)
 				return (-1);
-			if (!built_in && !elem->exec)
-				ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
-			else if (!built_in && elem->exec)
-				shell_exec(tmp_fd, elem, shell);
 		}
 	}
 	clean_cmd(cmd);
@@ -63,7 +59,7 @@ void	read_lexing(t_cmd *cmd)
 			ft_dprintf(2, "arg[%i]=<%s> ", i, cmd->args[i]);
 			i++;
 		}
-		ft_dprintf(2, "\nRead stdout : ");
+		ft_dprintf(2, "\nRead output : ");
 		read = cmd->output;
 		if (read == NULL)
 			ft_dprintf(2, "(NULL)");
@@ -73,32 +69,37 @@ void	read_lexing(t_cmd *cmd)
 			read = read->next;
 		}
 
-		ft_dprintf(2, "\nRead stdin : ");
+		ft_dprintf(2, "\nRead input : ");
 		if (!cmd->input)
 			ft_dprintf(2, "(NULL)");
 		i = 0;
 		while (cmd->input && (cmd->input)[i] != NULL)
 		{
 			if ((int)(cmd->input)[i] <= -1 && (int)(cmd->input)[i] >= -3)
-				ft_dprintf(2, "<%d> -", (int)(cmd->input)[i++]);
+				ft_dprintf(2, "|%d| -", (int)(cmd->input)[i++]);
 			else
-				ft_dprintf(2, "<%s> - ", (cmd->input)[i++]);
+				ft_dprintf(2, "|%s| - ", (cmd->input)[i++]);
 		}
-		ft_dprintf(2, "\nRead heredoc : ");
+		ft_dprintf(2, "\nRead hrdc : ");
 		if (!cmd->hrdc)
 			ft_dprintf(2, "(NULL)");
 		i = 0;
 		while (cmd->hrdc && (cmd->hrdc)[i] != NULL)
 		{
 			if ((int)(cmd->hrdc)[i] <= -1 && (int)(cmd->hrdc)[i] >= -3)
-				ft_dprintf(2, "<%d> -", (int)(cmd->hrdc)[i++]);
+				ft_dprintf(2, "|%d| -", (int)(cmd->hrdc)[i++]);
 			else
-				ft_dprintf(2, "<%s> - ", (cmd->hrdc)[i++]);
+				ft_dprintf(2, "|%s| - ", (cmd->hrdc)[i++]);
 		}
-		if ((int)(cmd->process).fd_stdin == -1)
-			ft_dprintf(2, "\nRead fd stdin : <%d>\n", (int)cmd->process.fd_stdin);
+		if ((int)(cmd->process).stdin_send == -1)
+			ft_dprintf(2, "\nRead stdin : |%d|\n", (int)cmd->process.stdin_send);
 		else
-			ft_dprintf(2, "\nRead fd stdin : <%s>\n", cmd->process.fd_stdin);
+			ft_dprintf(2, "\nRead stdin : |%s|\n", cmd->process.stdin_send);
+		ft_dprintf(2, "Read fd stdin : |%s|\n", cmd->process.fd_stdin);
+		ft_dprintf(2, "Read fd stdout : |%s|\n", cmd->process.fd_stdout);
+		ft_dprintf(2, "Read fileout : |%d|\n", cmd->process.fd_fileout);
+		ft_dprintf(2, "Read fd stderr : |%s|\n", cmd->process.fd_stderr);
+		ft_dprintf(2, "Read fileerr : |%d|\n", cmd->process.fd_fileerr);
 		ft_dprintf(2, "Et sep %d\n", cmd->sep);
 		ft_dprintf(2, "-------------\n");
 	}

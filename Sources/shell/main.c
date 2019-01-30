@@ -88,7 +88,7 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 	return (1);
 }
 
-void	shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd, char ** env)
+void	shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd, char **env)
 {
 	init_terminal_data();
 	*shell = init_shell(env);
@@ -119,7 +119,7 @@ int		main(void)
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;
 		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
-				(prmt == PROMPT && cmd && (cmd->process).fd_stdin))
+				(prmt == PROMPT && cmd && (cmd->process).stdin_send))
 		{
 			if (cmd_check(&cmd, shl, &prmt))
 				continue;
@@ -135,3 +135,5 @@ int		main(void)
 	}
 	return (shell_exit(&cmd, &shl));
 }
+
+//shell_exit() --> renvoyer la bonne valeur

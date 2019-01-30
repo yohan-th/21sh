@@ -19,6 +19,6 @@
 
 char	**ft_arrdup(char **arr);
 int		ft_arrlen(char **arr);
-void	ft_arrdel(char **arr);
+void	ft_arrdel(char ***arr);
 
 #endif

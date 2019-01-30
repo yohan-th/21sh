@@ -48,29 +48,27 @@ int		clean_cmd(t_cmd **cmd)
 {
 	t_cmd	*tmp;
 
-	if (!(*cmd))
+	if (cmd && *cmd)
 	{
-		printf("[!] <erreur de clean cmd>\n");
-		return (0);
-	}
-	*cmd = (*cmd)->start;
-	tmp = *cmd;
-	while ((*cmd = (*cmd)->next_cmd))
-	{
-		if ((*cmd)->args)
-			ft_arrdel((*cmd)->args);
-		clean_arr_mlti((*cmd)->hrdc);
-		clean_arr_mlti((*cmd)->input);
-		ft_strdel(&(*cmd)->process.fd_stdin);
-		ft_strdel(&(*cmd)->process.fd_stdout);
-		ft_strdel(&(*cmd)->process.fd_stderr);
-		if ((*cmd)->output)
-			clean_redi(&((*cmd)->output));
-		free(tmp);
+		*cmd = (*cmd)->start;
 		tmp = *cmd;
+		while ((*cmd = (*cmd)->next_cmd))
+		{
+			if ((*cmd)->args)
+				ft_arrdel(&(*cmd)->args);
+			clean_arr_mlti((*cmd)->hrdc);
+			clean_arr_mlti((*cmd)->input);
+			ft_strdel(&(*cmd)->process.fd_stdin);
+			ft_strdel(&(*cmd)->process.fd_stdout);
+			ft_strdel(&(*cmd)->process.fd_stderr);
+			if ((*cmd)->output)
+				clean_redi(&((*cmd)->output));
+			free(tmp);
+			tmp = *cmd;
+		}
+		free(tmp);
+		*cmd = NULL;
 	}
-	free(tmp);
-	*cmd = NULL;
 	return (1);
 }
 
