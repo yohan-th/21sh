@@ -215,6 +215,8 @@ int		tabulator_get_path(t_editor *ed, t_tab *tabu);
 int		nb_line(char *line, int first_char, int ws_col);
 int		check_if_name_with_new_line(char *name);
 void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed);
+int		term_tabulator_enough_space(t_editor *ed, t_tab *tabu);
+void	free_tab(t_tab *tabu);
 
 t_history	*init_hist(void);
 void		fill_hist_file(t_history *hist);

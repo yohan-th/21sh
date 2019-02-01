@@ -56,7 +56,9 @@ int		tabulator_check_cmd(t_editor *ed, t_tab *tabu)
 		if ((tabu->start == -1 || (tabu->start >= 0 && check_separator(
 		ed->hist->cmd[tabu->start])) || (tabu->start == 0 && ed->hist->cmd
 		[tabu->start] == ' ')) || (tabu->start > 0 && ed->hist->cmd
-		[tabu->start] == ' ' && ed->hist->cmd[tabu->start - 1] != '\\'))
+		[tabu->start] == ' ' && ed->hist->cmd[tabu->start - 1] != '\\')
+		|| (tabu->start >= 0 && (ed->hist->cmd[tabu->start] == '<' ||
+		ed->hist->cmd[tabu->start] == '>')))
 		{
 			tabu->start++;
 			break ;
@@ -73,15 +75,20 @@ int		tabulator_check_cmd(t_editor *ed, t_tab *tabu)
 void	tabulator_check_argument(t_editor *ed, t_tab *tabu)
 {
 	tabu->start = ed->cursor_str_pos;
-	while (--tabu->start)
+	while (--tabu->start >= 0)
 	{
-		if ((ed->hist->cmd[tabu->start] == ' ') &&
-		ed->hist->cmd[tabu->start - 1] != '\\')
+		if ((ed->hist->cmd[tabu->start] == ' ' ||
+		ed->hist->cmd[tabu->start] == '<' ||
+		ed->hist->cmd[tabu->start] == '>') &&
+		((tabu->start && ed->hist->cmd[tabu->start - 1] != '\\')
+		|| !tabu->start))
 		{
 			tabu->start++;
 			break ;
 		}
 	}
+	if (tabu->start == -1)
+		tabu->start++;
 	tabu->path = ed->cursor_str_pos - tabu->start ? ft_strsub(ed->
 	hist->cmd, tabu->start, ed->cursor_str_pos -
 	tabu->start) : tabu->path;

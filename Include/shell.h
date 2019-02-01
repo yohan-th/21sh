@@ -69,6 +69,16 @@ typedef struct				s_cmd
 	struct s_cmd		*start;
 }							t_cmd;
 
+typedef struct				s_type
+{
+	int 					i;
+	int 					j;
+	int 					match[2];
+	char 					*op;
+	char					*b_path;
+	char 					**bin;
+}							t_type;
+
 typedef struct				s_shell
 {
 	char 				**envp;
@@ -185,6 +195,12 @@ int 		path_to_output_recheable(char *output);
 
 char		**append_key_env(char **envp, char *key, char *value);
 int			get_stdin(t_shell *shell, e_prompt *prompt);
+int 		builtin_type(char **args, char **envp);
+int		builtin_type_get_options(char **options, char **args);
+int		builtin_type_check_builtin(char *d_name);
+void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
+int		check_executable_file(char *path);
+
 /*
 ** Hard test
 ** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>

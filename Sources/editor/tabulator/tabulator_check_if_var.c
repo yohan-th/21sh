@@ -13,17 +13,6 @@
 
 #include "shell.h"
 
-static char		*get_var_name(char *env_var)
-{
-	int i;
-
-	i = -1;
-	while (env_var && env_var[++i])
-		if (env_var[i] == '=')
-			return (ft_strsub(env_var, 0, i));
-	return (NULL);
-}
-
 static char		*get_path_var(char *name)
 {
 	int		first_char;
@@ -88,8 +77,8 @@ void			tabulator_check_if_var_recup_data(t_tab *tb, t_tab_elem **list,
 	i = 0;
 	while (env && env[i])
 	{
-		env_var_name = get_var_name(env[i]);
-		if (!var || (env_var_name && var &&
+		env_var_name = get_var(env[i]);
+		if (!var || (env_var_name &&
 		!ft_strncmp(env_var_name, var, ft_strlen(var))))
 			tabulator_check_if_var_fill_list(tb, list, env_var_name);
 		ft_strdel(&env_var_name);

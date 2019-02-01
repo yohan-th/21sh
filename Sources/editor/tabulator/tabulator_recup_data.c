@@ -44,17 +44,13 @@ void	tabulator_sort_list(t_tab_elem **list)
 void	check_home(t_tab *tabu)
 {
 	char *tmp;
-	char *user;
 
-/*	if (tabu->path[1] == '/')
+	if (tabu->path[1] == '/')
 		tabu->home = ft_strdup(get_envp(tabu->env, "HOME"));
 	else
-		tabu->home = ft_strdup("/Users/");*/
-	tabu->home = ft_strdup("/Users/");
+		tabu->home = ft_strdup("/Users/");
 	if (tabu->home)
 	{
-		if (tabu->path[1] == '/' && (user = get_user_name())) //42sh
-			ft_strjoin_free(&tabu->home, user);
 		tmp = ft_strdup(tabu->home);
 		ft_strjoin_free(&tmp, tabu->path + 1);
 		ft_strdel(&tabu->path);

@@ -16,16 +16,13 @@
 char	*build_full_path(char *path, char *d_name, char **env)
 {
 	char *full_path;
-	char *user;
-	(void)env;
+
 	if (path && path[0] == '~')
 	{
-		//if (env && path[1] == '/')
-		//	full_path = ft_strdup(get_envp(env, "HOME"));
-		//else
+		if (env && path[1] == '/')
+			full_path = ft_strdup(get_envp(env, "HOME"));
+		else
 			full_path = ft_strdup("/Users/");
-			if (path[1] == '/' && (user = get_user_name())) //42sh
-				ft_strjoin_free(&full_path, user);
 		if (!full_path)
 			return (NULL);
 		ft_strjoin_free(&full_path, path + 1);

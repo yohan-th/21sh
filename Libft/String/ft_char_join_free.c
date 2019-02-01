@@ -1,36 +1,23 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   builtin_echo.c                                   .::    .:/ .      .::   */
+/*   ft_char_join_free.c                              .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
+/*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/05/07 19:56:27 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/24 22:13:49 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/02/01 23:16:32 by dewalter     #+#   ##    ##    #+#       */
+/*   Updated: 2019/02/01 23:16:32 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "../../Include/shell.h"
+#include "../Includes/string.h"
 
-void	builtin_echo(char **cmd)
+void	ft_char_join_free(char c, char **str)
 {
-	int		i;
-	BOOL	newl;
+	char tmp[2];
 
-	newl = 1;
-	i = 1;
-	if (cmd[1] && ft_strcmp(cmd[1], "-n") == 0)
-	{
-		newl = 0;
-		i = 2;
-	}
-	while (cmd[i])
-	{
-		if (ft_strcmp(cmd[i], "") != 0)
-			ft_dprintf(1, "%s", cmd[i]);
-		i++;
-	}
-	if (newl)
-		write(1, "\n", 1);
+	tmp[0] = c;
+	tmp[1] = '\0';
+	ft_strjoin_free(str, tmp);
 }

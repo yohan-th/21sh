@@ -56,5 +56,6 @@ char		*ft_rmvpath(char *str);
 void		ft_strdelchar(char **str, char c);
 int			ft_strjoin_free(char **s1, const char *s2);
 int			ft_strnbr(const char *str);
+void		ft_char_join_free(char c, char **str);
 
 #endif

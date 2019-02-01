@@ -43,7 +43,7 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 	int ret;
 
 	ft_strdel(&ed->key);
-	!mode ? ft_dprintf(2, "Display all %d possibilities? (y or n)",
+	!mode ? ft_dprintf(1, "Display all %d possibilities? (y or n)",
 			tabu->nb_node) : ft_putstr("--More--");
 	tputs(tgetstr("ve", NULL), 1, ft_putchar);
 	while ((ret = get_read_key(STDIN_FILENO, &ed->key)) > -1)
@@ -92,27 +92,6 @@ int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
 	return (ret);
 }
 
-void	free_tab(t_tab *tabu)
-{
-	t_tab_elem *tmp;
-
-	ft_strdel(&tabu->path);
-	ft_strdel(&tabu->data);
-	ft_strdel(&tabu->comp);
-	ft_strdel(&tabu->home);
-	if (tabu->dir)
-		closedir(tabu->dir);
-	while (tabu->elem)
-	{
-		tmp = tabu->elem->next;
-		ft_strdel(&tabu->elem->d_name);
-		ft_strdel(&tabu->elem->path);
-		free(tabu->elem);
-		tabu->elem = tmp;
-	}
-	free(tabu);
-}
-
 int		term_tabulator(t_editor *ed, e_prompt *prompt, char **envp, char **envl)
 {
 	t_tab	*tabu;
@@ -124,7 +103,10 @@ int		term_tabulator(t_editor *ed, e_prompt *prompt, char **envp, char **envl)
 	if (tabu->nb_node)
 	{
 		if (tabu->nb_node == 1 || tabu->comp)
-			tabulator_put_new_cmd(tabu, ed);
+		{
+			if (term_tabulator_enough_space(ed, tabu))
+				tabulator_put_new_cmd(tabu, ed);
+		}
 		else
 			ret = tabulator_put_row(ed, tabu, prompt);
 	}

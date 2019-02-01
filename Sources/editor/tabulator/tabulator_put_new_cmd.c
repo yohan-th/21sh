@@ -66,8 +66,8 @@ void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed)
 	ft_strjoin_free(&tabu->path, tabu->data);
 	check_data_with_space_after(&new, tabu->path);
 	tabu->home ? ft_strjoin_free(&tabu->home, tabu->path + 1) : 0;
-	if (tabu->nb_node == 1 && (dir = opendir(tabu->home
-	? tabu->home : tabu->path)) && !closedir(dir))
+	if ((tabu->nb_node == 1 && (S_ISDIR(tabu->elem->st_mode) ||
+	((dir = opendir(tabu->home ? tabu->home : tabu->path)) && !closedir(dir)))))
 		ft_strjoin_free(&new, "/");
 	else if (tabu->nb_node == 1 &&
 	!ft_strlen(ed->hist->cmd + ed->cursor_str_pos))

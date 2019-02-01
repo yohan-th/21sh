@@ -49,6 +49,8 @@ SRCS =  shell/main.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
         builtins/builtin_envl.c \
+        builtins/builtin_type.c \
+        builtins/builtin_type_tools.c \
         builtins/builtin.c \
         editor/get_stdin.c \
 		editor/prompt.c \
@@ -77,6 +79,7 @@ SRCS =  shell/main.c \
 		editor/tabulator/term_tabulator.c \
 		editor/tabulator/tabulator_put_new_cmd.c \
 		editor/tabulator/tabulator_check_if_var.c \
+		editor/tabulator/tabulator_tools.c \
 		editor/history/term_hist_recup_cmd.c \
 		editor/history/term_history.c
 

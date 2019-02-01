@@ -64,6 +64,8 @@ int		shell_builtin(t_cmd *link, t_shell *shell)
 		check_builtin_env(&shell->envp, link->args);
 	else if (link->args[0] && check_shell_variable(link->args[0]))
 		builtin_env_all(&shell->envp, &shell->envl, link->args);
+	else if (link->args[0] && ft_strcmp("type", link->args[0]) == 0)
+		builtin_type(link->args + 1, shell->envp);
 	else if (link->args[0] && ft_strcmp("exit", link->args[0]) == 0)
 		return (-1);
 	else

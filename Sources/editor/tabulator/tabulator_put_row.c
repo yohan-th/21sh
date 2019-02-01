@@ -16,7 +16,6 @@
 void	tabulator_put_color(t_tab_elem *el)
 {
 	int i;
-	DIR *dir;
 
 	i = -1;
 	if (el->d_type == 10)
@@ -25,8 +24,7 @@ void	tabulator_put_color(t_tab_elem *el)
 		ft_putstr(YEL);
 	else if (el->d_type == 8 && el->st_mode && (el->st_mode & S_IXUSR))
 		ft_putstr(GREEN);
-	else if (el->d_type == 4 ||
-	(el->path && (dir = opendir(el->path)) && !closedir(dir)))
+	else if (el->d_type == 4 || (el->path && S_ISDIR(el->st_mode)))
 		ft_putstr(RED);
 	if (check_if_name_with_new_line(el->d_name))
 		while (el->d_name[++i])
@@ -38,8 +36,6 @@ void	tabulator_put_color(t_tab_elem *el)
 
 void	tabulator_put_type(t_tab_elem *el)
 {
-	DIR *dir;
-
 	if (el->d_type == 2)
 		ft_putchar('%');
 	else if (el->d_type == 6)
@@ -49,7 +45,7 @@ void	tabulator_put_type(t_tab_elem *el)
 	else if (el->d_type == 8 && el->st_mode && (el->st_mode & S_IXUSR))
 		ft_putchar('*');
 	else if (el->d_type == 4 ||
-	(el->path && (dir = opendir(el->path)) && !closedir(dir)))
+	(el->path && (S_ISDIR(el->st_mode))))
 		ft_putchar('/');
 	else
 		ft_putchar(' ');
