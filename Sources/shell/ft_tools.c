@@ -42,6 +42,7 @@ int		ft_read_file(char *filename, char **file_content)
 
 	if ((fd = open(filename, O_RDONLY)) == -1)
 		return (0);
+	ft_strdel(file_content);
 	if (!(*file_content = malloc(sizeof(char))))
 		return (0);
 	(*file_content)[0] = '\0';

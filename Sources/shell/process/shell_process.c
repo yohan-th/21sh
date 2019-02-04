@@ -30,11 +30,10 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	elem = *cmd;
 	while ((elem = elem->next_cmd))
 	{
+		read_lexing(*cmd);
 		if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
 		{
-			read_lexing(*cmd);
-			shell_exec(elem, shell);
-			if (elem->ret < 0)
+			if (!shell_exec(elem, shell))
 				return (-1);
 		}
 	}

@@ -15,22 +15,17 @@
 
 int		shell_error_prepare(char *msg, char *elem)
 {
-	char *last_elem_path;
-
-	printf("-<msg|%s|>\n", msg);
-	last_elem_path = elem;
-	while (ft_strchr(last_elem_path, '/') && ft_strcmp(msg, "pathdenied") != 0)
-		last_elem_path = ft_strchr(last_elem_path, '/') + 1;
 	if (ft_strcmp(msg, "Is directory") == 0)
-		ft_dprintf(2, "21sh: %s: : Is a directory\n", last_elem_path);
+		ft_dprintf(2, "21sh: %s: : Is a directory\n", elem);
 	else if (ft_strcmp(msg, "denied") == 0 || !ft_strcmp(msg, "pathdenied"))
-		ft_dprintf(2, "21sh: %s: Permission denied\n", last_elem_path);
+		ft_dprintf(2, "21sh: %s: Permission denied\n", elem);
 	else if (ft_strcmp(msg, "not found") == 0)
-		ft_dprintf(2, "21sh: %s: No such file or directory\n", last_elem_path);
+		ft_dprintf(2, "21sh: %s: No such file or directory\n", elem);
 	else if (ft_strcmp(msg, "bad fd") == 0)
-		ft_dprintf(2, "21sh: %s: Bad file descriptor\n", last_elem_path + 1);
+		ft_dprintf(2, "21sh: %s: Bad file descriptor\n", elem + 1);
 	else if (ft_strcmp(msg, "ambiguous") == 0)
-		ft_dprintf(2, "21sh: %s: ambiguous redirect\n", last_elem_path + 1);
+		ft_dprintf(2, "21sh: %s: ambiguous redirect\n", elem + 1);
+	ft_strdel(&elem);
 	return (0);
 }
 

@@ -61,6 +61,8 @@ int		clean_cmd(t_cmd **cmd)
 			ft_strdel(&(*cmd)->process.fd_stdin);
 			ft_strdel(&(*cmd)->process.fd_stdout);
 			ft_strdel(&(*cmd)->process.fd_stderr);
+			ft_strdel(&(*cmd)->process.stdin_send);
+			ft_strdel(&(*cmd)->exec);
 			if ((*cmd)->output)
 				clean_redi(&((*cmd)->output));
 			free(tmp);

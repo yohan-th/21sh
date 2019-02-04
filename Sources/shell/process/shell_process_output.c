@@ -63,25 +63,31 @@ int 	check_output_recheable(t_output *output)
 
 int 	is_recheable_output(t_output *output, t_shell *shell)
 {
-	int fd_open;
+	int		fd_open;
+	char	*msg_err;
 
 	fd_open = 0;
+	msg_err = ft_strdup(output->to);
 	complete_output_paths(&output->to, shell);
 	if (ft_isdir(output->to))
-		return (shell_error_prepare("Is directory", output->to));
+		return (shell_error_prepare("Is directory", msg_err));
 	else if (!path_to_output_exist(output->to))
-		return (shell_error_prepare("not found", output->to));
+		return (shell_error_prepare("not found", msg_err));
 	else if (path_to_output_recheable(output->to) == -1)
-		return (shell_error_prepare("pathdenied", output->to));
+		return (shell_error_prepare("pathdenied", msg_err));
 	else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
-		return (shell_error_prepare("denied", output->to));
+		return (shell_error_prepare("denied", msg_err));
 	else
 	{
 		if (output->append)
 			fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
 		else
-			fd_open = open(output->to, O_WRONLY | O_CREAT);
+		{
+			printf("-<|open %s|>\n", output->to);
+			fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC);
+		}
 	}
+	ft_strdel(&msg_err);
 	return (fd_open);
 }
 

@@ -78,14 +78,23 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
-		return (shell_clean_data(cmd, shell, 1, 1));
-	if (ret == CTRLD && *prompt == HRDC && !shell->str)
 	{
+		return (shell_clean_data(cmd, shell, 1, 1));
+	}
+	if (*prompt == HRDC && ret == CTRLD && !shell->str)
+	{
+		ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
+				"end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
 		while (get_next_hrdc((*cmd)->hrdc))
 			del_next_hrdc((*cmd)->hrdc);
 		(*cmd)->hrdc = NULL;
 		*prompt = PROMPT;
 		return (1);
+	}
+	else if (*prompt == HRDC && ret == CTRLC)
+	{
+		*prompt = PROMPT;
+		return (shell_clean_data(cmd, shell, 1, 1));
 	}
 	if (*prompt == HRDC && *cmd)
 	{

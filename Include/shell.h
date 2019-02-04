@@ -112,6 +112,12 @@ void	builtin_env(char **envp, char *key);
 void	builtin_echo(char **cmd);
 void 	builtin_env_all(char ***envp, char ***envl, char **args);
 
+int 	builtin_type(char **args, char **envp);
+int		builtin_type_get_options(char **options, char **args);
+int		builtin_type_check_builtin(char *d_name);
+void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
+int		check_executable_file(char *path);
+
 int		shell_error(char *type, int n, ...);
 int		shell_error_env(char *msg);
 
@@ -195,11 +201,6 @@ int 		path_to_output_recheable(char *output);
 
 char		**append_key_env(char **envp, char *key, char *value);
 int			get_stdin(t_shell *shell, e_prompt *prompt);
-int 		builtin_type(char **args, char **envp);
-int		builtin_type_get_options(char **options, char **args);
-int		builtin_type_check_builtin(char *d_name);
-void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
-int		check_executable_file(char *path);
 
 /*
 ** Hard test
@@ -278,3 +279,5 @@ int		check_executable_file(char *path);
 */
 
 #endif
+
+//Question : lors d'un output vers un tty quelle test faire pour check si tty ouvert

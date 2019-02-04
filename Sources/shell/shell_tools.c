@@ -42,6 +42,7 @@ void		shl_quotesub(char *arg)
 void		clean_shell(t_shell **shell)
 {
 	ft_arrdel(&(*shell)->envp);
+	ft_arrdel(&(*shell)->envl);
 	if ((*shell)->str)
 		ft_strdel(&(*shell)->str);
 	free(*shell);

@@ -40,8 +40,8 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 	i = 0;
 	while (elem->args && elem->args[i])
 	{
-		shl_quotesub(elem->args[i]);
 		shell_envpsub(&elem->args[i], shell->envp);
+		shl_quotesub(elem->args[i]);
 		if (i == 0)
 		{
 			elem->exec = shell_getpathexec(elem->args[0], shell->envp);
