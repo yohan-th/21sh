@@ -81,7 +81,8 @@ int		builtin_type(char **args, char **envp)
 	{
 		if (((!tp->op || (ft_strchr(tp->op, 'a') && !ft_strchr(tp->op, 'p')
 		&& !ft_strchr(tp->op, 'P')) || (ft_strchr(tp->op, 't') &&
-		!ft_strchr(tp->op, 'P'))) && builtin_type_check_builtin(args[tp->i])))
+		!ft_strchr(tp->op, 'P') && !ft_strchr(tp->op, 'p'))) &&
+		builtin_type_check_builtin(args[tp->i])))
 		{
 			builtin_type_display(args[tp->i], NULL, tp->op, 0);
 			if (!tp->op)
