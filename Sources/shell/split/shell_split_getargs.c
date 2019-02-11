@@ -114,7 +114,7 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	cmd->input = NULL;
 	cmd->hrdc = NULL;
 	cmd->exec = NULL;
-	cmd->ret = 0;
+	cmd->val_ret = 0;
 	cmd->process.fd_stdin = ft_strdup("&0");
 	cmd->process.fd_stdout = ft_strdup("&1");
 	cmd->process.fd_stderr = ft_strdup("&2");

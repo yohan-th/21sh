@@ -11,12 +11,11 @@
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "../../Include/shell.h"
 
 void	builtin_type_free(t_type *tp)
 {
 	int		i;
-	char	*tmp;
 
 	i = 0;
 	while (tp->bin[i])

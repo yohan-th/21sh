@@ -36,6 +36,36 @@ void	shell_pipe_stderr(t_process process)
 		dup2(process.fd_fileerr, 2);
 }
 
+void	shell_plomberie(t_cmd *elem, int tmp_fd[2])
+{
+	pipe(tmp_fd);
+	if ((elem->process).stdin_send)
+		shell_pipe_stdin(tmp_fd, (elem->process).stdin_send);
+	if ((elem->process).fd_stdout)
+		shell_pipe_stdout(elem->process);
+	if ((elem->process).fd_stderr)
+		shell_pipe_stderr(elem->process);
+}
+
+void	shell_child_return_value(int exec, t_cmd *elem, int is_builtin, int fd[2])
+{
+	char	*tmp;
+	char 	*return_value;
+
+	tmp = ft_itoa(elem->val_ret);
+	if (is_builtin == -1)
+		return_value = ft_strjoin("2", tmp);
+	else if ((is_builtin && elem->val_ret > 0) ||
+			(!is_builtin && WEXITSTATUS(exec) == 0))
+		return_value = ft_strjoin("1", tmp);
+	else
+		return_value = ft_strjoin("0", tmp);
+	ft_strdel(&tmp);
+	close(fd[0]);
+	write(fd[1], return_value, (size_t)ft_strlen(return_value) + 1);
+	ft_strdel(&return_value);
+}
+
 /*
 ** Le premier caractère de return_value correspond si exit est nécessaire (1) ou non (0)
 ** Les 10 char suivant sont la valeur de retour des builtin contenu dans un int
@@ -45,50 +75,47 @@ void	shell_child(t_cmd *elem, t_shell *shell, int from_child[2])
 {
 	int 		tmp_fd[2];
 	int 		is_builtin;
-	char 		*return_value;
-	char 		*tmp;
+	int 		exec;
 
-	pipe(tmp_fd);
-	if ((elem->process).stdin_send)
-		shell_pipe_stdin(tmp_fd, (elem->process).stdin_send);
-	if ((elem->process).fd_stdout)
-		shell_pipe_stdout(elem->process);
-	if ((elem->process).fd_stderr)
-		shell_pipe_stderr(elem->process);
+	shell_plomberie(elem, tmp_fd);
 	is_builtin = shell_builtin(elem, shell);
 	if (!is_builtin && elem->exec && ft_strcmp("not found", elem->exec) == 0)
 		ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
-	else if (!is_builtin && elem->exec)
+	else if (!is_builtin && elem->exec && (exec = fork()) == 0)
 		execve(elem->exec, elem->args, shell->envp);
-	tmp = ft_itoa(elem->ret);
-	close(from_child[0]);
-	if (is_builtin && ft_strcmp("exit", elem->args[0]) == 0)
-		return_value = ft_strjoin("1", tmp);
-	else
-		return_value = ft_strjoin("0", tmp);
-	ft_strdel(&tmp);
-	write(from_child[1], return_value, (size_t)ft_strlen(return_value));
+	wait(&exec);
+	shell_child_return_value(exec, elem, is_builtin, from_child);
 	exit(EXIT_SUCCESS);
 }
 
 /*
-** Le premier caractère de buf correspond si exit est nécessaire (1) ou non (0)
+** buf[0] correspond à :
+**		- command échec '0'
+** 		- command réussi '1'
+** 		- exit nécessaire '2'
 ** Les 10 char suivant sont la valeur de retour des builtin contenu dans un int
 */
 
-BOOL	shell_father(t_cmd *elem, int pid_child, int from_child[2])
+int		shell_father(t_cmd *elem, int pid_child, int from_child[2])
 {
-	char buf[12];
+	char	buf;
+	char	ret[5];
+	int 	i;
 
 	wait(&pid_child);
+	ft_bzero(ret, 5);
 	close(from_child[1]);
-	ft_bzero(&buf, 11);
-	read(from_child[0], buf, 12);
-	elem->ret = ft_atoi(buf + 1);
-	if (buf[0] == '1')
-		return (0);
-	else
-		return (1);
+	buf = -1;
+	i = 0;
+	while (buf != '\0')
+	{
+		read(from_child[0], &buf, 1);
+		ret[i++] = buf;
+
+	}
+	printf("-<ret|%s|>\n", ret);
+	elem->val_ret = ft_atoi(ret + 1);
+	return (ret[0] - 48);
 }
 
 int 	shell_exec(t_cmd *elem, t_shell *shell)
@@ -96,43 +123,15 @@ int 	shell_exec(t_cmd *elem, t_shell *shell)
 	int		father;
 	int 	fd[3];
 	int 	from_child[2];
-	BOOL	exec_ok;
+	int 	ret;
 
-	exec_ok = 1;
+	ret = 0;
 	pipe(from_child);
 	shell_save_fd(fd);
 	if ((father = fork()) == 0)
 		shell_child(elem, shell, from_child);
 	else
-		exec_ok = shell_father(elem, father, from_child);
+		ret = shell_father(elem, father, from_child);
 	shell_reinit_fd(fd);
-	if (!exec_ok)
-		return (0);
-	else
-		return (1);
+	return (ret);
 }
-
-/*
-int     main(int ac, char **av)
-{
-	int pfd2[2];
-	int p;
-	char *msg;
-	char *buf;
-
-	buf = malloc(sizeof(char) * 20);
-	pipe(pfd2);
-	if((p = fork()) == 0)//from child to parent
-	{
-		close(pfd2[0]);
-		write(pfd2[1],"from child: how r u\0",20);
-	}
-	else
-	{
-		wait(&p);
-		close(pfd2[1]);
-		read(pfd2[0], buf, 20);
-		printf("\nreceive |%s|",buf);
-	}
-}
- */

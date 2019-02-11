@@ -29,6 +29,7 @@
 typedef struct				s_process
 {
 	char 				*fd_stdin;
+	int 				fd_pipestdin;
 	char 				*stdin_send;
 	char 				*fd_stdout;
 	int 				fd_fileout;
@@ -64,7 +65,7 @@ typedef struct				s_cmd
 	char 				**hrdc;
 	t_process			process;
 	int 				sep;
-	int 				ret;
+	int 				val_ret;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
 }							t_cmd;
@@ -102,15 +103,17 @@ typedef enum 				s_error
 	DBL_SEP_OR_BK,
 }							e_error;
 
-void	builtin_cd(char **cmd, char ***envp);
+int		builtin_cd(char **cmd, char ***envp);
+char	*cd_rmv_last_path(char *cur_dir);
 void	builtin_setenv(char ***envp, char *key, char *value);
 void	builtin_unsetenv(char ***envp, char *key);
 void	builtin_delenv(char ***envp, char *key);
 int		builtin_eewefnv(char ***envp, char ***envl, char **args);
 char	**rmv_key_env(char **envp, char *key);
 void	builtin_env(char **envp, char *key);
-void	builtin_echo(char **cmd);
-void 	builtin_env_all(char ***envp, char ***envl, char **args);
+int		builtin_echo(char **cmd);
+int 	builtin_env_all(char ***envp, char ***envl, char **args);
+int		builtin_exit(char **cmd, char ***envp);
 
 int 	builtin_type(char **args, char **envp);
 int		builtin_type_get_options(char **options, char **args);
@@ -121,7 +124,7 @@ int		check_executable_file(char *path);
 int		shell_error(char *type, int n, ...);
 int		shell_error_env(char *msg);
 
-int		shell_builtin(t_cmd *link, t_shell *shell);
+int		shell_builtin(t_cmd *elem, t_shell *shell);
 char	*get_envp(char **envp, char *var);
 char	*get_var(char *var_key);
 char	*get_cur_dir(void);
@@ -173,7 +176,7 @@ int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd,
 							BOOL shl_str);
 int			len_stdin(char *str, char quote);
 
-void		read_lexing(t_cmd *cmd);
+void		read_lexing(t_cmd *elem);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

@@ -46,11 +46,13 @@ SRCS =  shell/main.c \
         shell/process/shell_process_getpathcmd.c \
         shell/process/shell_process_exec.c \
 		builtins/builtin_cd.c \
+		builtins/builtin_cd_tools.c \
         builtins/builtin_allenv.c \
         builtins/builtin_echo.c \
         builtins/builtin_envl.c \
         builtins/builtin_type.c \
         builtins/builtin_type_tools.c \
+        builtins/builtin_exit.c \
         builtins/builtin.c \
         editor/get_stdin.c \
 		editor/prompt.c \

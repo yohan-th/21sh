@@ -33,13 +33,16 @@ int 	check_replace_env_variable(char ***env, char *var, char *value)
 	return (0);
 }
 
-void	builtin_env_all(char ***envp, char ***envl, char **args)
+int		builtin_env_all(char ***envp, char ***envl, char **args)
 {
 	char 	*var;
 	char 	*value;
 
 	if (ft_arrlen(args) > 1)
+	{
 		ft_putstr_fd("21sh: too much arguments\n", 2);
+		return (0);
+	}
 	else
 	{
 		var = get_var(args[0]);
@@ -51,4 +54,5 @@ void	builtin_env_all(char ***envp, char ***envl, char **args)
 		ft_strdel(&var);
 		ft_strdel(&value);
 	}
+	return (1);
 }

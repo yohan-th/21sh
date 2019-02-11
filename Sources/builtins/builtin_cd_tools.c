@@ -1,37 +1,34 @@
 /* ************************************************************************** */
 /*                                                          LE - /            */
 /*                                                              /             */
-/*   builtin_echo.c                                   .::    .:/ .      .::   */
+/*   builtin_cd_tools.c                               .::    .:/ .      .::   */
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/05/07 19:56:27 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/10/24 22:13:49 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/02/08 13:19:17 by ythollet     #+#   ##    ##    #+#       */
+/*   Updated: 2019/02/08 13:19:17 by ythollet    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "../../Include/shell.h"
 
-int		builtin_echo(char **cmd)
-{
-	int		i;
-	BOOL	newl;
+/*
+** se poisitonne au dernier '/' et remet a '\0' jusqu'a la fin
+** sauf si on est a la racine
+*/
 
-	newl = 1;
-	i = 1;
-	if (cmd[1] && ft_strcmp(cmd[1], "-n") == 0)
+char	*cd_rmv_last_path(char *cur_dir)
+{
+	char *tmp;
+
+	if (ft_strlen(cur_dir) > 1)
 	{
-		newl = 0;
-		i = 2;
+		tmp = ft_strchr(cur_dir, '/') + 1;
+		while (ft_strchr(tmp, '/'))
+			tmp = ft_strchr(tmp, '/') + 1;
+		while (*tmp)
+			*tmp++ = '\0';
 	}
-	while (cmd[i])
-	{
-		if (ft_strcmp(cmd[i], "") != 0)
-			ft_dprintf(1, "%s", cmd[i]);
-		i++;
-	}
-	if (newl)
-		write(1, "\n", 1);
-	return (1);
+	return (cur_dir);
 }

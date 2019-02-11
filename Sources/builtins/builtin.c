@@ -13,30 +13,33 @@
 
 #include "../../Include/shell.h"
 
-void	check_builtin_setenv(char ***envp, char **cmd)
+int		check_builtin_setenv(char ***envp, char **cmd)
 {
 	if (cmd[1] != NULL && cmd[2] != NULL && cmd[3] == NULL)
 		builtin_setenv(envp, cmd[1], cmd[2]);
 	else
-		shell_error_env("env set usage");
+		return (shell_error_env("env set usage"));
+	return (1);
 }
 
-void	check_builtin_unsetenv(char ***envp, char **cmd)
+int		check_builtin_unsetenv(char ***envp, char **cmd)
 {
 	if (cmd[1] != NULL && cmd[2] == NULL && get_envp(*envp, cmd[1]))
 		*envp = rmv_key_env(*envp, cmd[1]);
 	else
-		shell_error_env("env unset usage");
+		return (shell_error_env("env unset usage"));
+	return (1);
 }
 
-void	check_builtin_env(char ***envp, char **cmd)
+int		check_builtin_env(char ***envp, char **cmd)
 {
 	if (cmd[1] == NULL)
 		builtin_env(*envp, NULL);
 	else if (cmd[1] != NULL && cmd[2] == NULL)
 		builtin_env(*envp, cmd[1]);
 	else
-		shell_error_env("env usage");
+		return (shell_error_env("env usage"));
+	return (1);
 }
 
 int 	check_shell_variable(char *arg)
@@ -50,24 +53,36 @@ int 	check_shell_variable(char *arg)
 	return (0);
 }
 
-int		shell_builtin(t_cmd *link, t_shell *shell)
+/*
+** Return value :
+**  - 0 not builtin
+**  - 1 is builtin
+**  - -1 need exit
+** elem->val_ret contient 0 si builtin failed ou 1 si succeeded
+*/
+
+int		shell_builtin(t_cmd *elem, t_shell *shell)
 {
-	if (link->args[0] && ft_strcmp("echo", link->args[0]) == 0)
-		builtin_echo(link->args);
-	else if (link->args[0] && ft_strcmp("cd", link->args[0]) == 0)
-		builtin_cd(link->args, &shell->envp);
-	else if (link->args[0] && ft_strcmp("setenv", link->args[0]) == 0)
-		check_builtin_setenv(&shell->envp, link->args);
-	else if (link->args[0] && ft_strcmp("unsetenv", link->args[0]) == 0)
-		check_builtin_unsetenv(&shell->envp, link->args);
-	else if (link->args[0] && ft_strcmp("env", link->args[0]) == 0)
-		check_builtin_env(&shell->envp, link->args);
-	else if (link->args[0] && check_shell_variable(link->args[0]))
-		builtin_env_all(&shell->envp, &shell->envl, link->args);
-	else if (link->args[0] && ft_strcmp("type", link->args[0]) == 0)
-		builtin_type(link->args + 1, shell->envp);
-	else if (link->args[0] && ft_strcmp("exit", link->args[0]) == 0)
-		return (-1);
+	if (elem->args[0] && ft_strcmp("echo", elem->args[0]) == 0)
+		elem->val_ret = builtin_echo(elem->args);
+	else if (elem->args[0] && ft_strcmp("cd", elem->args[0]) == 0)
+		elem->val_ret = builtin_cd(elem->args, &shell->envp);
+	else if (elem->args[0] && ft_strcmp("setenv", elem->args[0]) == 0)
+		elem->val_ret = check_builtin_setenv(&shell->envp, elem->args);
+	else if (elem->args[0] && ft_strcmp("unsetenv", elem->args[0]) == 0)
+		elem->val_ret = check_builtin_unsetenv(&shell->envp, elem->args);
+	else if (elem->args[0] && ft_strcmp("env", elem->args[0]) == 0)
+		elem->val_ret = check_builtin_env(&shell->envp, elem->args);
+	else if (elem->args[0] && check_shell_variable(elem->args[0]))
+		elem->val_ret = builtin_env_all(&shell->envp, &shell->envl, elem->args);
+	else if (elem->args[0] && ft_strcmp("type", elem->args[0]) == 0)
+		elem->val_ret = builtin_type(elem->args + 1, shell->envp);
+	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
+	{
+		elem->val_ret = builtin_exit(elem->args, &shell->envp);
+		if (elem->val_ret >= 0)
+			return (-1);
+	}
 	else
 		return (0);
 	return (1);

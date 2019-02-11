@@ -84,7 +84,8 @@ int 	is_recheable_output(t_output *output, t_shell *shell)
 		else
 		{
 			printf("-<|open %s|>\n", output->to);
-			fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC);
+			fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC,
+										S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
 		}
 	}
 	ft_strdel(&msg_err);
