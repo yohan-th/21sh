@@ -15,10 +15,10 @@
 
 int		check_fd_input(char *input, t_shell *shell)
 {
-	int 	fd;
-	int 	i;
+	int fd;
+	int i;
 
-	if ((int)input != -3 && (int)input != -1 &&  input[0] == '&')
+	if ((int)input != -3 && (int)input != -1 && input[0] == '&')
 	{
 		shell_envpsub(&input, shell->envp);
 		shl_quotesub(input);
@@ -36,10 +36,10 @@ int		check_fd_input(char *input, t_shell *shell)
 	return (0);
 }
 
-void 	complete_stdin_path(char **std_in, t_shell *shell)
+void	complete_stdin_path(char **std_in, t_shell *shell)
 {
-	char 	*tmp;
-	char 	*cur_dir;
+	char *tmp;
+	char *cur_dir;
 
 	shell_envpsub(std_in, shell->envp);
 	shl_quotesub(*std_in);
@@ -53,7 +53,7 @@ void 	complete_stdin_path(char **std_in, t_shell *shell)
 	}
 }
 
-int 	check_input_file(char **std_in, t_shell *shell)
+int		check_input_file(char **std_in, t_shell *shell)
 {
 	char *msg_err;
 
@@ -72,11 +72,10 @@ int 	check_input_file(char **std_in, t_shell *shell)
 	return (1);
 }
 
-
-int 	shell_read_input(t_cmd *elem, t_shell *shell)
+int		shell_read_input(t_cmd *elem, t_shell *shell)
 {
-	int 		i;
-	int 		is_fd;
+	int i;
+	int is_fd;
 
 	i = 0;
 	while (elem->input && elem->input[i])

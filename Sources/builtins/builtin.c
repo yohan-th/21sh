@@ -42,7 +42,7 @@ int		check_builtin_env(char ***envp, char **cmd)
 	return (1);
 }
 
-int 	check_shell_variable(char *arg)
+int		check_shell_variable(char *arg)
 {
 	int i;
 
@@ -66,7 +66,7 @@ int		shell_builtin(t_cmd *elem, t_shell *shell)
 	if (elem->args[0] && ft_strcmp("echo", elem->args[0]) == 0)
 		elem->val_ret = builtin_echo(elem->args);
 	else if (elem->args[0] && ft_strcmp("cd", elem->args[0]) == 0)
-		elem->val_ret = builtin_cd(elem->args, &shell->envp);
+		elem->val_ret = builtin_cd(elem->args, &shell->envp, 1);
 	else if (elem->args[0] && ft_strcmp("setenv", elem->args[0]) == 0)
 		elem->val_ret = check_builtin_setenv(&shell->envp, elem->args);
 	else if (elem->args[0] && ft_strcmp("unsetenv", elem->args[0]) == 0)
@@ -79,7 +79,7 @@ int		shell_builtin(t_cmd *elem, t_shell *shell)
 		elem->val_ret = builtin_type(elem->args + 1, shell->envp);
 	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
 	{
-		elem->val_ret = builtin_exit(elem->args, &shell->envp);
+		elem->val_ret = builtin_exit(elem->args);
 		if (elem->val_ret >= 0)
 			return (-1);
 	}

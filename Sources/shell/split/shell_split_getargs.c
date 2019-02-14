@@ -93,7 +93,8 @@ char	*get_arg(char **str, t_cmd *cmd)
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
 	shell_std_out(&arg, &cmd->output, quote);
-	shell_std_in(&arg, quote, &cmd->input, &cmd->hrdc, &(cmd->process).stdin_send);
+	shell_std_in(&arg, quote, &cmd->input, &cmd->hrdc,
+					&(cmd->process).stdin_send);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }

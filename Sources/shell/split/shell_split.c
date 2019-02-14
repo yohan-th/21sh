@@ -106,11 +106,11 @@ t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
 		(cmd->next_cmd)->start = cmd->start;
 		cmd = cmd->next_cmd;
 		cmd->sep = get_sep(&line);
-		if (!stdout_to(cmd->output)) //(!ft_strlen(cmd->args[0]) && cmd->sep) ||
+		if (!stdout_to(cmd->output))
 			break ;
 	}
 	if (!cmd->args || (ft_strlen(*cmd->args) && (cmd->sep == SPL_PIPE ||
-		cmd->sep == DBL_PIPE ||  cmd->sep == DBL_SPRLU)))
+			cmd->sep == DBL_PIPE || cmd->sep == DBL_SPRLU)))
 	{
 		*prompt = B_QUOTE;
 		clean_cmd(&cmd);

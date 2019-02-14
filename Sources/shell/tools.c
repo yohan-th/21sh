@@ -13,96 +13,49 @@
 
 #include "../../Include/shell.h"
 
-/*
-** Lorsqu'on lance shell, OLDPWD ne doit pas exister, on le del de dup_envp
-*/
-
-int 	check_if_env_var_existing(char **env, char*var)
+int			init_terminal_data(void)
 {
-	int i;
-	char *env_var;
+	static char	term_buffer[2048];
+	char		*termtype;
+	int			success;
 
-	i = -1;
-	while (env[++i])
+	if (!(termtype = getenv("TERM")))
+		termtype = "xterm-256color";
+	success = tgetent(term_buffer, termtype);
+	if (success < 0)
 	{
-		env_var = get_var(env[i]);
-		if (env_var && !(ft_strcmp(var, env_var)))
-		{
-			ft_strdel(&env_var);
-			return (1);
-		}
-		ft_strdel(&env_var);
+		ft_putstr("Could not access the termcap data base.\n");
+		return (EXIT_FAILURE);
 	}
-	return (0);
-}
-
-void	get_env_path_from_file(char **path, char *file)
-{
-	int fd;
-	char *line;
-	int next_path;
-
-	line = NULL;
-	next_path = 0;
-	if ((fd = open(file, O_RDONLY)) > -1)
+	if (success == 0)
 	{
-		while (get_next_line(fd, &line) > 0)
-		{
-			if (next_path || (!next_path && *path))
-				ft_strjoin_free(path, ":");
-			ft_strjoin_free(path, line);
-			next_path = 1;
-			ft_strdel(&line);
-		}
-		close(fd);
+		ft_putstr("Terminal type `");
+		ft_putstr(termtype);
+		ft_putendl("' is not defined.");
+		return (EXIT_FAILURE);
 	}
+	return (EXIT_SUCCESS);
 }
 
-char 	**init_env_path(char **envp)
+void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
+						char **env)
 {
-	char **new_envp;
-	char *path;
-
-	path = NULL;
-	get_env_path_from_file(&path, "/etc/paths");
-	get_env_path_from_file(&path, "/etc/paths.d/munki");
-	new_envp = append_key_env(envp, "PATH", path);
-	ft_strdel(&path);
-	return (new_envp);
+	init_terminal_data();
+	*shell = init_shell(env);
+	*prompt = PROMPT;
+	*cmd = NULL;
 }
 
-char 	**init_env(char **envp)
+int			shell_exit(t_cmd **cmd, t_shell **shell)
 {
-	int i;
-	char **new_envp;
-	char *var;
-	char *ret;
-	int j;
+	int ret;
 
-	i = -1;
-	j = -1;
-	new_envp = NULL;
-	new_envp = ft_arrdup(envp);
-	if (!check_if_env_var_existing(new_envp, "PATH"))
-		new_envp = init_env_path(new_envp);
-	if (!check_if_env_var_existing(new_envp, "SHLVL"))
-		new_envp = append_key_env(new_envp, "SHLVL", "1");
-	else
-		while (new_envp[++i])
-		{
-			var = get_var(new_envp[i]);
-			if (!(ft_strcmp(var, "SHLVL")))
-			{
-				while (new_envp[i][++j] != '=')
-					;
-				ret = ft_itoa(ft_atoi(new_envp[i] + j + 1) + 1);
-				ft_strdel(&new_envp[i]);
-				new_envp[i] = ft_strjoin_mltp(3, "SHLVL", "=", ret);
-				ft_strdel(&ret);
-			}
-			ft_strdel(&var);
-		}
-	return (new_envp);
+	clean_cmd(cmd);
+	if ((*shell)->hist)
+		fill_hist_file((*shell)->hist);
+	ret = (*shell)->ret;
+	clean_shell(shell);
+	return (ret);
 }
 
 t_shell		*init_shell(char **envp)
@@ -117,6 +70,7 @@ t_shell		*init_shell(char **envp)
 	shell->hist = init_hist();
 	shell->envl = (char **)malloc(sizeof(char *));
 	shell->envl[0] = NULL;
+	shell->ret = 0;
 	if (!shell->hist)
 		return (NULL);
 	return (shell);

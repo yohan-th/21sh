@@ -23,7 +23,7 @@ int		ft_isfile(char *file_path)
 		return (0);
 }
 
-int 	ft_isdir(char *path)
+int		ft_isdir(char *path)
 {
 	struct stat		t_stat;
 
@@ -37,7 +37,7 @@ int		ft_read_file(char *filename, char **file_content)
 {
 	int		fd;
 	char	buf[BUFF_SIZE + 1];
-	char 	*tmp;
+	char	*tmp;
 	size_t	ret_read;
 
 	if ((fd = open(filename, O_RDONLY)) == -1)

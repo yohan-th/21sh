@@ -45,7 +45,7 @@ int		del_next_hrdc(char **hrdc)
 void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 {
 	char	*hrdc;
-	int 	last;
+	int		last;
 
 	if ((int)((*cmd)->process).stdin_send == -1)
 		((*cmd)->process).stdin_send = ft_strdup("");

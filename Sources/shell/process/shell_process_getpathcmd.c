@@ -55,7 +55,7 @@ int		is_directory(char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-char 	*check_path_cmd(char *exec_path, char *exec)
+char	*check_path_cmd(char *exec_path, char *exec)
 {
 	char *ret;
 
@@ -91,7 +91,7 @@ char	*shell_getpathexec(char *exec, char **envp)
 	exec_path = NULL;
 	i = 0;
 	while (get_envp(envp, "PATH") && all_path[i] != NULL &&
-		   !ft_strchr(exec, '/'))
+				!ft_strchr(exec, '/'))
 	{
 		exec_path = ft_strjoin_mltp(3, all_path[i++], "/", exec);
 		if (access(exec_path, X_OK) != -1)

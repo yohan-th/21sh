@@ -15,9 +15,9 @@
 
 void	shell_clean_emptyargs(t_cmd *elem)
 {
-	char 	**args2;
-	int 	i;
-	int 	n;
+	char	**args2;
+	int		i;
+	int		n;
 
 	args2 = (char **)malloc(sizeof(char *) * (ft_arrlen(elem->args) + 1));
 	i = 0;
@@ -35,7 +35,7 @@ void	shell_clean_emptyargs(t_cmd *elem)
 
 void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 {
-	int 	i;
+	int i;
 
 	i = 0;
 	while (elem->args && elem->args[i])
@@ -54,9 +54,9 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 
 void	shell_clean_input(t_cmd *elem)
 {
-	int 	i;
-	char 	**files;
-	int 	n;
+	int		i;
+	char	**files;
+	int		n;
 
 	if (elem->input)
 	{
@@ -65,7 +65,7 @@ void	shell_clean_input(t_cmd *elem)
 		n = 0;
 		while (elem->input && elem->input[i])
 		{
-			if ((int) elem->input[i] != -1 && (int) elem->input[i] != -3)
+			if ((int)elem->input[i] != -1 && (int)elem->input[i] != -3)
 			{
 				files[n++] = ft_strdup(elem->input[i]);
 				ft_strdel(&elem->input[i]);
@@ -94,7 +94,5 @@ void	shell_prepare(t_cmd *cmd, t_shell *shell)
 	{
 		shell_clean_emptyargs(elem);
 		shell_prepare_args(elem, shell);
-		//shell_clean_input(elem);
 	}
-
 }

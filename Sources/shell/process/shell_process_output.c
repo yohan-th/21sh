@@ -15,8 +15,8 @@
 
 int		check_fd_output(char *output, t_shell *shell)
 {
-	int 	fd;
-	int 	i;
+	int fd;
+	int i;
 
 	if (output[0] == '&')
 	{
@@ -36,9 +36,9 @@ int		check_fd_output(char *output, t_shell *shell)
 	return (0);
 }
 
-int 	check_output_recheable(t_output *output)
+int		check_output_recheable(t_output *output)
 {
-	t_output 	*elem;
+	t_output	*elem;
 
 	elem = output;
 	while (elem != NULL)
@@ -55,13 +55,12 @@ int 	check_output_recheable(t_output *output)
 			if (ft_atoi(elem->to + 1) >= 0 && ft_atoi(elem->to + 1) <= 2)
 				return (shell_error_prepare("bad fd", elem->to + 1));
 		}
-
 		elem = elem->next;
 	}
 	return (1);
 }
 
-int 	is_recheable_output(t_output *output, t_shell *shell)
+int		is_recheable_output(t_output *output, t_shell *shell)
 {
 	int		fd_open;
 	char	*msg_err;
@@ -82,17 +81,14 @@ int 	is_recheable_output(t_output *output, t_shell *shell)
 		if (output->append)
 			fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
 		else
-		{
-			printf("-<|open %s|>\n", output->to);
 			fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC,
 										S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
-		}
 	}
 	ft_strdel(&msg_err);
 	return (fd_open);
 }
 
-void 	shell_set_output_file(t_output *output, t_cmd *elem, int fd_file)
+void	shell_set_output_file(t_output *output, t_cmd *elem, int fd_file)
 {
 	if (output->from == 1)
 	{
@@ -129,8 +125,8 @@ void	shell_set_output_fd(t_output *output, t_cmd *elem)
 int		shell_set_output(t_cmd *elem, t_shell *shell)
 {
 	t_output	*output;
-	int 		is_fd;
-	int 		fd_file;
+	int			is_fd;
+	int			fd_file;
 
 	output = elem->output;
 	while (output != NULL)
@@ -149,5 +145,3 @@ int		shell_set_output(t_cmd *elem, t_shell *shell)
 	}
 	return (1);
 }
-
-//Quelle logique dans "echo test 0>fichier" ?

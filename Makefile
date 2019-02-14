@@ -13,7 +13,7 @@
 
 .PHONY: all clean fclean re
 
-CFLAGS = #-g -Wall -Wextra -Werror
+CFLAGS = -g -Wall -Wextra -Werror
 
 NAME = 21sh
 
@@ -27,6 +27,7 @@ SRCS =  shell/main.c \
         shell/ft_tools.c \
         shell/shell_tools.c \
         shell/shell_envsub.c \
+        shell/shell_env_init.c \
         shell/shell_error.c \
         shell/shell_hrdc.c \
         shell/shell_check.c \
@@ -45,6 +46,7 @@ SRCS =  shell/main.c \
         shell/process/shell_process_tools.c \
         shell/process/shell_process_getpathcmd.c \
         shell/process/shell_process_exec.c \
+        shell/process/shell_process_plomberie.c \
 		builtins/builtin_cd.c \
 		builtins/builtin_cd_tools.c \
         builtins/builtin_allenv.c \

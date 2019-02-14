@@ -13,7 +13,7 @@
 
 #include "../../../Include/shell.h"
 
-int 	path_to_output_exist(char *output)
+int		path_to_output_exist(char *output)
 {
 	int i;
 	int exist;
@@ -33,7 +33,7 @@ int 	path_to_output_exist(char *output)
 	return (exist);
 }
 
-int 	path_to_output_recheable(char *output)
+int		path_to_output_recheable(char *output)
 {
 	int	i;
 	int recheable;
@@ -60,8 +60,8 @@ int 	path_to_output_recheable(char *output)
 
 int		complete_output_paths(char **output_to, t_shell *shell)
 {
-	char 		*tmp;
-	char 		*cur_dir;
+	char *tmp;
+	char *cur_dir;
 
 	shell_envpsub(output_to, shell->envp);
 	shl_quotesub(*output_to);
@@ -75,4 +75,3 @@ int		complete_output_paths(char **output_to, t_shell *shell)
 	}
 	return (1);
 }
-

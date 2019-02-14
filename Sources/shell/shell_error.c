@@ -33,10 +33,10 @@ int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
 		ft_dprintf(2, "shell: setenv: invalid argument\n"
-				   "usage: setenv VAR VALUE\n");
+						"usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
 		ft_dprintf(2, "shell: unsetenv: invalid argument\n"
-				   "usage: unsetenv VAR\n");
+						"usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
 		ft_dprintf(2, "shell: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)

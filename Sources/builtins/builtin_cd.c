@@ -13,9 +13,25 @@
 
 #include "../../Include/shell.h"
 
-void	cd_change_env(char ***envp, char *pwd, char *old_pwd, char *dir)
+char	*cd_cur_dir(char **cmd, char ***envp, int *i)
 {
-	if (!pwd || access(pwd, X_OK) == -1)
+	char	*cur_dir;
+
+	*i = 1;
+	while (cmd[*i] != NULL && cmd[*i][0] == '-' && cmd[*i][1] != '\0')
+		(*i)++;
+	if ((cmd[(*i) - 1][0] == '-' &&
+			cmd[(*i) - 1][ft_strlen(cmd[(*i) - 1]) - 1] == 'P') ||
+			get_envp(*envp, "PWD") == NULL)
+		cur_dir = get_cur_dir();
+	else
+		cur_dir = ft_strdup(get_envp(*envp, "PWD"));
+	return (cur_dir);
+}
+
+void	cd_change_env(char ***envp, char *pwd, char *oldpwd, char *dir, BOOL v)
+{
+	if (v && (!pwd || access(pwd, X_OK) == -1))
 	{
 		write(2, "21sh: cd: ", 10);
 		if (!pwd)
@@ -35,7 +51,7 @@ void	cd_change_env(char ***envp, char *pwd, char *old_pwd, char *dir)
 	{
 		chdir(pwd);
 		builtin_setenv(envp, "PWD", pwd);
-		builtin_setenv(envp, "OLDPWD", old_pwd);
+		builtin_setenv(envp, "OLDPWD", oldpwd);
 	}
 }
 
@@ -43,11 +59,11 @@ void	cd_change_env(char ***envp, char *pwd, char *old_pwd, char *dir)
 ** {tmp} doit terminer par "/"
 */
 
-int		cd_move(char ***envp, char *cur_dir, char *dir)
+int		cd_move(char ***envp, char *cur_dir, char *dir, BOOL v)
 {
 	char	*tmp;
 
-	if (ft_strchr(dir, '~') && !get_envp(*envp, "HOME"))
+	if (v && ft_strchr(dir, '~') && !get_envp(*envp, "HOME"))
 		return (shell_error("env $HOME not set", 0));
 	else if (dir[0] == '~')
 		tmp = ft_strjoin_mltp(3, get_envp(*envp, "HOME"), dir + 1, "/");
@@ -55,7 +71,7 @@ int		cd_move(char ***envp, char *cur_dir, char *dir)
 		tmp = ft_strjoin(dir, "/");
 	else
 		tmp = ft_strjoin_mltp(4, cur_dir, "/", dir, "/");
-	cd_change_env(envp, tmp, cur_dir, dir);
+	cd_change_env(envp, tmp, cur_dir, dir, v);
 	free(tmp);
 	return (1);
 }
@@ -90,27 +106,12 @@ void	cd_clean_path(char *pwd)
 		pwd[i--] = '\0';
 }
 
-char 	*cd_cur_dir(char **cmd, char ***envp, int *i)
-{
-	char	*cur_dir;
-
-	*i = 1;
-	while (cmd[*i] != NULL && cmd[*i][0] == '-' && cmd[*i][1] != '\0')
-		(*i)++;
-	if ((cmd[(*i) - 1][0] == '-' &&
-			cmd[(*i) - 1][ft_strlen(cmd[(*i) - 1]) - 1] == 'P') ||
-			get_envp(*envp, "PWD") == NULL)
-		cur_dir = get_cur_dir();
-	else
-		cur_dir = ft_strdup(get_envp(*envp, "PWD"));
-	return (cur_dir);
-}
-
 /*
 ** Par default cd suit les liens (option -L)
+** option v pour verbose
 */
 
-int		builtin_cd(char **cmd, char ***envp)
+int		builtin_cd(char **cmd, char ***envp, BOOL v)
 {
 	int		i;
 	char	*cur_dir;
@@ -119,18 +120,18 @@ int		builtin_cd(char **cmd, char ***envp)
 	ret = 0;
 	cur_dir = cd_cur_dir(cmd, envp, &i);
 	if (cmd[i] == NULL || ft_strlen(cmd[i]) == 0)
-		cd_change_env(envp, get_envp(*envp, "HOME"), cur_dir, "HOME");
-	else if (ft_strcmp(cmd[i], "-") == 0 && get_envp(*envp, "OLDPWD") == NULL)
+		cd_change_env(envp, get_envp(*envp, "HOME"), cur_dir, "HOME", v);
+	else if (v && ft_strcmp(cmd[i], "-") == 0 && !get_envp(*envp, "OLDPWD"))
 	{
 		write(2, "21sh: cd: OLDPWD not set\n", 25);
 		ret = 0;
 	}
 	else if (ft_strcmp(cmd[i], "-") == 0)
-		cd_change_env(envp, get_envp(*envp, "OLDPWD"), cur_dir, "OLDPWD");
+		cd_change_env(envp, get_envp(*envp, "OLDPWD"), cur_dir, "OLDPWD", v);
 	else if (ft_strcmp(cmd[i], "..") == 0 && ft_strcmp(cur_dir, "/") != 0)
-		cd_change_env(envp, cd_rmv_last_path(cur_dir), cur_dir, "RMV_LAST");
+		cd_change_env(envp, cd_rmv_last_path(cur_dir), cur_dir, "RMV_LAST", v);
 	else
-		ret = cd_move(envp, cur_dir, cmd[i]);
+		ret = cd_move(envp, cur_dir, cmd[i], v);
 	cd_clean_path(get_envp(*envp, "PWD"));
 	ft_strdel(&cur_dir);
 	return (ret);

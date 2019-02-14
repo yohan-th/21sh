@@ -13,30 +13,6 @@
 
 #include "../../Include/shell.h"
 
-int		init_terminal_data(void)
-{
-	static char	term_buffer[2048];
-	char		*termtype;
-	int			success;
-
-	if (!(termtype = getenv("TERM")))
-		termtype = "xterm-256color";
-	success = tgetent(term_buffer, termtype);
-	if (success < 0)
-	{
-		ft_putstr("Could not access the termcap data base.\n");
-		return (EXIT_FAILURE);
-	}
-	if (success == 0)
-	{
-		ft_putstr("Terminal type `");
-		ft_putstr(termtype);
-		ft_putendl("' is not defined.");
-		return (EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
-}
-
 BOOL	check_syntax_err(t_cmd *cmd)
 {
 	t_cmd	*next;
@@ -88,21 +64,29 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 	return (1);
 }
 
-void	shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd, char **env)
+void	shell(t_shell *shl, t_cmd *cmd, e_prompt prmt)
 {
-	init_terminal_data();
-	*shell = init_shell(env);
-	*prompt = PROMPT;
-	*cmd = NULL;
-}
+	e_shortcut	ret;
 
-int	shell_exit(t_cmd **cmd, t_shell **shell)
-{
-	clean_cmd(cmd);
-	if ((*shell)->hist)
-		fill_hist_file((*shell)->hist);
-	clean_shell(shell);
-	return (101); //renvoyer bonne valeur du shell
+	while ((ret = get_stdin(shl, &prmt)) != -1)
+	{
+		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
+			break ;
+		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
+			(prmt == PROMPT && cmd && (cmd->process).stdin_send))
+		{
+			if (cmd_check(&cmd, shl, &prmt))
+				continue;
+			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
+					(shl->hist->prev && shl->hist->prev->cmd &&
+					ft_strcmp(shl->hist->prev->cmd, shl->str))))
+				shl->hist->cmd = ft_strdup(shl->str);
+			if (check_syntax_err(cmd))
+				shell_clean_data(&cmd, shl, 1, 1);
+			else if (shell_process(&cmd, shl) == -1)
+				break ;
+		}
+	}
 }
 
 int		main(void)
@@ -111,29 +95,8 @@ int		main(void)
 	t_shell		*shl;
 	e_prompt	prmt;
 	t_cmd		*cmd;
-	e_shortcut	ret;
 
 	shell_init(&shl, &prmt, &cmd, environ);
-	while ((ret = get_stdin(shl, &prmt)) != -1)
-	{
-		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
-			break ;
-		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
-				(prmt == PROMPT && cmd && (cmd->process).stdin_send))
-		{
-			if (cmd_check(&cmd, shl, &prmt))
-				continue;
-			if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
-						(shl->hist->prev && shl->hist->prev->cmd &&
-						ft_strcmp(shl->hist->prev->cmd, shl->str))))
-				shl->hist->cmd = ft_strdup(shl->str);
-			if (check_syntax_err(cmd))
-				shell_clean_data(&cmd, shl, 1, 1);
-			else if (shell_process(&cmd, shl) == -1)
-				break ;
-		}
-	}
+	shell(shl, cmd, prmt);
 	return (shell_exit(&cmd, &shl));
 }
-
-//shell_exit() --> renvoyer la bonne valeur

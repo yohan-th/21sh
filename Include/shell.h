@@ -29,7 +29,6 @@
 typedef struct				s_process
 {
 	char 				*fd_stdin;
-	int 				fd_pipestdin;
 	char 				*stdin_send;
 	char 				*fd_stdout;
 	int 				fd_fileout;
@@ -85,6 +84,7 @@ typedef struct				s_shell
 	char 				**envp;
 	char 				**envl;
 	char 				*str;
+	int 				ret;
 	t_history			*hist;
 }							t_shell;
 
@@ -103,7 +103,13 @@ typedef enum 				s_error
 	DBL_SEP_OR_BK,
 }							e_error;
 
-int		builtin_cd(char **cmd, char ***envp);
+/*
+**┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+**┃                                  Builtin                                   ┃
+**┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+*/
+
+int		builtin_cd(char **cmd, char ***envp, BOOL v);
 char	*cd_rmv_last_path(char *cur_dir);
 void	builtin_setenv(char ***envp, char *key, char *value);
 void	builtin_unsetenv(char ***envp, char *key);
@@ -113,7 +119,7 @@ char	**rmv_key_env(char **envp, char *key);
 void	builtin_env(char **envp, char *key);
 int		builtin_echo(char **cmd);
 int 	builtin_env_all(char ***envp, char ***envl, char **args);
-int		builtin_exit(char **cmd, char ***envp);
+int		builtin_exit(char **cmd);
 
 int 	builtin_type(char **args, char **envp);
 int		builtin_type_get_options(char **options, char **args);
@@ -121,26 +127,10 @@ int		builtin_type_check_builtin(char *d_name);
 void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
 int		check_executable_file(char *path);
 
-int		shell_error(char *type, int n, ...);
-int		shell_error_env(char *msg);
-
 int		shell_builtin(t_cmd *elem, t_shell *shell);
 char	*get_envp(char **envp, char *var);
 char	*get_var(char *var_key);
-char	*get_cur_dir(void);
-int		shell_argsub_env(char **arg, int i, char **envp);
-void	*shl_mlc(char *type, int n, ...);
 
-/*
-**┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-**┃                                  Tools                                     ┃
-**┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-*/
-
-t_shell		*init_shell(char **envp);
-void		clean_shell(t_shell **shell);
-int			ft_isfile(char *file_path);
-int 		ft_isdir(char *path);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -161,10 +151,9 @@ int			hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell,
 						e_shortcut ret);
 
 size_t		len_arg(char *str, char quote);
-int			clean_cmd(t_cmd **cmd);
+void		clean_cmd(t_cmd **cmd);
 char		*shell_trim(char **str);
 int			check_last_quote(char *arg, char quote);
-void		shl_quotesub(char *arg);
 BOOL		stdout_to(t_output *redis);
 int			len_stdout_to(char *str, char quote);
 t_output	*get_last_stdout(t_output *redi);
@@ -177,6 +166,7 @@ int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd,
 int			len_stdin(char *str, char quote);
 
 void		read_lexing(t_cmd *elem);
+
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -200,10 +190,35 @@ int			ft_read_file(char *filename, char **file_content);
 int 		path_to_output_exist(char *output);
 int			complete_output_paths(char **output_to, t_shell *shell);
 int 		path_to_output_recheable(char *output);
-
+void		shell_plomberie(t_cmd *elem, int tmp_fd[2], int fd_pipe[2]);
 
 char		**append_key_env(char **envp, char *key, char *value);
 int			get_stdin(t_shell *shell, e_prompt *prompt);
+void 		check_builtin_env_cd(t_cmd *elem, t_shell *shell);
+
+
+/*
+**┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+**┃                                  Tools                                     ┃
+**┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+*/
+
+t_shell		*init_shell(char **envp);
+int 		check_if_env_var_existing(char **env, char*var);
+char 		**init_env(char **envp);
+int			shell_error(char *type, int n, ...);
+int			shell_error_env(char *msg);
+void		clean_shell(t_shell **shell);
+int			ft_isfile(char *file_path);
+int 		ft_isdir(char *path);
+char		*get_cur_dir(void);
+int			shell_argsub_env(char **arg, int i, char **envp);
+void		shl_quotesub(char *arg);
+void		*shl_mlc(char *type, int n, ...);
+int			shell_exit(t_cmd **cmd, t_shell **shell);
+void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
+						char **env);
+
 
 /*
 ** Hard test
@@ -272,6 +287,12 @@ int			get_stdin(t_shell *shell, e_prompt *prompt);
 ** cat <&\2
 ** echo test >folder/unfind_folder/file
 ** echo test >&0
+** echo test > file | cat -->stdou prio sur pipe
+** echo test | cat < file --> file écrase le pipe
+** exit 2>file
+** exit | test
+** exit 1 2 --> too many arg et pas d'exit
+** exit t --> exit mais pas msg "numeric arg required"
 */
 
 /*
@@ -283,4 +304,6 @@ int			get_stdin(t_shell *shell, e_prompt *prompt);
 
 #endif
 
-//Question : lors d'un output vers un tty quelle test faire pour check si tty ouvert
+// Question :
+//lors d'un output vers un tty quelle test faire pour check si tty ouvert
+//Quelle logique dans "echo test 0>fichier" ?

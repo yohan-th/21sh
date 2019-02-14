@@ -13,7 +13,7 @@
 
 #include "../../Include/shell.h"
 
-int 	is_only_digit(char *arg)
+int		is_only_digit(char *arg)
 {
 	int i;
 
@@ -32,11 +32,10 @@ int 	is_only_digit(char *arg)
 ** return -1 si fail (pas d'exit) ou la valeur de retour
 */
 
-int		builtin_exit(char **cmd, char ***envp)
+int		builtin_exit(char **cmd)
 {
 	unsigned char ret;
 
-	write(2, "exit\n", 5);
 	if (cmd[1] == NULL)
 		return (0);
 	else if (!is_only_digit(cmd[1]))

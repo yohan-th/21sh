@@ -42,7 +42,7 @@ int		shell_argsub_env(char **arg, int i, char **envp)
 		return (i + ft_strlen(var) - 1);
 }
 
-void		shell_check_tilde(char **arg, char **envp)
+void	shell_check_tilde(char **arg, char **envp)
 {
 	char	*tmp;
 
@@ -69,10 +69,10 @@ void		shell_check_tilde(char **arg, char **envp)
 ** Remplace les var d'environnements
 */
 
-void		shell_envpsub(char **arg, char **envp)
+void	shell_envpsub(char **arg, char **envp)
 {
 	int		i;
-	char 	quote;
+	char	quote;
 
 	shell_check_tilde(arg, envp);
 	quote = *arg && ft_strchr("\"'", *arg[0]) ? (char)*arg[0] : (char)' ';

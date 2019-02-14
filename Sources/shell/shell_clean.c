@@ -44,7 +44,7 @@ void	clean_redi(t_output **redi)
 	free(*redi);
 }
 
-int		clean_cmd(t_cmd **cmd)
+void	clean_cmd(t_cmd **cmd)
 {
 	t_cmd	*tmp;
 
@@ -71,7 +71,6 @@ int		clean_cmd(t_cmd **cmd)
 		free(tmp);
 		*cmd = NULL;
 	}
-	return (1);
 }
 
 int 	shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)

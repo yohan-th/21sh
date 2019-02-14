@@ -13,7 +13,7 @@
 
 #include "../../Include/shell.h"
 
-void		shl_quotesub(char *arg)
+void	shl_quotesub(char *arg)
 {
 	char	quote;
 
@@ -39,7 +39,7 @@ void		shl_quotesub(char *arg)
 	}
 }
 
-void		clean_shell(t_shell **shell)
+void	clean_shell(t_shell **shell)
 {
 	ft_arrdel(&(*shell)->envp);
 	ft_arrdel(&(*shell)->envl);

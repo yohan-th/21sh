@@ -73,7 +73,7 @@ void	complete_stdin(char **arg, char quote, char ***std_in)
 ** {i})
 */
 
-int			shell_get_stdin(char ***ptn_stdin, char **arg, int i)
+int		shell_get_stdin(char ***ptn_stdin, char **arg, int i)
 {
 	char *tmp;
 
@@ -85,7 +85,7 @@ int			shell_get_stdin(char ***ptn_stdin, char **arg, int i)
 	return (0);
 }
 
-int 		shell_get_hrdc(char ***ptn_hrdc, char **arg, int i,
+int		shell_get_hrdc(char ***ptn_hrdc, char **arg, int i,
 							char ***ptn_stdin, char **hrdc_stdin)
 {
 	char	*tmp;
@@ -113,7 +113,7 @@ int 		shell_get_hrdc(char ***ptn_hrdc, char **arg, int i,
 */
 
 void	shell_std_in(char **arg, char quote, char ***ptn_stdin,
-					char ***ptn_hrdc, char **hrdc_stdin)
+						char ***ptn_hrdc, char **hrdc_stdin)
 {
 	int		i;
 

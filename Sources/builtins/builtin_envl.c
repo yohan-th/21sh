@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                          LE - /            */
+/*                                                              /             */
+/*   builtin_envl.c                                   .::    .:/ .      .::   */
+/*                                                 +:+:+   +:    +:  +:+:+    */
+/*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
+/*                                                 #+#   #+    #+    #+#      */
+/*   Created: 2019/02/13 23:03:27 by ythollet     #+#   ##    ##    #+#       */
+/*   Updated: 2019/02/13 23:03:27 by ythollet    ###    #+. /#+    ###.fr     */
+/*                                                         /                  */
+/*                                                        /                   */
+/* ************************************************************************** */
+
 #include "../../Include/shell.h"
 
-char 	*get_value(char *arg)
+char	*get_value(char *arg)
 {
 	int i;
 
@@ -11,10 +24,10 @@ char 	*get_value(char *arg)
 	return (NULL);
 }
 
-int 	check_replace_env_variable(char ***env, char *var, char *value)
+int		check_replace_env_variable(char ***env, char *var, char *value)
 {
-	int i;
-	char *env_key;
+	int		i;
+	char	*env_key;
 
 	i = 0;
 	while ((*env)[i])
@@ -35,8 +48,8 @@ int 	check_replace_env_variable(char ***env, char *var, char *value)
 
 int		builtin_env_all(char ***envp, char ***envl, char **args)
 {
-	char 	*var;
-	char 	*value;
+	char	*var;
+	char	*value;
 
 	if (ft_arrlen(args) > 1)
 	{

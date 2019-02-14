@@ -13,79 +13,88 @@
 
 #include "../../../Include/shell.h"
 
-void	shell_pipe_stdin(int tmp_fd[2], char *send_stdin)
-{
-	ft_putstr_fd(send_stdin, tmp_fd[1]);
-	close(tmp_fd[1]);
-	dup2(tmp_fd[0], 0);
-}
-
-void	shell_pipe_stdout(t_process process)
-{
-	if (process.fd_stdout[0] == '&' && process.fd_stdout[1] != '1')
-		dup2(ft_atoi(process.fd_stdout + 1), 1); // connect the write side with file
-	else if (process.fd_fileout != 0)
-		dup2(process.fd_fileout, 1);
-}
-
-void	shell_pipe_stderr(t_process process)
-{
-	if (process.fd_stderr[0] == '&' && process.fd_stderr[1] != '2')
-		dup2(ft_atoi(process.fd_stderr + 1), 2); // connect the write side with file
-	else if (process.fd_fileerr != 0)
-		dup2(process.fd_fileerr, 2);
-}
-
-void	shell_plomberie(t_cmd *elem, int tmp_fd[2])
-{
-	pipe(tmp_fd);
-	if ((elem->process).stdin_send)
-		shell_pipe_stdin(tmp_fd, (elem->process).stdin_send);
-	if ((elem->process).fd_stdout)
-		shell_pipe_stdout(elem->process);
-	if ((elem->process).fd_stderr)
-		shell_pipe_stderr(elem->process);
-}
-
-void	shell_child_return_value(int exec, t_cmd *elem, int is_builtin, int fd[2])
+void	shell_child_return_value(int exec, t_cmd *elem, int is_builtin,
+									int fd_child[2])
 {
 	char	*tmp;
-	char 	*return_value;
+	char	*return_value;
 
 	tmp = ft_itoa(elem->val_ret);
-	if (is_builtin == -1)
+	if (is_builtin == -1 && elem->sep != SPL_PIPE)
+	{
+		write(2, "exit\n", 5);
 		return_value = ft_strjoin("2", tmp);
+	}
 	else if ((is_builtin && elem->val_ret > 0) ||
 			(!is_builtin && WEXITSTATUS(exec) == 0))
 		return_value = ft_strjoin("1", tmp);
 	else
 		return_value = ft_strjoin("0", tmp);
 	ft_strdel(&tmp);
-	close(fd[0]);
-	write(fd[1], return_value, (size_t)ft_strlen(return_value) + 1);
+	close(fd_child[0]);
+	write(fd_child[1], return_value, (size_t)ft_strlen(return_value) + 1);
 	ft_strdel(&return_value);
 }
 
 /*
-** Le premier caractère de return_value correspond si exit est nécessaire (1) ou non (0)
+** Le premier caractère de return_value correspond si exit est nécessaire (0/1)
 ** Les 10 char suivant sont la valeur de retour des builtin contenu dans un int
 */
 
-void	shell_child(t_cmd *elem, t_shell *shell, int from_child[2])
+void	shell_child(t_cmd *elem, t_shell *shell, int ret_child[2],
+						int fd_pipe[2])
 {
-	int 		tmp_fd[2];
-	int 		is_builtin;
-	int 		exec;
+	int send_stdin[2];
+	int is_builtin;
+	int exec;
 
-	shell_plomberie(elem, tmp_fd);
+	exec = 0;
+	pipe(send_stdin);
+	shell_plomberie(elem, send_stdin, fd_pipe);
 	is_builtin = shell_builtin(elem, shell);
 	if (!is_builtin && elem->exec && ft_strcmp("not found", elem->exec) == 0)
 		ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
-	else if (!is_builtin && elem->exec && (exec = fork()) == 0)
-		execve(elem->exec, elem->args, shell->envp);
-	wait(&exec);
-	shell_child_return_value(exec, elem, is_builtin, from_child);
+	else if (!is_builtin && elem->exec)
+	{
+		if ((exec = fork()) == 0)
+			execve(elem->exec, elem->args, shell->envp);
+		else
+			wait(&exec);
+	}
+	shell_child_return_value(exec, elem, is_builtin, ret_child);
 	exit(EXIT_SUCCESS);
+}
+
+/*
+** Le fils a connecté le output de la command dans fd_pipe
+** Lecture char by char pour capter l'EOF puis les assembler dans strjoin_buf
+*/
+
+char	*shell_father_read_out(int *fd_pipe)
+{
+	char	*stdin_nxt_elem;
+	char	buf;
+	char	strjoin_buf[BUFF_READ];
+	int		i;
+
+	dup2(fd_pipe[0], 0);
+	close(fd_pipe[0]);
+	close(fd_pipe[1]);
+	stdin_nxt_elem = NULL;
+	ft_bzero(strjoin_buf, BUFF_READ);
+	i = 0;
+	while (read(0, &buf, 1) == 1)
+	{
+		strjoin_buf[i++] = buf;
+		if (i > BUFF_READ - 2)
+		{
+			ft_strjoin_free(&stdin_nxt_elem, strjoin_buf);
+			ft_bzero(strjoin_buf, BUFF_READ);
+			i = 0;
+		}
+	}
+	ft_strjoin_free(&stdin_nxt_elem, strjoin_buf);
+	return (stdin_nxt_elem);
 }
 
 /*
@@ -93,45 +102,50 @@ void	shell_child(t_cmd *elem, t_shell *shell, int from_child[2])
 **		- command échec '0'
 ** 		- command réussi '1'
 ** 		- exit nécessaire '2'
-** Les 10 char suivant sont la valeur de retour des builtin contenu dans un int
+** Les 3 char suivant sont la valeur de retour des builtins contenu dans un int
+**
+** shell_read_out lis les valeurs de retour de la commande et les stock dans
+** l'input de la prochaine commande
 */
 
-int		shell_father(t_cmd *elem, int pid_child, int from_child[2])
+int		shell_father(t_cmd *elem, t_shell *shell, int pid_child,
+						int ret_child[2], int fd_pipe[2])
 {
-	char	buf;
 	char	ret[5];
-	int 	i;
 
 	wait(&pid_child);
+	close(ret_child[1]);
 	ft_bzero(ret, 5);
-	close(from_child[1]);
-	buf = -1;
-	i = 0;
-	while (buf != '\0')
-	{
-		read(from_child[0], &buf, 1);
-		ret[i++] = buf;
-
-	}
-	printf("-<ret|%s|>\n", ret);
+	read(ret_child[0], &ret, 5);
+	if (elem->sep == SPL_PIPE)
+		(elem->next_cmd)->process.stdin_send = shell_father_read_out(fd_pipe);
 	elem->val_ret = ft_atoi(ret + 1);
+	shell->ret = ft_atoi(ret + 1);
 	return (ret[0] - 48);
 }
 
-int 	shell_exec(t_cmd *elem, t_shell *shell)
-{
-	int		father;
-	int 	fd[3];
-	int 	from_child[2];
-	int 	ret;
+/*
+** On s'emmerde pas à exec les builtin lié à {env} et {cd} dans l'enfant car
+** après ça va être la merde pour informer le père des modifications des {var}
+** Qui plus est la lib pour partage mémoire entre père et fils est interdite
+** father qui reprend une valeur permet de respecter la norme 4 vars
+*/
 
-	ret = 0;
-	pipe(from_child);
+int		shell_exec(t_cmd *elem, t_shell *shell)
+{
+	int	father;
+	int fd[3];
+	int ret_child[2];
+	int fd_pipe[2];
+
 	shell_save_fd(fd);
+	pipe(ret_child);
+	pipe(fd_pipe);
 	if ((father = fork()) == 0)
-		shell_child(elem, shell, from_child);
+		shell_child(elem, shell, ret_child, fd_pipe);
 	else
-		ret = shell_father(elem, father, from_child);
+		father = shell_father(elem, shell, father, ret_child, fd_pipe);
 	shell_reinit_fd(fd);
-	return (ret);
+	check_builtin_env_cd(elem, shell);
+	return (father);
 }

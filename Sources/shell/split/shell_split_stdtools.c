@@ -31,7 +31,7 @@ int			len_stdout_to(char *str, char quote)
 		if (str[i] == quote && (quote == ' ' || ft_strchr("\0 ", str[i + 1])))
 			break ;
 		if (quote == ' ' && str[i] == '-' && i++)
-			break;
+			break ;
 		i += (str[i]) ? 1 : 0;
 	}
 	return (i);
@@ -62,7 +62,7 @@ char		*complete_stdout_to(char **arg, t_output *add_to, char quote)
 	return (ret);
 }
 
-int		len_stdin(char *str, char quote)
+int			len_stdin(char *str, char quote)
 {
 	int i;
 
@@ -84,7 +84,7 @@ int		len_stdin(char *str, char quote)
 	return (i);
 }
 
-int		shell_stdin_sub(char **arg, int i, char ***std_in)
+int			shell_stdin_sub(char **arg, int i, char ***std_in)
 {
 	int		last;
 	char	quote;

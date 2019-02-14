@@ -17,15 +17,6 @@
 
 #include "../../../Include/shell.h"
 
-void	shell_spl_pipe(t_cmd *elem)
-{
-	//int fd_pipe[2];
-
-	//pipe(fd_pipe);
-	//(elem->next_cmd)->process.fd_stdin;
-
-}
-
 /*
 ** ret correspond au résultat de la commande
 ** 	- 0 fail
@@ -37,7 +28,6 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
 	int 	fd[3];
-	int 	spl_pipe[2];
 	int 	ret;
 
 	shell_prepare(*cmd, shell);
@@ -46,9 +36,7 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	elem = *cmd;
 	while ((elem = elem->next_cmd))
 	{
-		read_lexing(elem);
-		if (elem->sep == SPL_PIPE)
-			shell_spl_pipe(elem);
+		//read_lexing(elem);
 		if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
 		{
 			ret = shell_exec(elem, shell);
