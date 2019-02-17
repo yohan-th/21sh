@@ -6,17 +6,17 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 15:48:57 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/14 13:06:38 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void		fill_hist(t_history **hist, char *line)
+void		fill_hist(t_data **hist, char *line)
 {
-	t_history *new;
-	t_history *now;
+	t_data *new;
+	t_data *now;
 
 	new = NULL;
 	(*hist)->next = new;
@@ -27,12 +27,12 @@ void		fill_hist(t_history **hist, char *line)
 	(*hist)->next = NULL;
 }
 
-void		fill_hist_file(t_history *hist)
+void		fill_hist_file(t_data *hist, char *file)
 {
-	t_history	*tmp;
+	t_data		*tmp;
 	int			fd;
 
-	if ((fd = open(".21sh_history", O_WRONLY | O_CREAT |
+	if ((fd = open(file, O_WRONLY | O_CREAT |
 	O_APPEND | O_TRUNC, 0644)) < 0)
 		return ;
 	while (hist->prev)
@@ -53,7 +53,7 @@ void		fill_hist_file(t_history *hist)
 	close(fd);
 }
 
-t_history	*recup_hist_from_file(t_history *hist, char *file)
+t_data		*recup_hist_from_file(t_data *hist, char *file)
 {
 	char	c;
 	int		i;
@@ -79,26 +79,45 @@ t_history	*recup_hist_from_file(t_history *hist, char *file)
 	return (hist);
 }
 
-t_history	*init_hist(void)
+t_data	*hist_add(t_data *hist)
 {
-	t_history	*hist;
-	char		*file;
+	t_data *new;
+	t_data *now;
+
+	new = NULL;
+	now = NULL;
+	if (!(new = (t_data*)malloc(sizeof(t_data))))
+		exit(-1);
+	hist->next = new;
+	now = hist;
+	hist = new;
+	hist->cmd = NULL;
+	hist->prev = now;
+	hist->next = NULL;
+	return (new);
+}
+
+t_data	*init_hist(char *file)
+{
+	t_data	*hist;
+	char		*file_str;
 	int			fd;
 	int			ret;
 
-	hist = malloc(sizeof(t_history));
+	if (!(hist = malloc(sizeof(t_data))))
+		exit (1);
 	hist->cmd = NULL;
 	hist->next = NULL;
 	hist->prev = NULL;
-	file = NULL;
+	file_str = NULL;
 	ret = 0;
-	if (!access(".21sh_history", R_OK | F_OK))
-		if ((fd = open(".21sh_history", O_RDONLY)))
+	if (!access(file, R_OK | F_OK))
+		if ((fd = open(file, O_RDONLY)))
 		{
-			if ((ret = get_read_key(fd, &file)))
+			if ((ret = get_read_key(fd, &file_str)))
 			{
-				hist = recup_hist_from_file(hist, file);
-				ft_strdel(&file);
+				hist = recup_hist_from_file(hist, file_str);
+				ft_strdel(&file_str);
 			}
 			close(fd);
 		}

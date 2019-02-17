@@ -6,7 +6,7 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/01/28 18:21:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/28 18:21:40 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/16 08:30:39 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -31,7 +31,8 @@ int		builtin_type_init(t_type **tp, char **envp, char **args)
 	if (!(*tp = (t_type*)malloc(sizeof(t_type))))
 		return (EXIT_FAILURE);
 	(*tp)->op = NULL;
-	if (((*tp)->i = builtin_type_get_options(&(*tp)->op, args) - 1) == -2)
+	if (((*tp)->i =
+	builtin_get_options(&(*tp)->op, args, "aptP") - 1) == -2)
 	{
 		ft_dprintf(2, "42sh: type: -%s: invalid option\ntype: usage: type"
 				"[-afptP] name [name ...]\n", (*tp)->op);

@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/05 23:19:43 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 18:27:38 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/17 17:59:04 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,10 +49,17 @@ void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 int			shell_exit(t_cmd **cmd, t_shell **shell)
 {
 	int ret;
+	t_data *tmp;
 
 	clean_cmd(cmd);
 	if ((*shell)->hist)
-		fill_hist_file((*shell)->hist);
+		fill_hist_file((*shell)->hist, ".21sh_history");
+	tmp = (*shell)->alias;
+	while ((*shell)->alias)
+		(*shell)->alias = (*shell)->alias->prev;
+	(*shell)->alias = tmp;
+	if ((*shell)->alias)
+		fill_hist_file((*shell)->alias, ".21sh_alias");
 	ret = (*shell)->ret;
 	clean_shell(shell);
 	return (ret);
@@ -67,10 +74,12 @@ t_shell		*init_shell(char **envp)
 	if (check_if_env_var_existing(shell->envp, "OLDPWD"))
 		shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
-	shell->hist = init_hist();
+	shell->hist = init_hist(".21sh_history");
 	shell->envl = (char **)malloc(sizeof(char *));
+	shell->alias = init_hist(".21sh_alias");
 	shell->envl[0] = NULL;
 	shell->ret = 0;
+	dprintf(1, "hist: %p\n", shell->hist);
 	if (!shell->hist)
 		return (NULL);
 	return (shell);

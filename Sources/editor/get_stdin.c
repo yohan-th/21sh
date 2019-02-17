@@ -14,7 +14,7 @@
 #include "shell.h"
 
 static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt,
-				t_history **hist)
+				t_data **hist)
 {
 	go_to_end_of_line(ed);
 	ft_putchar('\n');

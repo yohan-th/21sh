@@ -46,26 +46,8 @@ int			get_term_raw_mode(int mode)
 	return (0);
 }
 
-t_history	*hist_add(t_history *hist)
-{
-	t_history *new;
-	t_history *now;
-
-	new = NULL;
-	now = NULL;
-	if (!(new = (t_history*)malloc(sizeof(t_history))))
-		exit(-1);
-	hist->next = new;
-	now = hist;
-	hist = new;
-	hist->cmd = NULL;
-	hist->prev = now;
-	hist->next = NULL;
-	return (new);
-}
-
 t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size,
-			t_history **hist)
+			t_data **hist)
 {
 	t_editor *ed;
 
@@ -90,7 +72,7 @@ t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size,
 	return (ed);
 }
 
-int			line_editor_delete(t_editor *ed, t_history **hist)
+int			line_editor_delete(t_editor *ed, t_data **hist)
 {
 	int		ret;
 

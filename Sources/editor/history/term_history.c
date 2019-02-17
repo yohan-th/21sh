@@ -15,7 +15,7 @@
 
 void	term_history_up(t_editor *ed, char *line)
 {
-	t_history *tmp;
+	t_data *tmp;
 
 	tmp = NULL;
 	if (!ed->hist->next)
@@ -33,7 +33,7 @@ void	term_history_up(t_editor *ed, char *line)
 
 void	term_history_down(t_editor *ed)
 {
-	t_history *tmp;
+	t_data *tmp;
 
 	tmp = NULL;
 	if (!ed->hist->next)
