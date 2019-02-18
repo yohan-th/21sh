@@ -6,14 +6,14 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/01 23:21:54 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/01 23:21:54 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/16 08:25:54 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
-#include "shell.h"
+#include "../../Include/shell.h"
 
-int		builtin_type_get_options(char **options, char **args)
+int		builtin_get_options(char **options, char **args, char *possibility)
 {
 	int i[2];
 
@@ -21,7 +21,7 @@ int		builtin_type_get_options(char **options, char **args)
 	while (args[++i[0]] && args[i[0]][0] == '-' && args[i[0]][1] && !(i[1] = 0))
 		while (args[i[0]][++i[1]])
 			if (!ft_strcmp(args[i[0]], "--") ||
-			ft_strchr("afptP", args[i[0]][i[1]]))
+			ft_strchr(possibility, args[i[0]][i[1]]))
 			{
 				if (!ft_strcmp(args[i[0]], "--"))
 					return (i[0] + 1);

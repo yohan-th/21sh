@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2019/01/16 21:27:16 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/02/16 08:24:14 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -55,6 +55,7 @@ SRCS =  shell/main.c \
         builtins/builtin_envl.c \
         builtins/builtin_type.c \
         builtins/builtin_type_tools.c \
+        builtins/builtin_alias.c \
         builtins/builtin_exit.c \
         builtins/builtin.c \
         editor/get_stdin.c \

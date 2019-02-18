@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 21:01:00 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/05 13:22:18 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -71,12 +71,12 @@ typedef enum		s_prompt
 	HRDC,
 }					e_prompt;
 
-typedef struct		s_history
+typedef struct		s_data
 {
 	char				*cmd;
-	struct s_history	*next;
-	struct s_history	*prev;
-}					t_history;
+	struct s_data		*next;
+	struct s_data		*prev;
+}					t_data;
 
 typedef struct		s_tab_elem
 {
@@ -126,7 +126,7 @@ typedef struct		s_editor
 	char			*clipboard;
 	char			*key;
 	struct			termios term_default;
-	t_history		*hist;
+	t_data			*hist;
 }					t_editor;
 
 /*
@@ -186,8 +186,8 @@ void	ft_putfreshstr(char *str);
  */
 
 void	ft_miniconcat(char **s1, char *s2);
-t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_history **hist);
-int		line_editor_delete(t_editor *ed, t_history **hist);
+t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size, t_data **hist);
+int		line_editor_delete(t_editor *ed, t_data **hist);
 void	init_t_tab(t_editor *ed);
 int		term_size(t_editor *ed);
 void	window_resize(t_editor *ed, e_prompt *prompt, char **env);
@@ -195,7 +195,7 @@ int		print_key(t_editor *ed);
 
 void	del_lines(int nb_line);
 void	insert_lines(int nb_line);
-t_history	*hist_add(t_history *hist);
+t_data	*hist_add(t_data *hist);
 
 /*
  *******************************************************************************
@@ -218,8 +218,8 @@ void	tabulator_put_new_cmd(t_tab *tabu, t_editor *ed);
 int		term_tabulator_enough_space(t_editor *ed, t_tab *tabu);
 void	free_tab(t_tab *tabu);
 
-t_history	*init_hist(void);
-void		fill_hist_file(t_history *hist);
+t_data	*init_hist(char *file);
+void	fill_hist_file(t_data *hist, char *file);
 void	print_line(char *line, int str_pos, int cur_pos, int ws_col);
 int		last_char_pos(t_editor *ed);
 int		check_if_new_line_in_line(t_editor *ed);
