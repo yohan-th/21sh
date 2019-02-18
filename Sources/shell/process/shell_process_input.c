@@ -18,6 +18,7 @@ int		check_fd_input(char *input, t_shell *shell)
 	int fd;
 	int i;
 
+	printf("-<|check fd |>\n");
 	if ((int)input != -3 && (int)input != -1 && input[0] == '&')
 	{
 		shell_envpsub(&input, shell->envp);
@@ -71,6 +72,10 @@ int		check_input_file(char **std_in, t_shell *shell)
 	}
 	return (1);
 }
+
+/*
+** Même si c'est seulement le dernier input qui est lu ont les check tous
+*/
 
 int		shell_read_input(t_cmd *elem, t_shell *shell)
 {

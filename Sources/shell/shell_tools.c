@@ -45,6 +45,8 @@ void	clean_shell(t_shell **shell)
 	ft_arrdel(&(*shell)->envl);
 	if ((*shell)->str)
 		ft_strdel(&(*shell)->str);
+	if ((*shell)->str_tmp)
+		ft_strdel(&(*shell)->str_tmp);
 	free(*shell);
 	*shell = NULL;
 }

@@ -45,17 +45,10 @@ void	shell_pipe_stderr(t_process process)
 ** Les redirections stdout sont prio sur le pipe
 */
 
-void	shell_plomberie(t_cmd *elem, int tmp_fd[2], int fd_pipe[2])
+void	shell_plomberie(t_cmd *elem, int tmp_fd[2])
 {
 	if ((elem->process).stdin_send)
 		shell_pipe_stdin(tmp_fd, (elem->process).stdin_send);
-	if (elem->sep == SPL_PIPE && ft_strcmp(elem->process.fd_stdout, "&1") == 0)
-	{
-		dup2(fd_pipe[1], 1);
-		close(fd_pipe[0]);
-		close(fd_pipe[1]);
-	}
-	else
-		shell_pipe_stdout(elem->process);
+	shell_pipe_stdout(elem->process);
 	shell_pipe_stderr(elem->process);
 }

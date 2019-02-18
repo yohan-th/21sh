@@ -17,36 +17,103 @@
 
 #include "../../../Include/shell.h"
 
+void 	shell_child_pipe(t_cmd *elem, t_shell *shell, int fd_pipe[2])
+{
+	int is_builtin;
+
+	dup2(ft_atoi(elem->process.fd_stdin + 1), 0);
+	//Verif si le prochain est toujours un pipe ?
+	if (elem->sep == SPL_PIPE)
+		dup2(fd_pipe[1], 1);
+	if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
+	{
+		//shell_plomberie(elem, fd_pipe[2]);
+		close(fd_pipe[0]);
+		is_builtin = shell_builtin(elem, shell);
+		if (!is_builtin && ft_strcmp("not found", elem->exec) == 0)
+		{
+			ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
+			exit(EXIT_FAILURE);
+		}
+		else if (!is_builtin)
+			execve(elem->exec, elem->args, shell->envp);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void 	shell_father_pipe(t_cmd *elem, t_shell *shell, int fd_pipe[2])
+{
+	close(fd_pipe[1]);
+	if (ft_atoi(elem->process.fd_stdin + 1) != 0)
+		close (ft_atoi(elem->process.fd_stdin + 1));
+	if (elem->next_cmd)
+		elem->next_cmd->process.fd_stdin = ft_strjoin("&", ft_itoa(fd_pipe[0]));
+}
+
+void	shell_exec_pipes(t_cmd **elem, t_shell *shell)
+{
+	int	fd_pipe[2];
+	int	child;
+	int	status;
+	int stop ;
+
+	stop = 0;
+	while (1)
+	{
+		read_lexing(*elem);
+		pipe(fd_pipe);
+		if ((child = fork()) == 0)
+			shell_child_pipe(*elem, shell, fd_pipe);
+		else
+			shell_father_pipe(*elem, shell, fd_pipe);
+		*elem = (*elem)->next_cmd;
+		if (stop == 1 || !(*elem))
+			break ;
+		if ((*elem)->sep != SPL_PIPE)
+			stop = 1;
+	}
+	waitpid(child, &status, 0);
+	while (wait(NULL) > 0)
+		;
+}
+
 /*
 ** ret correspond au résultat de la commande
 ** 	- 0 fail
 **  - 1 succeed
-**  - 2 meed exit
+**  - 2 need exit
 */
 
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
 	int 	fd[3];
-	int 	ret;
+	int 	is_builtin;
 
 	shell_prepare(*cmd, shell);
 	shell_save_fd(fd);
 	signal(SIGINT, shell_prcs_sigint);
 	elem = *cmd;
-	while ((elem = elem->next_cmd))
+	while (elem && (elem = elem->next_cmd))
 	{
-		//read_lexing(elem);
-		if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
+		if (elem->sep == SPL_PIPE)
+			shell_exec_pipes(&elem, shell);
+		else if (shell_read_input(elem, shell) && shell_set_output(elem, shell))
 		{
-			ret = shell_exec(elem, shell);
-			if (ret == 2)
+			is_builtin = shell_builtin(elem, shell);
+			if (!is_builtin && ft_strcmp("not found", elem->exec) == 0)
+				ft_dprintf(2, "21sh: %s: command not found\n", elem->args[0]);
+			else if (!is_builtin)
+				shell_exec(elem, shell);
+			else if (is_builtin == -1)
 				return (-1);
-			else if ((ret == 1 && elem->sep == DBL_PIPE) ||
-					(ret == 0 && elem->sep == DBL_SPRLU))
+			if ((elem->ret == 1 && elem->sep == DBL_PIPE) ||
+					(elem->ret == 0 && elem->sep == DBL_SPRLU))
 				break ;
 		}
+
 	}
+	shell_reinit_fd(fd);
 	clean_cmd(cmd);
 	ft_strdel(&shell->str);
 	return (1);

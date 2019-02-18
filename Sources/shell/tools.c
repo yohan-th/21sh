@@ -67,6 +67,7 @@ t_shell		*init_shell(char **envp)
 	if (check_if_env_var_existing(shell->envp, "OLDPWD"))
 		shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
+	shell->str_tmp = NULL;
 	shell->hist = init_hist();
 	shell->envl = (char **)malloc(sizeof(char *));
 	shell->envl[0] = NULL;

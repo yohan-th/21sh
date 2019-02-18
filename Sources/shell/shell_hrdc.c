@@ -78,9 +78,7 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
-	{
 		return (shell_clean_data(cmd, shell, 1, 1));
-	}
 	if (*prompt == HRDC && ret == CTRLD && !shell->str)
 	{
 		ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
@@ -94,6 +92,7 @@ int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 	else if (*prompt == HRDC && ret == CTRLC)
 	{
 		*prompt = PROMPT;
+		shell->hist->cmd = ft_strdup(shell->str_tmp);
 		return (shell_clean_data(cmd, shell, 1, 1));
 	}
 	if (*prompt == HRDC && *cmd)

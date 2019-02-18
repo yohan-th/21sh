@@ -120,6 +120,7 @@ void	shell_set_output_fd(t_output *output, t_cmd *elem)
 
 /*
 ** complete_output fail si $HOME n'existe pas (getpwnam interdit)
+** Création de file out, return 0 si erreur (no right..)
 */
 
 int		shell_set_output(t_cmd *elem, t_shell *shell)

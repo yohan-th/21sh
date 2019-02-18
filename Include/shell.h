@@ -64,7 +64,7 @@ typedef struct				s_cmd
 	char 				**hrdc;
 	t_process			process;
 	int 				sep;
-	int 				val_ret;
+	int 				ret;
 	struct s_cmd		*next_cmd;
 	struct s_cmd		*start;
 }							t_cmd;
@@ -84,6 +84,7 @@ typedef struct				s_shell
 	char 				**envp;
 	char 				**envl;
 	char 				*str;
+	char 				*str_tmp;
 	int 				ret;
 	t_history			*hist;
 }							t_shell;
@@ -109,7 +110,7 @@ typedef enum 				s_error
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-int		builtin_cd(char **cmd, char ***envp, BOOL v);
+int		builtin_cd(char **cmd, char ***envp);
 char	*cd_rmv_last_path(char *cur_dir);
 void	builtin_setenv(char ***envp, char *key, char *value);
 void	builtin_unsetenv(char ***envp, char *key);
@@ -181,7 +182,7 @@ int			complete_stdout_path(t_output *std_out, t_shell *shell);
 int			shell_error_prepare(char *msg, char *elem);
 int 		shell_read_input(t_cmd *elem, t_shell *shell);
 int			shell_set_output(t_cmd *elem, t_shell *shell);
-int 		shell_exec(t_cmd *elem, t_shell *shell);
+void 		shell_exec(t_cmd *elem, t_shell *shell);
 
 void		shell_save_fd(int fd[3]);
 void		shell_reinit_fd(int *fd);
@@ -190,7 +191,7 @@ int			ft_read_file(char *filename, char **file_content);
 int 		path_to_output_exist(char *output);
 int			complete_output_paths(char **output_to, t_shell *shell);
 int 		path_to_output_recheable(char *output);
-void		shell_plomberie(t_cmd *elem, int tmp_fd[2], int fd_pipe[2]);
+void		shell_plomberie(t_cmd *elem, int tmp_fd[2]);
 
 char		**append_key_env(char **envp, char *key, char *value);
 int			get_stdin(t_shell *shell, e_prompt *prompt);

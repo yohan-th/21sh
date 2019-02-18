@@ -22,7 +22,7 @@ void	shell_prcs_sigint(int signum)
 void	check_builtin_env_cd(t_cmd *elem, t_shell *shell)
 {
 	if (elem->args[0] && ft_strcmp("cd", elem->args[0]) == 0)
-		builtin_cd(elem->args, &shell->envp, 0);
+		builtin_cd(elem->args, &shell->envp);
 	else if (elem->args[0] && ft_strcmp("setenv", elem->args[0]) == 0 &&
 				elem->args[1] != NULL && !elem->args[2])
 		builtin_setenv(&shell->envp, elem->args[0], elem->args[1]);
