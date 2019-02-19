@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 16:53:36 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/17 14:13:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/19 10:36:48 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -83,11 +83,11 @@ typedef struct				s_shell
 {
 	char 				**envp;
 	char 				**envl;
+	char				**alias;
 	char 				*str;
 	char 				*str_tmp;
 	int 				ret;
 	t_data				*hist;
-	t_data				*alias;
 }							t_shell;
 
 typedef enum 				e_sep
@@ -127,7 +127,7 @@ int 	builtin_type(char **args, char **envp);
 int		builtin_get_options(char **options, char **args, char *possibility);
 int		builtin_type_check_builtin(char *d_name);
 void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
-int 	builtin_alias(t_data **alias, char **args, BOOL v);
+int 	builtin_alias(char ***alias, char **args);
 int		check_executable_file(char *path);
 
 int		shell_builtin(t_cmd *elem, t_shell *shell);

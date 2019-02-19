@@ -6,7 +6,7 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/01/28 18:21:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/16 08:30:39 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/18 16:58:25 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,7 +29,7 @@ void	builtin_type_free(t_type *tp)
 int		builtin_type_init(t_type **tp, char **envp, char **args)
 {
 	if (!(*tp = (t_type*)malloc(sizeof(t_type))))
-		return (EXIT_FAILURE);
+		exit (EXIT_FAILURE);
 	(*tp)->op = NULL;
 	if (((*tp)->i =
 	builtin_get_options(&(*tp)->op, args, "aptP") - 1) == -2)
@@ -38,12 +38,12 @@ int		builtin_type_init(t_type **tp, char **envp, char **args)
 				"[-afptP] name [name ...]\n", (*tp)->op);
 		ft_strdel(&(*tp)->op);
 		free(*tp);
-		return (EXIT_FAILURE);
+		return (1);
 	}
 	(*tp)->b_path = get_envp(envp, "PATH");
 	(*tp)->bin = ft_strsplit((*tp)->b_path, ':');
 	(*tp)->match[1] = 0;
-	return (EXIT_SUCCESS);
+	return (0);
 }
 
 void	builtin_type_search_bin(t_type *tp, char **args)
@@ -75,8 +75,8 @@ int		builtin_type(char **args, char **envp)
 {
 	t_type *tp;
 
-	if (builtin_type_init(&tp, envp, args) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
+	if (builtin_type_init(&tp, envp, args) == 1)
+		return (1);
 	while (args[++tp->i] && (tp->j = -1) == -1)
 	{
 		if (((!tp->op || (ft_strchr(tp->op, 'a') && !ft_strchr(tp->op, 'p')
@@ -97,5 +97,5 @@ int		builtin_type(char **args, char **envp)
 			ft_dprintf(2, "42sh: type: %s: not found\n", args[tp->i]);
 	}
 	builtin_type_free(tp);
-	return (tp->match[1] ? EXIT_FAILURE : EXIT_SUCCESS);
+	return (tp->match[1]);
 }

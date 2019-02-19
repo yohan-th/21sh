@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/23 13:13:48 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/17 13:45:22 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/19 10:36:19 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -77,6 +77,8 @@ int		shell_builtin(t_cmd *elem, t_shell *shell)
 		elem->ret = builtin_env_all(&shell->envp, &shell->envl, elem->args);
 	else if (elem->args[0] && ft_strcmp("type", elem->args[0]) == 0)
 		elem->ret = builtin_type(elem->args + 1, shell->envp);
+	else if (elem->args[0] && ft_strcmp("alias", elem->args[0]) == 0)
+		elem->ret = builtin_alias(&shell->alias, elem->args + 1);
 	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
 	{
 		elem->ret = builtin_exit(elem->args);
