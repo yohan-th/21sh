@@ -13,7 +13,7 @@
 
 #include "../Includes/print.h"
 
-void	ft_putstr_fd(char const *s, int fd)
+int		ft_putstr_fd(char const *s, int fd)
 {
 	unsigned int i;
 
@@ -21,5 +21,7 @@ void	ft_putstr_fd(char const *s, int fd)
 	{
 		i = ft_strlen(s);
 		write(fd, s, i);
+		return (i);
 	}
+	return (0);
 }

@@ -18,9 +18,11 @@ void	ft_arrdel(char ***arr)
 	int i;
 
 	i = 0;
-	while (arr && *arr != NULL && (*arr)[i] != NULL)
+	while (*arr != NULL && (*arr)[i] != NULL)
 		ft_strdel(&(*arr)[i++]);
-	if (arr && *arr != NULL)
+	if (*arr != NULL)
+	{
 		free(*arr);
-	arr = NULL;
+		*arr = NULL;
+	}
 }

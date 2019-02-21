@@ -57,13 +57,13 @@ int		ft_print_flags_aftr(t_pf_prints *print)
 	return (len_print);
 }
 
-int		ft_print_txt(t_pf_prints *print, char c, int len_print)
+int		ft_print_txt(t_pf_prints *print, char c, int len_print, int fd)
 {
 	len_print += ft_print_flags_bfr(print);
 	if (c == 'c' || c == '%')
-		len_print += ft_putchar((char)print->data);
+		len_print += ft_putchar_fd((char)print->data, fd);
 	else if (c == 's')
-		len_print += ft_putstr((char *)print->data);
+		len_print += ft_putstr_fd((char *)print->data, fd);
 	else if (c == 'C')
 		len_print += ft_putwchar((wchar_t)print->data);
 	else if (c == 'S')
@@ -87,13 +87,13 @@ int		ft_print_int(t_pf_prints *print, t_pf_fields *fields, int len_print)
 	return (len_print);
 }
 
-int		pf_print_field(t_pf_prints *print, t_pf_fields *fields)
+int		pf_print_field(t_pf_prints *print, t_pf_fields *fields, int fd)
 {
 	int len_print;
 
 	len_print = 0;
 	if (ft_strchr("cCsS%", fields->type))
-		len_print = ft_print_txt(print, fields->type, len_print);
+		len_print = ft_print_txt(print, fields->type, len_print, fd);
 	else if (ft_strchr("dDixXoOuUpb", fields->type))
 		len_print = ft_print_int(print, fields, len_print);
 	if (ft_strchr("sSxXoOpb", fields->type) && print->free == 1)

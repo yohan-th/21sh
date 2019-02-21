@@ -46,7 +46,7 @@ void	pf_parse_correct(t_pf_fields *fields, char type, const char *str)
 		fields->type = 'S';
 }
 
-int		ft_undef_char(const char **format)
+int		ft_undef_char(const char **format, int fd)
 {
 	t_pf_fields	fields;
 	intmax_t	data;
@@ -69,7 +69,7 @@ int		ft_undef_char(const char **format)
 	(*format)++;
 	fields.type = 'c';
 	print = pf_convert(&data, &fields);
-	len_print = pf_print_field(&print, &fields);
+	len_print = pf_print_field(&print, &fields, fd);
 	return (len_print);
 }
 
@@ -98,6 +98,10 @@ int		ft_undef_beha(const char **format)
 	return (0);
 }
 
+/*
+** Attention : les fd sont prit en compte seulemt pour %s et %c
+*/
+
 int		ft_dprintf(int fd, const char *format, ...)
 {
 	va_list		ap;
@@ -116,10 +120,10 @@ int		ft_dprintf(int fd, const char *format, ...)
 			fields = pf_parse(&format);
 			data = pf_type(ap, &fields);
 			print = pf_convert(&data, &fields);
-			len_print += pf_print_field(&print, &fields);
+			len_print += pf_print_field(&print, &fields, fd);
 		}
 		else if (*format == '%' && ft_undef_beha(&format) == -1)
-			len_print += ft_undef_char(&format);
+			len_print += ft_undef_char(&format, fd);
 		else if (ft_strlen(format) >= 1)
 			len_print += ft_putchar_fd(*format++, fd);
 	}

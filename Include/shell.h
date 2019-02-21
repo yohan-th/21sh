@@ -111,28 +111,31 @@ typedef enum 				s_error
 **┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 */
 
-int		builtin_cd(char **cmd, char ***envp);
-char	*cd_rmv_last_path(char *cur_dir);
-void	builtin_setenv(char ***envp, char *key, char *value);
-void	builtin_unsetenv(char ***envp, char *key);
-void	builtin_delenv(char ***envp, char *key);
-int		builtin_eewefnv(char ***envp, char ***envl, char **args);
-char	**rmv_key_env(char **envp, char *key);
-void	builtin_env(char **envp, char *key);
-int		builtin_echo(char **cmd);
-int 	builtin_env_all(char ***envp, char ***envl, char **args);
-int		builtin_exit(char **cmd);
+int			builtin_cd(char **cmd, char ***envp);
+char		*cd_rmv_last_path(char *cur_dir);
+void		builtin_setenv(char ***envp, char *key, char *value);
+void		builtin_unsetenv(char ***envp, char *key);
+void		builtin_delenv(char ***envp, char *key);
+int			builtin_eewefnv(char ***envp, char ***envl, char **args);
+char		**rmv_key_env(char **envp, char *key);
+void		builtin_env(char **envp, char *key);
+int			builtin_echo(char **cmd);
+int 		builtin_env_all(char ***envp, char ***envl, char **args);
+int			builtin_exit(char **cmd);
 
-int 	builtin_type(char **args, char **envp);
-int		builtin_get_options(char **options, char **args, char *possibility);
-int		builtin_type_check_builtin(char *d_name);
-void	builtin_type_display(char *d_name, char *bin, char *options, int mode);
-int 	builtin_alias(char ***alias, char **args);
-int		check_executable_file(char *path);
+int 		builtin_type(char **args, char **envp);
+int			builtin_get_options(char **options, char **args, char *possibility);
+int			builtin_type_check_builtin(char *d_name);
+void		builtin_type_display(char *d_name, char *bin, char *options, int mode);
+int 		builtin_alias(char ***alias, char **args);
+int			check_executable_file(char *path);
 
-int		shell_builtin(t_cmd *elem, t_shell *shell);
-char	*get_envp(char **envp, char *var);
-char	*get_var(char *var_key);
+int			shell_builtin(t_cmd *elem, t_shell *shell);
+char		*get_envp(char **envp, char *var);
+char		*get_var(char *var_key);
+char		**append_key_env(char **envp, char *key, char *value);
+
+
 
 
 /*
@@ -184,7 +187,8 @@ int			complete_stdout_path(t_output *std_out, t_shell *shell);
 int			shell_error_prepare(char *msg, char *elem);
 int 		shell_read_input(t_cmd *elem, t_shell *shell);
 int			shell_set_output(t_cmd *elem, t_shell *shell);
-void 		shell_exec(t_cmd *elem, t_shell *shell);
+void 		shell_execve(t_cmd *elem, t_shell *shell);
+int			shell_exec(t_cmd *elem, t_shell *shell);
 
 void		shell_save_fd(int fd[3]);
 void		shell_reinit_fd(int *fd);
@@ -193,12 +197,11 @@ int			ft_read_file(char *filename, char **file_content);
 int 		path_to_output_exist(char *output);
 int			complete_output_paths(char **output_to, t_shell *shell);
 int 		path_to_output_recheable(char *output);
-void		shell_plomberie(t_cmd *elem, int tmp_fd[2]);
+void		shell_plomberie(t_process process);
 
-char		**append_key_env(char **envp, char *key, char *value);
 int			get_stdin(t_shell *shell, e_prompt *prompt);
-void 		check_builtin_env_cd(t_cmd *elem, t_shell *shell);
-
+int			shell_exec_pipes(t_cmd **elem, t_shell *shell);
+void		check_fd_devnull(char **ptn_output, int fd_devnull);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -222,7 +225,6 @@ int			shell_exit(t_cmd **cmd, t_shell **shell);
 void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 						char **env);
 
-
 /*
 ** Hard test
 ** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>
@@ -239,7 +241,7 @@ void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 ** <cd \./> && pwd --> PWD et OLDPWD devrait avoir la meme valeur
 ** <cd \/.///> && env PWD && cd ..
 ** <cd ~///./folder//.//>
-** cat * | ./minishell
+** cat * | ./minishell <-- pas a executer mais a protéger
 ** env -i ./minishell && unsetenv PATH && echo $HOME && cd ~
 ** ./minishell && unsetenv HOME && cd $random --> HOME not set
 ** ./minishell < "n'importe quel fichier"
@@ -264,6 +266,8 @@ void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 ** ; puis ;; (pas le meme msg d'erreur)
 ** {t &&} --> prompt
 ** >>>
+** <!<
+** ls\ --> saut de ligne puis ls exec
 ** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
 ** << EOF cat nofile ;; --> les EOF puis ;; puis erreur de cat
 ** ;; "test {ENTER} " --> les fermetures des quotes sont prio face au ;;
@@ -275,7 +279,7 @@ void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 ** heredoc puis Cltr-c et Ctrl-v
 ** cat <<t {ENTER} test {Ctrl-D} ->> heredoc stop mais test dans cat
 ** << \'"test"\\
-** file avec du txt dedans puis "> file" --> txt écrasé
+** >oui<<EOF
 ** <<EOF<file_stdin
 ** <<EOF>file_stdout
 ** {test && w} et {test || w}
@@ -296,6 +300,7 @@ void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 ** exit | test
 ** exit 1 2 --> too many arg et pas d'exit
 ** exit t --> exit mais pas msg "numeric arg required"
+** / --> "/ is directory"
 */
 
 /*

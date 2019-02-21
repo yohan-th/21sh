@@ -18,7 +18,6 @@ int		check_fd_input(char *input, t_shell *shell)
 	int fd;
 	int i;
 
-	printf("-<|check fd |>\n");
 	if ((int)input != -3 && (int)input != -1 && input[0] == '&')
 	{
 		shell_envpsub(&input, shell->envp);

@@ -18,15 +18,20 @@
 ** On le ferme pour envoyer EOF
 */
 
-void	shell_pipe_stdin(int tmp_fd[2], char *send_stdin)
+void	shell_pipe_stdin(char *send_stdin)
 {
+	int tmp_fd[2];
+
+	pipe(tmp_fd);
 	ft_putstr_fd(send_stdin, tmp_fd[1]);
 	close(tmp_fd[1]);
 	dup2(tmp_fd[0], 0);
+	close(tmp_fd[0]);
 }
 
 void	shell_pipe_stdout(t_process process)
 {
+
 	if (process.fd_stdout[0] == '&' && process.fd_stdout[1] != '1')
 		dup2(ft_atoi(process.fd_stdout + 1), 1);
 	else if (process.fd_fileout != 0)
@@ -45,10 +50,10 @@ void	shell_pipe_stderr(t_process process)
 ** Les redirections stdout sont prio sur le pipe
 */
 
-void	shell_plomberie(t_cmd *elem, int tmp_fd[2])
+void	shell_plomberie(t_process process)
 {
-	if ((elem->process).stdin_send)
-		shell_pipe_stdin(tmp_fd, (elem->process).stdin_send);
-	shell_pipe_stdout(elem->process);
-	shell_pipe_stderr(elem->process);
+	if (process.stdin_send)
+		shell_pipe_stdin(process.stdin_send);
+	shell_pipe_stdout(process);
+	shell_pipe_stderr(process);
 }

@@ -13,22 +13,27 @@
 
 #include "../../../Include/shell.h"
 
-int		check_fd_output(char *output, t_shell *shell)
+int		check_fd_output(char **ptn_output, t_shell *shell)
 {
-	int fd;
-	int i;
+	int		fd;
+	int		i;
+	int		devNULL;
+	char 	*output;
 
+	output = *ptn_output;
 	if (output[0] == '&')
 	{
-		shell_envpsub(&output, shell->envp);
+		devNULL = open("/dev/null", O_WRONLY);
+		shell_envpsub(ptn_output, shell->envp);
 		shl_quotesub(output);
+		check_fd_devnull(ptn_output, devNULL);
 		i = 1;
 		while (ft_isdigit(output[i]))
 			i++;
 		if (output[i] != '\0')
 			return (shell_error_prepare("ambiguous", output) - 1);
 		fd = ft_atoi(output + 1);
-		if (fd < 0 || fd > 2)
+		if ((fd < 0 || fd > 2) && fd != devNULL)
 			return (shell_error_prepare("bad fd", output) - 1);
 		else
 			return (1);
@@ -36,53 +41,28 @@ int		check_fd_output(char *output, t_shell *shell)
 	return (0);
 }
 
-int		check_output_recheable(t_output *output)
-{
-	t_output	*elem;
-
-	elem = output;
-	while (elem != NULL)
-	{
-		if (elem->to && elem->to[0] != '&')
-		{
-			if (ft_isdir(elem->to))
-				return (shell_error_prepare("Is directory", elem->to));
-			else if (access(elem->to, R_OK) == -1)
-				return (shell_error_prepare("denied", elem->to));
-		}
-		else if (elem->to && elem->to[0] == '&')
-		{
-			if (ft_atoi(elem->to + 1) >= 0 && ft_atoi(elem->to + 1) <= 2)
-				return (shell_error_prepare("bad fd", elem->to + 1));
-		}
-		elem = elem->next;
-	}
-	return (1);
-}
-
 int		is_recheable_output(t_output *output, t_shell *shell)
 {
 	int		fd_open;
 	char	*msg_err;
 
-	fd_open = 0;
 	msg_err = ft_strdup(output->to);
 	complete_output_paths(&output->to, shell);
-	if (ft_isdir(output->to))
-		return (shell_error_prepare("Is directory", msg_err));
-	else if (!path_to_output_exist(output->to))
-		return (shell_error_prepare("not found", msg_err));
-	else if (path_to_output_recheable(output->to) == -1)
-		return (shell_error_prepare("pathdenied", msg_err));
-	else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
-		return (shell_error_prepare("denied", msg_err));
+	if (output->append)
+		fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
 	else
+		fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC,
+					   S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+	if (fd_open < 0)
 	{
-		if (output->append)
-			fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
-		else
-			fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC,
-										S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+		if (ft_isdir(output->to))
+			return (shell_error_prepare("Is directory", msg_err));
+		else if (!path_to_output_exist(output->to))
+			return (shell_error_prepare("not found", msg_err));
+		else if (path_to_output_recheable(output->to) == -1)
+			return (shell_error_prepare("pathdenied", msg_err));
+		else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
+			return (shell_error_prepare("denied", msg_err));
 	}
 	ft_strdel(&msg_err);
 	return (fd_open);
@@ -136,7 +116,7 @@ int		shell_set_output(t_cmd *elem, t_shell *shell)
 			ft_strdel(&(elem->process).fd_stdout);
 		else if (output->from == 2)
 			ft_strdel(&(elem->process).fd_stderr);
-		if (((is_fd = check_fd_output(output->to, shell)) == 1))
+		if (((is_fd = check_fd_output(&output->to, shell)) == 1))
 			shell_set_output_fd(output, elem);
 		else if (!is_fd && (fd_file = is_recheable_output(output, shell)))
 			shell_set_output_file(output, elem, fd_file);

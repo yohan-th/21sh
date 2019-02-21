@@ -74,15 +74,17 @@ void	shell(t_shell *shl, t_cmd *cmd, e_prompt prmt)
 
 	while ((ret = get_stdin(shl, &prmt)) != -1)
 	{
-		ft_strjoin_free(&shl->str_tmp, shl->str);
-		ft_strjoin_free(&shl->str_tmp, "\n");
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;
 		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
 			(prmt == PROMPT && cmd && (cmd->process).stdin_send))
 		{
 			if (cmd_check(&cmd, shl, &prmt))
+			{
+				ft_strjoin_free(&shl->str_tmp, shl->str);
+				ft_strjoin_free(&shl->str_tmp, "\n");
 				continue;
+			}
 			if (shl->str_tmp && ((!shl->hist->cmd && !shl->hist->prev) ||
 					(shl->hist->prev && shl->hist->prev->cmd &&
 					ft_strcmp(shl->hist->prev->cmd, shl->str_tmp))))
@@ -101,8 +103,32 @@ int		main(void)
 	t_shell		*shl;
 	e_prompt	prmt;
 	t_cmd		*cmd;
+	e_shortcut	ret;
 
 	shell_init(&shl, &prmt, &cmd, environ);
-	shell(shl, cmd, prmt);
+	//shell(shl, cmd, prmt);
+	while ((ret = get_stdin(shl, &prmt)) != -1)
+	{
+		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
+			break ;
+		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
+			(prmt == PROMPT && cmd && (cmd->process).stdin_send))
+		{
+			if (cmd_check(&cmd, shl, &prmt))
+			{
+				ft_strjoin_free(&shl->str_tmp, shl->str);
+				ft_strjoin_free(&shl->str_tmp, "\n");
+				continue;
+			}
+			if (shl->str_tmp && ((!shl->hist->cmd && !shl->hist->prev) ||
+								 (shl->hist->prev && shl->hist->prev->cmd &&
+								  ft_strcmp(shl->hist->prev->cmd, shl->str_tmp))))
+				shl->hist->cmd = ft_strdup(shl->str_tmp);
+			if (check_syntax_err(cmd))
+				shell_clean_data(&cmd, shl, 1, 1);
+			else if (shell_process(&cmd, shl) == -1)
+				break ;
+		}
+	}
 	return (shell_exit(&cmd, &shl));
 }

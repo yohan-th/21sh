@@ -47,6 +47,10 @@ t_output	*get_last_stdout(t_output *redi)
 	return (t_next);
 }
 
+/*
+** ret se prend un strnew vide pour pouvoir parcourir args[i] lors de son free
+*/
+
 char		*complete_stdout_to(char **arg, t_output *add_to, char quote)
 {
 	char *ret;
@@ -56,7 +60,7 @@ char		*complete_stdout_to(char **arg, t_output *add_to, char quote)
 		ret = ft_strsub(*arg, (unsigned)len_stdout_to(*arg, quote),
 						(size_t)ft_strlen(*arg));
 	else
-		ret = NULL;
+		ret = ft_strnew(1);
 	ft_strdel(arg);
 	*arg = NULL;
 	return (ret);

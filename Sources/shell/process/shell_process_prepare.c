@@ -47,6 +47,8 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 			elem->exec = shell_getpathexec(elem->args[0], shell->envp);
 			if (!elem->exec)
 				elem->exec = ft_strdup("not found");
+			else if ((int)elem->exec == -1)
+				elem->exec = ft_strdup("directory");
 		}
 		i++;
 	}
@@ -58,27 +60,26 @@ void	shell_clean_input(t_cmd *elem)
 	char	**files;
 	int		n;
 
-	if (elem->input)
+	files = malloc(sizeof(char *) * (ft_arrlen(elem->input) + 1));
+	i = 0;
+	n = 0;
+	while (elem->input && elem->input[i])
 	{
-		files = malloc(sizeof(char *) * (ft_arrlen(elem->input) + 1));
-		i = 0;
-		n = 0;
-		while (elem->input && elem->input[i])
+		if ((int)elem->input[i] != -1 && (int)elem->input[i] != -2
+				&& (int)elem->input[i] != -3)
 		{
-			if ((int)elem->input[i] != -1 && (int)elem->input[i] != -3)
-			{
-				files[n++] = ft_strdup(elem->input[i]);
-				ft_strdel(&elem->input[i]);
-			}
-			i++;
+			files[n++] = ft_strdup(elem->input[i]);
+			ft_strdel(&elem->input[i]);
 		}
-		if (n == 0)
-			ft_arrdel(&files);
-		else
-			files[n] = NULL;
-		free(elem->input);
-		elem->input = files;
+		i++;
 	}
+	files[n] = NULL;
+	if (n == 0)
+		ft_arrdel(&files);
+	else
+		files[n] = NULL;
+	free(elem->input);
+	elem->input = files;
 }
 
 /*
@@ -94,5 +95,7 @@ void	shell_prepare(t_cmd *cmd, t_shell *shell)
 	{
 		shell_clean_emptyargs(elem);
 		shell_prepare_args(elem, shell);
+		if (elem->input)
+			shell_clean_input(elem);
 	}
 }

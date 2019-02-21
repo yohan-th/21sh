@@ -65,11 +65,7 @@ char	*check_path_cmd(char *exec_path, char *exec)
 	else if (!ft_isdir(exec) && access(exec, X_OK) != -1)
 		ret = ft_strdup(exec);
 	else if (exec && ft_isdir(exec))
-	{
-		write(2, "21sh: ", 6);
-		write(2, exec, (size_t)ft_strlen(exec));
-		write(2, ": is a directory\n", 17);
-	}
+		ret = (char *)-1;
 	ft_strdel(&exec_path);
 	return (ret);
 }

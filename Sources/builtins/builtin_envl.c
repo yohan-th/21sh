@@ -54,7 +54,7 @@ int		builtin_env_all(char ***envp, char ***envl, char **args)
 	if (ft_arrlen(args) > 1)
 	{
 		ft_putstr_fd("21sh: too much arguments\n", 2);
-		return (0);
+		return (1);
 	}
 	else
 	{
@@ -67,5 +67,5 @@ int		builtin_env_all(char ***envp, char ***envl, char **args)
 		ft_strdel(&var);
 		ft_strdel(&value);
 	}
-	return (1);
+	return (0);
 }

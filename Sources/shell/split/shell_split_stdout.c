@@ -63,27 +63,31 @@ int			get_stdout_from(char *redi, int pos)
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-int			shell_stdout_sub(char **arg, int i, t_output *redi)
+char			*shell_stdout_sub(char **arg, int *i, t_output *redi)
 {
-	redi->from = get_stdout_from(*arg, i);
+	char	*tmp;
+	redi->from = get_stdout_from(*arg, *i);
 	ft_strdel(&redi->to);
-	if ((*arg)[i] && (*arg)[i + 1] == '>')
+	if ((*arg)[*i] && (*arg)[*i + 1] == '>')
 	{
 		redi->append = 1;
-		(*arg)[i] = '\0';
-		i += 2;
-		redi->to = get_stdout_to(*arg, &i);
+		(*arg)[*i] = '\0';
+		*i += 2;
+		redi->to = get_stdout_to(*arg, i);
 	}
-	else if ((*arg)[i])
+	else if ((*arg)[*i])
 	{
 		redi->append = 0;
-		(*arg)[i] = '\0';
-		i += 1;
-		redi->to = get_stdout_to(*arg, &i);
+		(*arg)[*i] = '\0';
+		*i += 1;
+		redi->to = get_stdout_to(*arg, i);
 	}
 	if (*arg && ft_atoi(*arg) == redi->from)
 		*arg[0] = '\0';
-	return (i);
+	tmp = ft_strsub(*arg, (unsigned int)*i, (size_t)*i + ft_strlen(*arg + *i));
+	ft_strdel(arg);
+	*i = 0;
+	return (tmp);
 }
 
 t_output	*add_stdout(t_output **first_redi)
@@ -139,7 +143,7 @@ t_output	*shell_std_out(char **arg, t_output **first_redi, char quote)
 		{
 			if (!(redi = add_stdout(first_redi)))
 				return (NULL);
-			i = shell_stdout_sub(arg, i, redi);
+			*arg = shell_stdout_sub(arg, &i, redi);
 		}
 		else
 			i += ((*arg)[i]) ? 1 : 0;

@@ -46,12 +46,12 @@ void	clean_redi(t_output **redi)
 
 void	clean_cmd(t_cmd **cmd)
 {
-	t_cmd	*tmp;
+	t_cmd	*prev;
 
-	if (cmd && *cmd)
+	if (*cmd)
 	{
 		*cmd = (*cmd)->start;
-		tmp = *cmd;
+		prev = *cmd;
 		while ((*cmd = (*cmd)->next_cmd))
 		{
 			if ((*cmd)->args)
@@ -61,14 +61,15 @@ void	clean_cmd(t_cmd **cmd)
 			ft_strdel(&(*cmd)->process.fd_stdin);
 			ft_strdel(&(*cmd)->process.fd_stdout);
 			ft_strdel(&(*cmd)->process.fd_stderr);
-			ft_strdel(&(*cmd)->process.stdin_send);
+			if ((int)(*cmd)->process.stdin_send != -1)
+				ft_strdel(&(*cmd)->process.stdin_send);
 			ft_strdel(&(*cmd)->exec);
 			if ((*cmd)->output)
 				clean_redi(&((*cmd)->output));
-			free(tmp);
-			tmp = *cmd;
+			free(prev);
+			prev = *cmd;
 		}
-		free(tmp);
+		free(prev);
 		*cmd = NULL;
 	}
 }

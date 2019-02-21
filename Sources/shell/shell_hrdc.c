@@ -64,10 +64,29 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 	}
 	else if ((int)((*cmd)->process).stdin_send != -1)
 	{
+		ft_strjoin_free(&shell->str_tmp, "\n");
 		ft_strjoin_free(&((*cmd)->process).stdin_send, shell->str);
 		ft_strjoin_free(&((*cmd)->process).stdin_send, "\n");
 	}
 	ft_strdel(&shell->str);
+}
+
+/*
+** Le cas d'un CTRL-D, on save les HRDC enregistré dans stdin_send
+** mais remet à NULL si rien
+*/
+
+int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
+{
+	ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
+				  "end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
+	while (get_next_hrdc((*cmd)->hrdc))
+		del_next_hrdc((*cmd)->hrdc);
+	if ((int)(*cmd)->process.stdin_send == -1)
+		(*cmd)->process.stdin_send = NULL;
+	(*cmd)->hrdc = NULL;
+	*prompt = PROMPT;
+	return (1);
 }
 
 /*
@@ -80,15 +99,7 @@ int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
 		return (shell_clean_data(cmd, shell, 1, 1));
 	if (*prompt == HRDC && ret == CTRLD && !shell->str)
-	{
-		ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
-				"end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
-		while (get_next_hrdc((*cmd)->hrdc))
-			del_next_hrdc((*cmd)->hrdc);
-		(*cmd)->hrdc = NULL;
-		*prompt = PROMPT;
-		return (1);
-	}
+		return (hrdc_interrupt_ctrd(prompt, cmd));
 	else if (*prompt == HRDC && ret == CTRLC)
 	{
 		*prompt = PROMPT;

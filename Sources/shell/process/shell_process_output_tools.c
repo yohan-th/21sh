@@ -13,6 +13,20 @@
 
 #include "../../../Include/shell.h"
 
+void	check_fd_devnull(char **ptn_output, int fd_devnull)
+{
+	char *tmp;
+
+	if (ft_strcmp(*ptn_output, "&-") == 0)
+	{
+		ft_strdel(ptn_output);
+		tmp = ft_itoa(fd_devnull);
+		*ptn_output = ft_strjoin("&", tmp);
+		ft_strdel(&tmp);
+	}
+}
+
+
 int		path_to_output_exist(char *output)
 {
 	int i;
