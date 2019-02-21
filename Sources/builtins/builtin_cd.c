@@ -56,7 +56,7 @@ int		cd_move(char ***envp, char *cur_dir, char *dir)
 	else
 		tmp = ft_strjoin_mltp(4, cur_dir, "/", dir, "/");
 	cd_change_env(envp, tmp, cur_dir, dir);
-	free(tmp);
+	ft_strdel(&tmp);
 	return (1);
 }
 

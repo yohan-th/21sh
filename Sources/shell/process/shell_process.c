@@ -76,6 +76,7 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	shell_reinit_fd(fd);
 	clean_cmd(cmd);
 	ft_strdel(&shell->str);
+	ft_strdel(&shell->hrdc_tmp);
 	return (1);
 }
 

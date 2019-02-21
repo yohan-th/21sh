@@ -47,11 +47,14 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 	char	*hrdc;
 	int		last;
 
+	printf("---<str|%s| hrdc_tmp|%s|>\n", shell->str, shell->hrdc_tmp);
 	if ((int)((*cmd)->process).stdin_send == -1)
 		((*cmd)->process).stdin_send = ft_strdup("");
 	hrdc = get_next_hrdc((*cmd)->hrdc);
 	if (hrdc && shell->str && ft_strcmp(hrdc, shell->str) == 0)
 	{
+		ft_strjoin_free(&shell->hrdc_tmp, shell->str);
+		ft_strjoin_free(&shell->hrdc_tmp, "\n");
 		del_next_hrdc((*cmd)->hrdc);
 		if (get_next_hrdc((*cmd)->hrdc) == NULL)
 		{
@@ -64,7 +67,8 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 	}
 	else if ((int)((*cmd)->process).stdin_send != -1)
 	{
-		ft_strjoin_free(&shell->str_tmp, "\n");
+		ft_strjoin_free(&shell->hrdc_tmp, shell->str);
+		ft_strjoin_free(&shell->hrdc_tmp, "\n");
 		ft_strjoin_free(&((*cmd)->process).stdin_send, shell->str);
 		ft_strjoin_free(&((*cmd)->process).stdin_send, "\n");
 	}
@@ -103,7 +107,7 @@ int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 	else if (*prompt == HRDC && ret == CTRLC)
 	{
 		*prompt = PROMPT;
-		shell->hist->cmd = ft_strdup(shell->str_tmp);
+		shell->hist->cmd = ft_strdup(shell->hrdc_tmp);
 		return (shell_clean_data(cmd, shell, 1, 1));
 	}
 	if (*prompt == HRDC && *cmd)

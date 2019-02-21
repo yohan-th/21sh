@@ -85,7 +85,7 @@ typedef struct				s_shell
 	char 				**envl;
 	char				**alias;
 	char 				*str;
-	char 				*str_tmp;
+	char 				*hrdc_tmp;
 	int 				ret;
 	t_data				*hist;
 }							t_shell;

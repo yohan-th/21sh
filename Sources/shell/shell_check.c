@@ -13,11 +13,13 @@
 
 #include "../../Include/shell.h"
 
-BOOL	shell_hrdc_quotesub(t_cmd *cmd, char **shell_str, e_prompt *prompt)
+BOOL	shell_hrdc_quotesub(t_cmd *cmd, t_shell *shell, e_prompt *prompt)
 {
 	int i;
 
-	ft_strdel(shell_str);
+	ft_strjoin_free(&shell->hrdc_tmp, shell->str);
+	ft_strjoin_free(&shell->hrdc_tmp, "\n");
+	ft_strdel(&shell->str);
 	*prompt = HRDC;
 	i = 0;
 	while (cmd->hrdc[i] != NULL)
@@ -40,7 +42,7 @@ BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 	while ((next = next->next_cmd))
 	{
 		if (next->hrdc && ((int)next->hrdc[0] < -3 || (int)next->hrdc[0] > -1))
-			return (shell_hrdc_quotesub((*cmd = next), &shell->str, prompt));
+			return (shell_hrdc_quotesub((*cmd = next), shell, prompt));
 		if ((next->hrdc && (int)next->hrdc[0] == -1) ||
 			(((next->input && (int)next->input[0] == -2) ||
 			(next->hrdc && (int)next->hrdc[0] == -2)) &&
@@ -48,6 +50,7 @@ BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
 		{
 			write(2, "21sh: syntax error near unexpected token `newline'\n",
 					51);
+			//ft_strjoin_free(&shell->str_tmp, shell->str);
 			ft_strdel(&shell->str);
 			clean_cmd(cmd);
 			return (1);

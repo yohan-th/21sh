@@ -64,37 +64,15 @@ BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
 	return (1);
 }
 
-/*
-** str_tmp contient les éléments brut de l'utilisateur (non modif par HRDC)
-*/
-
-void	shell(t_shell *shl, t_cmd *cmd, e_prompt prmt)
+void	shell_save_histo(t_shell *shl)
 {
-	e_shortcut	ret;
-
-	while ((ret = get_stdin(shl, &prmt)) != -1)
-	{
-		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
-			break ;
-		if ((shl->str && (cmd = shell_split(shl->str, shl->envp, &prmt))) ||
-			(prmt == PROMPT && cmd && (cmd->process).stdin_send))
-		{
-			if (cmd_check(&cmd, shl, &prmt))
-			{
-				ft_strjoin_free(&shl->str_tmp, shl->str);
-				ft_strjoin_free(&shl->str_tmp, "\n");
-				continue;
-			}
-			if (shl->str_tmp && ((!shl->hist->cmd && !shl->hist->prev) ||
-					(shl->hist->prev && shl->hist->prev->cmd &&
-					ft_strcmp(shl->hist->prev->cmd, shl->str_tmp))))
-				shl->hist->cmd = ft_strdup(shl->str_tmp);
-			if (check_syntax_err(cmd))
-				shell_clean_data(&cmd, shl, 1, 1);
-			else if (shell_process(&cmd, shl) == -1)
-				break ;
-		}
-	}
+	if (shl->hrdc_tmp)
+		ft_strdel(&shl->str);
+	shl->str = shl->hrdc_tmp ? ft_strdup(shl->hrdc_tmp) : shl->str;
+	if (shl->str && ((!shl->hist->cmd && !shl->hist->prev) ||
+					 (shl->hist->prev && shl->hist->prev->cmd &&
+					  ft_strcmp(shl->hist->prev->cmd, shl->str))))
+		shl->hist->cmd = ft_strdup(shl->str);
 }
 
 int		main(void)
@@ -106,7 +84,6 @@ int		main(void)
 	e_shortcut	ret;
 
 	shell_init(&shl, &prmt, &cmd, environ);
-	//shell(shl, cmd, prmt);
 	while ((ret = get_stdin(shl, &prmt)) != -1)
 	{
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
@@ -115,15 +92,8 @@ int		main(void)
 			(prmt == PROMPT && cmd && (cmd->process).stdin_send))
 		{
 			if (cmd_check(&cmd, shl, &prmt))
-			{
-				ft_strjoin_free(&shl->str_tmp, shl->str);
-				ft_strjoin_free(&shl->str_tmp, "\n");
 				continue;
-			}
-			if (shl->str_tmp && ((!shl->hist->cmd && !shl->hist->prev) ||
-								 (shl->hist->prev && shl->hist->prev->cmd &&
-								  ft_strcmp(shl->hist->prev->cmd, shl->str_tmp))))
-				shl->hist->cmd = ft_strdup(shl->str_tmp);
+			shell_save_histo(shl);
 			if (check_syntax_err(cmd))
 				shell_clean_data(&cmd, shl, 1, 1);
 			else if (shell_process(&cmd, shl) == -1)

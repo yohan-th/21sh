@@ -99,7 +99,7 @@ t_shell		*init_shell(char **envp)
 	if (check_if_env_var_existing(shell->envp, "OLDPWD"))
 		shell->envp = rmv_key_env(shell->envp, "OLDPWD");
 	shell->str = NULL;
-	shell->str_tmp = NULL;
+	shell->hrdc_tmp = NULL;
 	shell->hist = init_hist(".21sh_history");
 	shell->alias = get_alias_from_file(".21sh_alias");
 	if (!(shell->envl = (char **)malloc(sizeof(char *))))
