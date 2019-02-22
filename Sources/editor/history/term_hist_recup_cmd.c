@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/14 13:06:38 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:00:10 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -79,7 +79,7 @@ t_data		*recup_hist_from_file(t_data *hist, char *file)
 	return (hist);
 }
 
-t_data	*hist_add(t_data *hist)
+t_data		*hist_add(t_data *hist)
 {
 	t_data *new;
 	t_data *now;
@@ -97,15 +97,15 @@ t_data	*hist_add(t_data *hist)
 	return (new);
 }
 
-t_data	*init_hist(char *file)
+t_data		*init_hist(char *file)
 {
-	t_data	*hist;
+	t_data		*hist;
 	char		*file_str;
 	int			fd;
 	int			ret;
 
 	if (!(hist = malloc(sizeof(t_data))))
-		exit (1);
+		exit(1);
 	hist->cmd = NULL;
 	hist->next = NULL;
 	hist->prev = NULL;

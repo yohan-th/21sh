@@ -6,32 +6,29 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/04 22:15:59 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/19 16:16:16 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 16:21:25 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-static int		builtin_alias_init(char **args, char **tbl)
+static int		builtin_alias_init(char **args, char **op)
 {
 	int i;
 
 	i = 0;
-	tbl[0] = NULL;
-	tbl[1] = NULL;
-	tbl[2] = NULL;
-	if (args[0] && (i = builtin_get_options(&tbl[0], args, "p")) == -1)
+	if (args[0] && (i = builtin_get_options(&(*op), args, "p")) == -1)
 	{
 		ft_dprintf(2, "42sh: alias: -%s: invalid option\nalias: usage:\
-		alias[-p] [name[=value] ... ]\n", tbl[0]);
-		ft_strdel(&tbl[0]);
+		alias[-p] [name[=value] ... ]\n", *op);
+		ft_strdel(op);
 		return (-1);
 	}
 	return (i);
 }
 
-static int		builtin_alias_available(char *arg, char **alias, char *val)
+static int		builtin_alias_found(char *arg, char **alias, char *val)
 {
 	char *cmd;
 
@@ -53,28 +50,26 @@ static int		builtin_alias_available(char *arg, char **alias, char *val)
 
 static void		builtin_alias_print(char **alias)
 {
-	int i;
-
-	i = 0;
-	while (alias[i])
-		ft_dprintf(1, "alias %s\n", alias[i++]);
+	while (*alias)
+		ft_dprintf(1, "alias %s\n", *alias++);
 }
 
-static void		builtin_alias_not_found(char *arg, char ***alias, char **tb)
+static void		builtin_alias_not_found(char *arg, char ***alias, char *vl)
 {
+	char *cmd;
 	char **alias_tmp;
 
-	if (!tb[1])
+	if (!vl || arg[0] == '=')
 		ft_dprintf(2, "42sh: alias: %s: not found\n", arg);
 	else
 	{
 		alias_tmp = ft_arrnew(ft_arrlen(*alias) + 1);
 		ft_arrcpy(alias_tmp, *alias);
 		alias_tmp[ft_arrlen(*alias)] = ft_strjoin_mltp(5, (
-		tb[2] = ft_strsub(arg, 0, ft_strlen(arg) -
-		(ft_strlen(tb[1]) + 1))), "=", "'", tb[1], "'");
+		cmd = ft_strsub(arg, 0, ft_strlen(arg) -
+		(ft_strlen(vl) + 1))), "=", "'", vl, "'");
 		free(*alias);
-		ft_strdel(&tb[2]);
+		ft_strdel(&cmd);
 		*alias = alias_tmp;
 	}
 }
@@ -82,28 +77,28 @@ static void		builtin_alias_not_found(char *arg, char ***alias, char **tb)
 int				builtin_alias(char ***al, char **ag)
 {
 	int		d[3];
-	char	**alias_tmp;
-	char	*tb[3];
+	char	**al_t;
+	char	*tl[2];
 
-	if ((d[2] = builtin_alias_init(ag, tb) - 1) == -2)
+	tl[0] = NULL;
+	if ((d[2] = builtin_alias_init(ag, &(tl[0])) - 1) == -2)
 		return (1);
-	if ((d[1] = 1) && ((!ag[0] || (tb[0] && ft_strchr(tb[0], 'p')))))
+	if (!(d[1] = 0) && ((!ag[0] || (tl[0] && ft_strchr(tl[0], 'p')))))
 		builtin_alias_print(*al);
-	if ((alias_tmp = *al) && (!tb[0] || ft_strchr(tb[0], 'p')))
-		while (ag[++d[2]] && (alias_tmp = *al))
+	if (!tl[0] || ft_strchr(tl[0], 'p'))
+		while (ag[++d[2]] && (al_t = *al))
 		{
 			d[0] = 1;
-			tb[1] = ft_strchr(ag[d[2]], '=') ? ft_strchr(ag[d[2]], '=') + 1 : 0;
-			while (*alias_tmp)
+			tl[1] = ft_strchr(ag[d[2]], '=') ? ft_strchr(ag[d[2]], '=') + 1 : 0;
+			while (*al_t)
 			{
-				if (builtin_alias_available(ag[d[2]],
-				&*alias_tmp, tb[1]) && !(d[0] = 0))
+				if (builtin_alias_found(ag[d[2]], &*al_t, tl[1]) && !(d[0] = 0))
 					break ;
-				alias_tmp++;
+				al_t++;
 			}
-			if ((!tb[1] && d[0] && (d[1] = 1)) || (tb[1] && d[0]))
-				builtin_alias_not_found(ag[d[2]], al, tb);
+			if ((!tl[1] && d[0] && (d[1] = 1)) || (tl[1] && d[0]))
+				builtin_alias_not_found(ag[d[2]], al, tl[1]);
 		}
-	ft_strdel(&tb[0]);
+	ft_strdel(&(tl[0]));
 	return (d[1]);
 }

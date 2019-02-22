@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/04 19:23:25 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 17:27:29 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:26:42 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -83,8 +83,10 @@ int		main(void)
 	t_cmd		*cmd;
 	e_shortcut	ret;
 
+	if (!isatty(STDIN_FILENO))
+		return (1);
 	shell_init(&shl, &prmt, &cmd, environ);
-	while ((ret = get_stdin(shl, &prmt)) != -1)
+	while (isatty(STDIN_FILENO) && (ret = get_stdin(shl, &prmt)) != -1)
 	{
 		if (!hrdc_fill(&prmt, &cmd, shl, ret) && !check_shrt(&prmt, ret, shl))
 			break ;

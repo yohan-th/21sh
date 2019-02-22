@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 21:32:34 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:12:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -47,51 +47,59 @@ static int		prompt_type(e_prompt prompt)
 	return (0);
 }
 
-char			*get_user_name()
+char			*get_user_name(void)
 {
-	DIR		*dir;
-	uid_t	uid;
-	char	*full_path;
-	struct	stat buf;
-	struct	dirent *dirent;
+	DIR				*dir;
+	uid_t			uid;
+	char			*full_path;
+	struct stat		buf;
+	struct dirent	*dirent;
 
-	dir = opendir("/Users");
 	uid = getuid();
-	while (dir && (dirent = readdir(dir)))
+	if ((dir = opendir("/Users")))
 	{
-		full_path = build_full_path("/Users", dirent->d_name, NULL);
-		if (full_path && !lstat(full_path, &buf)
-		&& buf.st_uid == uid && !closedir(dir))
+		while ((dirent = readdir(dir)))
 		{
+			full_path = build_full_path("/Users", dirent->d_name, NULL);
+			if (full_path && !lstat(full_path, &buf)
+			&& buf.st_uid == uid)
+			{
+				ft_strdel(&full_path);
+				full_path = ft_strdup(dirent->d_name);
+				closedir(dir);
+				return (full_path);
+			}
 			ft_strdel(&full_path);
-			return (dirent->d_name);
 		}
-		ft_strdel(&full_path);
-	}
-	if (dir)
 		closedir(dir);
-	return (NULL);
+	}
+	return (0);
 }
 
 int				display_prompt(e_prompt prompt, char **env)
 {
-	(void)env;
-	//char			*user;
+	char			*user;
 	int				len;
 	struct utsname	buf;
-	//uid_t			uid;
 
 	if (prompt != PROMPT)
 		return (prompt_type(prompt));
-	//user = get_envp(env, "USER");
-//	len = ft_putstrlen(user);
-	len = ft_putstrlen(get_user_name());//42sh
+	if (((env && (user = ft_strdup(get_envp(env, "USER"))))
+	|| (user = get_user_name())))
+		len = ft_putstrlen(user);
+	else
+		len = 0;
 	if (!uname(&buf))
 	{
-	//	if (user)
+		if (user)
+		{
 			len += ft_putstrlen("@");
+			ft_strdel(&user);
+		}
 		len += ft_putstrlen(buf.nodename);
 	}
+	else if (user)
+		ft_strdel(&user);
 	len += ft_putstrlen("$ ");
 	return (len);
 }

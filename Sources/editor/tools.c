@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 21:17:16 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 15:33:24 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:26:33 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -93,10 +93,11 @@ int		get_read_key(int fd, char **key)
 	int		ret;
 	char	buf[BUFF_READ + 1];
 
+	ret = 0;
 	if (BUFF_READ < 1)
 		return (-1);
 	ft_bzero(buf, BUFF_READ + 1);
-	if ((ret = read(fd, buf, BUFF_READ)))
+	if (isatty(fd) && (ret = read(fd, buf, BUFF_READ)))
 	{
 		buf[ret] = '\0';
 		if (!ft_strjoin_free(key, buf))

@@ -6,7 +6,7 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/01/28 18:21:28 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/18 16:58:25 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 15:47:45 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -29,7 +29,7 @@ void	builtin_type_free(t_type *tp)
 int		builtin_type_init(t_type **tp, char **envp, char **args)
 {
 	if (!(*tp = (t_type*)malloc(sizeof(t_type))))
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	(*tp)->op = NULL;
 	if (((*tp)->i =
 	builtin_get_options(&(*tp)->op, args, "aptP") - 1) == -2)

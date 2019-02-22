@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/23 13:13:48 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/19 10:36:19 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/21 22:59:49 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -19,7 +19,7 @@ int		check_builtin_setenv(char ***envp, char **cmd)
 		builtin_setenv(envp, cmd[1], cmd[2]);
 	else
 		return (shell_error_env("env set usage"));
-	return (0);
+	return (1);
 }
 
 int		check_builtin_unsetenv(char ***envp, char **cmd)
@@ -28,7 +28,7 @@ int		check_builtin_unsetenv(char ***envp, char **cmd)
 		*envp = rmv_key_env(*envp, cmd[1]);
 	else
 		return (shell_error_env("env unset usage"));
-	return (0);
+	return (1);
 }
 
 int		check_builtin_env(char ***envp, char **cmd)
@@ -39,7 +39,7 @@ int		check_builtin_env(char ***envp, char **cmd)
 		builtin_env(*envp, cmd[1]);
 	else
 		return (shell_error_env("env usage"));
-	return (0);
+	return (1);
 }
 
 int		check_shell_variable(char *arg)
@@ -58,28 +58,29 @@ int		check_shell_variable(char *arg)
 **  - 0 not builtin
 **  - 1 is builtin
 **  - -1 need exit
-** elem->val_ret contient 1 si builtin failed ou 0 si succeeded (RAS)
-** Note : pour certain builtin on corrige la var de retour (0=RAS, 1=smthg)
+** elem->val_ret contient 0 si builtin failed ou 1+ si succeeded
 */
 
 int		shell_builtin(t_cmd *elem, t_shell *shell)
 {
 	if (elem->args[0] && ft_strcmp("echo", elem->args[0]) == 0)
-		elem->ret = builtin_echo(elem->args) ? 0 : 1;
+		elem->ret = builtin_echo(elem->args);
 	else if (elem->args[0] && ft_strcmp("cd", elem->args[0]) == 0)
-		elem->ret = builtin_cd(elem->args, &shell->envp) ? 0 : 1;
+		elem->ret = builtin_cd(elem->args, &shell->envp);
 	else if (elem->args[0] && ft_strcmp("setenv", elem->args[0]) == 0)
-		elem->ret = check_builtin_setenv(&shell->envp, elem->args) ? 0 : 1;
+		elem->ret = check_builtin_setenv(&shell->envp, elem->args);
 	else if (elem->args[0] && ft_strcmp("unsetenv", elem->args[0]) == 0)
-		elem->ret = check_builtin_unsetenv(&shell->envp, elem->args) ? 0 : 1;
+		elem->ret = check_builtin_unsetenv(&shell->envp, elem->args);
 	else if (elem->args[0] && ft_strcmp("env", elem->args[0]) == 0)
-		elem->ret = check_builtin_env(&shell->envp, elem->args) ? 0 : 1;
+		elem->ret = check_builtin_env(&shell->envp, elem->args);
 	else if (elem->args[0] && check_shell_variable(elem->args[0]))
 		elem->ret = builtin_env_all(&shell->envp, &shell->envl, elem->args);
 	else if (elem->args[0] && ft_strcmp("type", elem->args[0]) == 0)
 		elem->ret = builtin_type(elem->args + 1, shell->envp);
 	else if (elem->args[0] && ft_strcmp("alias", elem->args[0]) == 0)
 		elem->ret = builtin_alias(&shell->alias, elem->args + 1);
+	else if (elem->args[0] && ft_strcmp("unalias", elem->args[0]) == 0)
+		elem->ret = builtin_unalias(&shell->alias, elem->args + 1);
 	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
 	{
 		elem->ret = builtin_exit(elem->args);

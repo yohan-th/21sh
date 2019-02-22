@@ -6,7 +6,7 @@
 #    By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/03/14 01:36:40 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2019/02/19 11:59:58 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/02/21 18:00:43 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -57,7 +57,7 @@ PRTF =	ft_printf.c pf_parse.c pf_type.c pf_convert.c pf_print_field.c \
 MATH =	ft_atoi.c ft_itoa.c ft_lenint.c ft_lenint_base.c ft_sqrt.c ft_utoa.c \
 		ft_digitlen.c
 
-ARRAY = ft_arrdel.c ft_arrdup.c ft_arrlen.c ft_arrnew.c ft_arrcpy.c
+ARRAY = ft_arrdel.c ft_arrdup.c ft_arrlen.c ft_arrnew.c ft_arrcpy.c ft_arrncpy.c
 
 SRC = 	$(addprefix $(DIR_CHR), $(CHR)) $(addprefix $(DIR_GNL), $(GNL)) \
 		$(addprefix $(DIR_LST), $(LST)) $(addprefix $(DIR_STR), $(STR)) \

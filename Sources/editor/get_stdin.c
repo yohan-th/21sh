@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 17:44:19 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:28:56 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -83,7 +83,7 @@ int				get_stdin(t_shell *shell, e_prompt *prompt)
 			display_prompt(*prompt, shell->envp), &shell->hist)))
 		return (-2);
 	term_size(ed);
-	while (ed->ret != -1)
+	while (isatty(STDIN_FILENO) && ed->ret != -1)
 	{
 		ed->ret = get_read_key(STDIN_FILENO, &ed->key);
 		tputs(tgetstr("vi", NULL), 1, ft_putchar);

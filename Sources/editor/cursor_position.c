@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/12 18:13:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/18 20:59:21 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/22 13:26:12 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -45,6 +45,7 @@ static int		check_cursor_position(int mode)
 	unsigned int	i;
 
 	i = 0;
+
 	if (write(1, "\x1b[6n", 4) != 4)
 		return (-1);
 	while (i < sizeof(buf) - 1)

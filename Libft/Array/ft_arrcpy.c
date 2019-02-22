@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/19 11:51:13 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/19 14:59:32 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/21 18:11:47 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -15,13 +15,10 @@
 
 char	**ft_arrcpy(char **arr_dst, char **arr_src)
 {
-	int i;
+	char **ret;
 
-	i = 0;
-	while (arr_dst && arr_src && arr_src[i])
-	{
-		arr_dst[i] = arr_src[i];
-		i++;
-	}
+	ret = arr_dst;
+	while (arr_dst && arr_src && *arr_src)
+		*arr_dst++ = *arr_src++;
 	return (arr_dst);
 }
