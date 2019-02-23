@@ -13,6 +13,16 @@
 
 #include "../../Include/shell.h"
 
+char	*get_next_hrdc(char **hrdc)
+{
+	int	i;
+
+	i = 0;
+	while (hrdc && (int)hrdc[i] == -3)
+		i++;
+	return (hrdc ? hrdc[i] : NULL);
+}
+
 void	shl_quotesub(char *arg)
 {
 	char	quote;

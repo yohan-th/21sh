@@ -20,7 +20,7 @@ int		check_fd_input(char *input, t_shell *shell)
 
 	if ((int)input != -3 && (int)input != -1 && input[0] == '&')
 	{
-		shell_envpsub(&input, shell->envp);
+		shell_envpsub(&input, shell->envp, shell->envl);
 		shl_quotesub(input);
 		i = 1;
 		while (ft_isdigit(input[i]))
@@ -41,7 +41,7 @@ void	complete_stdin_path(char **std_in, t_shell *shell)
 	char *tmp;
 	char *cur_dir;
 
-	shell_envpsub(std_in, shell->envp);
+	shell_envpsub(std_in, shell->envp, shell->envl);
 	shl_quotesub(*std_in);
 	if ((*std_in)[0] != '/')
 	{
@@ -74,6 +74,8 @@ int		check_input_file(char **std_in, t_shell *shell)
 
 /*
 ** Même si c'est seulement le dernier input qui est lu ont les check tous
+** On remplit stdin_send seulement si c'est le dernier input et qu'il
+** ne correspond pas à un HRDC
 */
 
 int		shell_read_input(t_cmd *elem, t_shell *shell)
@@ -94,7 +96,7 @@ int		shell_read_input(t_cmd *elem, t_shell *shell)
 		}
 		else if (!is_fd && check_input_file(&elem->input[i], shell))
 		{
-			if (i == ft_arrlen(elem->input) - 1)
+			if (i == ft_arrlen(elem->input) - 1 && (int)elem->input[i] != -3)
 				ft_read_file(elem->input[i], &(elem->process).stdin_send);
 		}
 		else

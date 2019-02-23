@@ -15,7 +15,7 @@
 
 void	check_fd_devnull(char **ptn_output, int fd_devnull)
 {
-	char *tmp;
+	char	*tmp;
 
 	if (ft_strcmp(*ptn_output, "&-") == 0)
 	{
@@ -25,7 +25,6 @@ void	check_fd_devnull(char **ptn_output, int fd_devnull)
 		ft_strdel(&tmp);
 	}
 }
-
 
 int		path_to_output_exist(char *output)
 {
@@ -77,7 +76,7 @@ int		complete_output_paths(char **output_to, t_shell *shell)
 	char *tmp;
 	char *cur_dir;
 
-	shell_envpsub(output_to, shell->envp);
+	shell_envpsub(output_to, shell->envp, shell->envl);
 	shl_quotesub(*output_to);
 	if ((*output_to)[0] != '/')
 	{

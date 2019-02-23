@@ -13,29 +13,6 @@
 
 #include "../../../Include/shell.h"
 
-/*
-** Return NULL si redi est dans le prochain arg (si existant) ou si quote
-** non fermé.
-*/
-
-char		*get_stdout_to(char *redi, int *pos)
-{
-	char	*redi_to;
-	char	quote;
-	int		len;
-
-	if (redi[*pos] == '\0')
-		return (NULL);
-	quote = ft_strchr("'\"", redi[*pos]) ? (char)redi[*pos] : (char)' ';
-	len = len_stdout_to(redi + *pos, quote);
-	if (len > 0)
-		redi_to = ft_strsub(redi, (unsigned)*pos, (size_t)len);
-	else
-		redi_to = NULL;
-	*pos += len;
-	return (redi_to);
-}
-
 int			get_stdout_from(char *redi, int pos)
 {
 	char	*rev;
@@ -47,7 +24,7 @@ int			get_stdout_from(char *redi, int pos)
 	i = 0;
 	while (i < pos)
 	{
-		if (!(ft_isdigit(redi[i++])))
+		if (!(ft_isdigit(redi[--pos])))
 			return (1);
 	}
 	rev = ft_strrev(ft_strdup(redi));
@@ -63,9 +40,8 @@ int			get_stdout_from(char *redi, int pos)
 ** tronque {arg} si {from} n'a pas que des digits
 */
 
-char			*shell_stdout_sub(char **arg, int *i, t_output *redi)
+void		shell_get_stdout(char **arg, int *i, t_output *redi)
 {
-	char	*tmp;
 	redi->from = get_stdout_from(*arg, *i);
 	ft_strdel(&redi->to);
 	if ((*arg)[*i] && (*arg)[*i + 1] == '>')
@@ -73,21 +49,15 @@ char			*shell_stdout_sub(char **arg, int *i, t_output *redi)
 		redi->append = 1;
 		(*arg)[*i] = '\0';
 		*i += 2;
-		redi->to = get_stdout_to(*arg, i);
+		redi->to = get_stdout_to(*arg, *i);
 	}
 	else if ((*arg)[*i])
 	{
 		redi->append = 0;
 		(*arg)[*i] = '\0';
 		*i += 1;
-		redi->to = get_stdout_to(*arg, i);
+		redi->to = get_stdout_to(*arg, *i);
 	}
-	if (*arg && ft_atoi(*arg) == redi->from)
-		*arg[0] = '\0';
-	tmp = ft_strsub(*arg, (unsigned int)*i, (size_t)*i + ft_strlen(*arg + *i));
-	ft_strdel(arg);
-	*i = 0;
-	return (tmp);
 }
 
 t_output	*add_stdout(t_output **first_redi)
@@ -96,7 +66,7 @@ t_output	*add_stdout(t_output **first_redi)
 	t_output	*t_next;
 
 	if (!(new_redi = malloc(sizeof(t_output))))
-		return (NULL);
+		exit(EXIT_FAILURE);
 	new_redi->append = 0;
 	new_redi->from = 1;
 	new_redi->to = ft_strdup("&1");
@@ -117,6 +87,34 @@ t_output	*add_stdout(t_output **first_redi)
 	return (new_redi);
 }
 
+int			shell_stdout_sub(char **arg, int pos, t_output *redi)
+{
+	int		len;
+	char	*tmp;
+	char	*bfr;
+	char	*aft;
+
+	len = len_stdout_to(*arg + pos);
+	if (*arg && ft_atoi(*arg) == redi->from)
+	{
+		tmp = ft_strsub(*arg + pos, (uint)len, ft_strlen(*arg + pos + len));
+		ft_strdel(arg);
+		*arg = tmp;
+		pos = 0;
+	}
+	else
+	{
+		bfr = ft_strdup(*arg);
+		aft = ft_strdup(*arg + pos + len);
+		ft_strdel(arg);
+		*arg = ft_strjoin(bfr, aft);
+		pos = ft_strlen(bfr);
+		ft_strdel(&bfr);
+		ft_strdel(&aft);
+	}
+	return (pos);
+}
+
 /*
 ** shell redi peut renvoyer NULL si malloc fail.
 ** On effectue un exit propre (à faire).
@@ -128,7 +126,7 @@ t_output	*shell_std_out(char **arg, t_output **first_redi, char quote)
 	t_output	*redi;
 
 	if (*first_redi && (get_last_stdout(*first_redi))->to == NULL && *arg)
-		*arg = complete_stdout_to(arg, get_last_stdout(*first_redi), quote);
+		*arg = complete_stdout_to(arg, get_last_stdout(*first_redi));
 	redi = NULL;
 	i = (quote == ' ') ? 0 : 1;
 	while (*arg && (*arg)[i])
@@ -141,12 +139,12 @@ t_output	*shell_std_out(char **arg, t_output **first_redi, char quote)
 			quote = ' ';
 		if ((*arg)[i] == '>' && quote == ' ')
 		{
-			if (!(redi = add_stdout(first_redi)))
-				return (NULL);
-			*arg = shell_stdout_sub(arg, &i, redi);
+			redi = add_stdout(first_redi);
+			shell_get_stdout(arg, &i, redi);
+			i = shell_stdout_sub(arg, i, redi);
 		}
 		else
 			i += ((*arg)[i]) ? 1 : 0;
 	}
-	return (redi);
+	return (*first_redi);
 }

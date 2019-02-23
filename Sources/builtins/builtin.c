@@ -83,8 +83,7 @@ int		shell_builtin(t_cmd *elem, t_shell *shell)
 		elem->ret = builtin_unalias(&shell->alias, elem->args + 1);
 	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
 	{
-		elem->ret = builtin_exit(elem->args);
-		if (elem->ret >= 0)
+		if ((elem->ret = builtin_exit(elem->args)) >= 0)
 			return (-1);
 	}
 	else

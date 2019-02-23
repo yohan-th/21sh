@@ -30,6 +30,8 @@ int		builtin_echo(char **cmd)
 		if (ft_strcmp(cmd[i], "") != 0)
 			ft_dprintf(1, "%s", cmd[i]);
 		i++;
+		if (cmd[i])
+			ft_dprintf(1, " ");
 	}
 	if (newl)
 		write(1, "\n", 1);

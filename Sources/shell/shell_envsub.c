@@ -13,7 +13,7 @@
 
 #include "../../Include/shell.h"
 
-int		shell_argsub_env(char **arg, int i, char **envp)
+int		shell_argsub_env(char **arg, int i, char **envp, char **envl)
 {
 	char	*tmp;
 	char	*var;
@@ -27,7 +27,7 @@ int		shell_argsub_env(char **arg, int i, char **envp)
 		return (i);
 	tmp[0] = '\0';
 	tmp = ft_strsub(tmp, 1, len - 1);
-	var = get_envp(envp, tmp);
+	var = get_envp(envp, tmp) ? get_envp(envp, tmp) : get_envp(envl, tmp);
 	free(tmp);
 	if (var == NULL)
 		tmp = ft_strjoin_mltp(2, *arg, *arg + i + len);
@@ -47,14 +47,11 @@ void	shell_check_tilde(char **arg, char **envp)
 	char	*tmp;
 
 	if ((*arg)[0] == '~' && !get_envp(envp, "HOME"))
-	{
-		write(2, "21sh: $HOME env not set for ~\n", 30);
 		return ;
-	}
 	if ((*arg)[0] == '~' && (*arg)[1] == '\0')
 	{
 		ft_strdel(arg);
-		*arg = ft_strdup(ft_strdup(get_envp(envp, "HOME")));
+		*arg = ft_strdup(get_envp(envp, "HOME"));
 	}
 	else if ((*arg)[0] == '~' && (*arg)[1] == '/')
 	{
@@ -69,7 +66,7 @@ void	shell_check_tilde(char **arg, char **envp)
 ** Remplace les var d'environnements
 */
 
-void	shell_envpsub(char **arg, char **envp)
+void	shell_envpsub(char **arg, char **envp, char **envl)
 {
 	int		i;
 	char	quote;
@@ -86,7 +83,7 @@ void	shell_envpsub(char **arg, char **envp)
 		else if ((*arg)[i] == quote && quote != ' ')
 			quote = ' ';
 		if ((*arg)[i] == '$' && quote != '\'')
-			i = shell_argsub_env(arg, i, envp);
+			i = shell_argsub_env(arg, i, envp, envl);
 		i++;
 	}
 }

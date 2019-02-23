@@ -15,7 +15,6 @@
 
 void	shell_child(t_cmd *elem, t_shell *shell)
 {
-	shell_plomberie(elem->process);
 	execve(elem->exec, elem->args, shell->envp);
 	exit(EXIT_SUCCESS);
 }
@@ -25,19 +24,17 @@ int		shell_father(int pid_child)
 	wait(&pid_child);
 	return (WEXITSTATUS(pid_child));
 }
+
 /*
 ** On retourne 0 si RAS ou 1 si execve fail
 */
 
-void		shell_execve(t_cmd *elem, t_shell *shell)
+void	shell_execve(t_cmd *elem, t_shell *shell)
 {
 	int	child;
-	int fd[3];
 
-	shell_save_fd(fd);
 	if ((child = fork()) == 0)
 		shell_child(elem, shell);
 	else
 		elem->ret = shell_father(child);
-	shell_reinit_fd(fd);
 }

@@ -93,7 +93,7 @@ char	**init_env(char **envp)
 				var = ft_itoa(ft_atoi(envp[i] + j + 1) + 1);
 				ft_strdel(&envp[i]);
 				envp[i] = ft_strjoin_mltp(3, "SHLVL", "=", var);
-				break ;
+				ft_strdel(&var);
 			}
 			ft_strdel(&var);
 		}

@@ -13,12 +13,16 @@
 
 #include "../../../Include/shell.h"
 
-int			len_stdout_to(char *str, char quote)
+int			len_stdout_to(char *str)
 {
-	int i;
+	int		i;
+	char	quote;
 
+	if (!str)
+		return (0);
+	quote = ft_strchr("'\"", *str) ? (char)*str : (char)' ';
 	i = (quote == ' ') ? 0 : 1;
-	while (str && str[i])
+	while (str[i])
 	{
 		if (str[i] == '\\' && ft_strlen(str) >= (i + 2) && quote != '\'')
 			i += 2;
@@ -51,13 +55,13 @@ t_output	*get_last_stdout(t_output *redi)
 ** ret se prend un strnew vide pour pouvoir parcourir args[i] lors de son free
 */
 
-char		*complete_stdout_to(char **arg, t_output *add_to, char quote)
+char		*complete_stdout_to(char **arg, t_output *add_to)
 {
 	char *ret;
 
-	add_to->to = ft_strsub(*arg, 0, (size_t)len_stdout_to(*arg, quote));
-	if ((ft_strlen(*arg) - len_stdout_to(*arg, quote)) > 0)
-		ret = ft_strsub(*arg, (unsigned)len_stdout_to(*arg, quote),
+	add_to->to = ft_strsub(*arg, 0, (size_t)len_stdout_to(*arg));
+	if ((ft_strlen(*arg) - len_stdout_to(*arg)) > 0)
+		ret = ft_strsub(*arg, (unsigned)len_stdout_to(*arg),
 						(size_t)ft_strlen(*arg));
 	else
 		ret = ft_strnew(1);

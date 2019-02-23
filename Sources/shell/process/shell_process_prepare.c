@@ -40,7 +40,7 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 	i = 0;
 	while (elem->args && elem->args[i])
 	{
-		shell_envpsub(&elem->args[i], shell->envp);
+		shell_envpsub(&elem->args[i], shell->envp, shell->envl);
 		shl_quotesub(elem->args[i]);
 		if (i == 0)
 		{
@@ -52,34 +52,6 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 		}
 		i++;
 	}
-}
-
-void	shell_clean_input(t_cmd *elem)
-{
-	int		i;
-	char	**files;
-	int		n;
-
-	files = malloc(sizeof(char *) * (ft_arrlen(elem->input) + 1));
-	i = 0;
-	n = 0;
-	while (elem->input && elem->input[i])
-	{
-		if ((int)elem->input[i] != -1 && (int)elem->input[i] != -2
-				&& (int)elem->input[i] != -3)
-		{
-			files[n++] = ft_strdup(elem->input[i]);
-			ft_strdel(&elem->input[i]);
-		}
-		i++;
-	}
-	files[n] = NULL;
-	if (n == 0)
-		ft_arrdel(&files);
-	else
-		files[n] = NULL;
-	free(elem->input);
-	elem->input = files;
 }
 
 /*
@@ -95,7 +67,5 @@ void	shell_prepare(t_cmd *cmd, t_shell *shell)
 	{
 		shell_clean_emptyargs(elem);
 		shell_prepare_args(elem, shell);
-		if (elem->input)
-			shell_clean_input(elem);
 	}
 }

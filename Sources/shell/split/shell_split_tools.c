@@ -23,3 +23,23 @@ char	*shell_trim(char **str)
 	*str = *str + i;
 	return (*str);
 }
+
+/*
+** Return NULL si redi est dans le prochain arg (si existant) ou si quote
+** non fermé.
+*/
+
+char	*get_stdout_to(char *redi, int pos)
+{
+	char	*redi_to;
+	int		len;
+
+	if (redi[pos] == '\0')
+		return (NULL);
+	len = len_stdout_to(redi + pos);
+	if (len > 0)
+		redi_to = ft_strsub(redi, (unsigned)pos, (size_t)len);
+	else
+		redi_to = NULL;
+	return (redi_to);
+}

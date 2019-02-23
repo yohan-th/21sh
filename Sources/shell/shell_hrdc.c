@@ -13,16 +13,6 @@
 
 #include "../../Include/shell.h"
 
-char	*get_next_hrdc(char **hrdc)
-{
-	int	i;
-
-	i = 0;
-	while (hrdc && (int)hrdc[i] == -3)
-		i++;
-	return (hrdc ? hrdc[i] : NULL);
-}
-
 /*
 ** hrdc[i] prend la valeur de -3 pour indiqué d'être rempli
 */
@@ -42,29 +32,32 @@ int		del_next_hrdc(char **hrdc)
 	return (1);
 }
 
+void	hrdc_match(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
+{
+	int last;
+
+	ft_strjoin_free(&shell->hrdc_tmp, shell->str);
+	ft_strjoin_free(&shell->hrdc_tmp, "\n");
+	del_next_hrdc((*cmd)->hrdc);
+	if (get_next_hrdc((*cmd)->hrdc) == NULL)
+	{
+		*prompt = PROMPT;
+		last = 0;
+		while ((int)(*cmd)->input[last] != -1)
+			last++;
+		(*cmd)->input[last] = (char *)-3;
+	}
+}
+
 void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 {
 	char	*hrdc;
-	int		last;
 
-	printf("---<str|%s| hrdc_tmp|%s|>\n", shell->str, shell->hrdc_tmp);
 	if ((int)((*cmd)->process).stdin_send == -1)
 		((*cmd)->process).stdin_send = ft_strdup("");
 	hrdc = get_next_hrdc((*cmd)->hrdc);
 	if (hrdc && shell->str && ft_strcmp(hrdc, shell->str) == 0)
-	{
-		ft_strjoin_free(&shell->hrdc_tmp, shell->str);
-		ft_strjoin_free(&shell->hrdc_tmp, "\n");
-		del_next_hrdc((*cmd)->hrdc);
-		if (get_next_hrdc((*cmd)->hrdc) == NULL)
-		{
-			*prompt = PROMPT;
-			last = 0;
-			while ((int)(*cmd)->input[last] != -1)
-				last++;
-			(*cmd)->input[last] = (char *)-3;
-		}
-	}
+		hrdc_match(prompt, cmd, shell);
 	else if ((int)((*cmd)->process).stdin_send != -1)
 	{
 		ft_strjoin_free(&shell->hrdc_tmp, shell->str);
@@ -83,9 +76,10 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
 {
 	ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
-				  "end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
+				"end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
 	while (get_next_hrdc((*cmd)->hrdc))
 		del_next_hrdc((*cmd)->hrdc);
+	free((*cmd)->hrdc);
 	if ((int)(*cmd)->process.stdin_send == -1)
 		(*cmd)->process.stdin_send = NULL;
 	(*cmd)->hrdc = NULL;
@@ -101,14 +95,14 @@ int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
 int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
-		return (shell_clean_data(cmd, shell, 1, 1));
+		return (shell_clean_data(cmd, shell, 1, 1, 0));
 	if (*prompt == HRDC && ret == CTRLD && !shell->str)
 		return (hrdc_interrupt_ctrd(prompt, cmd));
 	else if (*prompt == HRDC && ret == CTRLC)
 	{
 		*prompt = PROMPT;
 		shell->hist->cmd = ft_strdup(shell->hrdc_tmp);
-		return (shell_clean_data(cmd, shell, 1, 1));
+		return (shell_clean_data(cmd, shell, 1, 1, 0));
 	}
 	if (*prompt == HRDC && *cmd)
 	{

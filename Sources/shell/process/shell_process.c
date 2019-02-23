@@ -26,10 +26,11 @@
 
 int		shell_exec(t_cmd *elem, t_shell *shell)
 {
-	int is_builtin;
+	int	is_builtin;
 
 	if (!shell_read_input(elem, shell) || !shell_set_output(elem, shell))
 		return (1);
+	shell_plomberie(elem->process);
 	is_builtin = shell_builtin(elem, shell);
 	if (!is_builtin && elem->exec &&
 		ft_strcmp("not found", elem->exec) == 0)
@@ -38,7 +39,7 @@ int		shell_exec(t_cmd *elem, t_shell *shell)
 		elem->ret = 1;
 	}
 	else if (!is_builtin && elem->exec &&
-			 ft_strcmp("directory", elem->exec) == 0)
+				ft_strcmp("directory", elem->exec) == 0)
 	{
 		ft_dprintf(2, "21sh: %s: Is a directory\n", elem->args[0]);
 		elem->ret = 1;
@@ -53,16 +54,16 @@ int		shell_exec(t_cmd *elem, t_shell *shell)
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
-	int 	fd[3];
-	int 	exec;
+	int		fd[3];
+	int		exec;
 
+	//read_lexing((*cmd)->next_cmd);
 	shell_prepare(*cmd, shell);
 	shell_save_fd(fd);
 	signal(SIGINT, shell_prcs_sigint);
 	elem = *cmd;
 	while (elem && (elem = elem->next_cmd))
 	{
-		//read_lexing(elem);
 		if (elem->sep == SPL_PIPE)
 			exec = shell_exec_pipes(&elem, shell);
 		else
@@ -74,16 +75,16 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 			elem = elem->next_cmd;
 	}
 	shell_reinit_fd(fd);
-	clean_cmd(cmd);
-	ft_strdel(&shell->str);
-	ft_strdel(&shell->hrdc_tmp);
+	shell_clean_data(cmd, shell, 1, 1, 1);
 	return (1);
 }
 
+/*
 void	read_lexing(t_cmd *elem)
 {
 	t_output	*read;
 	int 		i;
+	char 		*tmp;
 
 	ft_dprintf(2, "-------------\n");
 	ft_dprintf(2, "Read exec : %s\n", elem->exec);
@@ -100,7 +101,9 @@ void	read_lexing(t_cmd *elem)
 		ft_dprintf(2, "(NULL)");
 	while (read != NULL)
 	{
-		ft_dprintf(2, "from %d to <%s> append=%d - ", read->from, read->to, read->append);
+		tmp = ft_itoa(read->from);
+		ft_dprintf(2, "from <%s> to <%s> append=%d - ", tmp, read->to, read->append);
+		ft_strdel(&tmp);
 		read = read->next;
 	}
 
@@ -138,3 +141,4 @@ void	read_lexing(t_cmd *elem)
 	ft_dprintf(2, "Et sep %d\n", elem->sep);
 	ft_dprintf(2, "-------------\n");
 }
+*/

@@ -17,7 +17,7 @@
 ** shell exec peut retourner 0=RAS ou -1=quite mais pas dans un pipe
 */
 
-void 	shell_child_pipe(t_cmd *elem, t_shell *shell, int fd_pipe[2])
+void	shell_child_pipe(t_cmd *elem, t_shell *shell, int fd_pipe[2])
 {
 	int		exec;
 
@@ -32,7 +32,7 @@ void 	shell_child_pipe(t_cmd *elem, t_shell *shell, int fd_pipe[2])
 		exit(EXIT_SUCCESS);
 }
 
-void 	shell_father_pipe(t_cmd *elem, int fd_pipe[2])
+void	shell_father_pipe(t_cmd *elem, int fd_pipe[2])
 {
 	char *tmp;
 
@@ -57,7 +57,7 @@ int		shell_exec_pipes(t_cmd **elem, t_shell *shell)
 	int		fd_pipe[2];
 	int		child;
 	BOOL	elem_no_pipe;
-	int 	status;
+	int		status;
 
 	elem_no_pipe = 0;
 	while (elem_no_pipe == 0)

@@ -36,11 +36,11 @@ char	*get_envp(char **envp, char *var)
 		tmp = get_var(*envp);
 		if (ft_strcmp(tmp, var) == 0)
 			break ;
-		free(tmp);
+		ft_strdel(&tmp);
 		envp++;
 	}
 	if (*envp != NULL)
-		free(tmp);
+		ft_strdel(&tmp);
 	else
 		return (NULL);
 	return (ft_strchr(*envp, '=') + 1);

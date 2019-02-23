@@ -69,57 +69,78 @@ void	complete_stdin(char **arg, char quote, char ***std_in)
 }
 
 /*
-** stdin_sub renvoi la valeur de combien stdin a été sub, (idealement reçu par
-** {i})
+** sub la valeur dans stdin et recolle les 2 morceau avec i au milieu
 */
 
 int		shell_get_stdin(char ***ptn_stdin, char **arg, int i)
 {
-	char *tmp;
+	int		len;
+	char	quote;
+	char	*bfr;
+	char	*aft;
 
 	*ptn_stdin = add_stdin(*ptn_stdin);
-	i = shell_stdin_sub(arg, i + 1, ptn_stdin);
-	tmp = *arg;
-	*arg = ft_strdup(*arg + i);
-	ft_strdel(&tmp);
-	return (0);
+	shell_stdin_sub(arg, i + 1, ptn_stdin);
+	(*arg)[i++] = '\0';
+	quote = ft_strchr("\"'", (*arg)[i]) ? (*arg)[i] : (char)' ';
+	len = len_stdin(*arg + i, quote);
+	bfr = ft_strdup(*arg);
+	aft = ft_strdup(*arg + i + len);
+	ft_strdel(arg);
+	*arg = ft_strjoin(bfr, aft);
+	i = ft_strlen(bfr);
+	ft_strdel(&bfr);
+	ft_strdel(&aft);
+	return (i);
 }
 
-int		shell_get_hrdc(char ***ptn_hrdc, char **arg, int i,
-							char ***ptn_stdin, char **hrdc_stdin)
+int		shell_get_hrdc(char **arg, int i, t_cmd *cmd)
 {
-	char	*tmp;
+	char	*aft;
+	char	*bfr;
 	int		last;
+	char	quote;
+	int		len;
 
-	*ptn_hrdc = add_stdin(*ptn_hrdc);
-	i = shell_stdin_sub(arg, i + 2, ptn_hrdc);
-	tmp = *arg;
-	*arg = ft_strdup(*arg + i);
-	ft_strdel(&tmp);
-	*ptn_stdin = add_stdin(*ptn_stdin);
+	cmd->hrdc = add_stdin(cmd->hrdc);
+	shell_stdin_sub(arg, i + 2, &cmd->hrdc);
+	(*arg)[i] = '\0';
+	i += 2;
+	quote = ft_strchr("\"'", (*arg)[i]) ? (*arg)[i] : (char)' ';
+	len = len_stdin(*arg + i, quote);
+	bfr = ft_strdup(*arg);
+	aft = ft_strdup(*arg + i + len);
+	ft_strdel(arg);
+	*arg = ft_strjoin(bfr, aft);
+	i = ft_strlen(bfr);
+	ft_strdel(&bfr);
+	ft_strdel(&aft);
+	cmd->input = add_stdin(cmd->input);
 	last = 0;
-	while ((*ptn_stdin)[last] != NULL)
+	while ((cmd->input)[last] != NULL)
 		last++;
-	(*ptn_stdin)[last - 1] = *hrdc_stdin;
-	return (0);
+	cmd->input[last - 1] = (cmd->process).stdin_send;
+	return (i);
 }
 
 /*
-** {hrdc[i] et std_in[i]} peuvent valoir soit une string, soit -1 si non rempli
-** soit -2 si la chaine de char se trouve dans le prochain arg soit -3 pour
-** être indiqué comme rempli par l'utilisateur.
+** {hrdc[i] et std_in[i]} peuvent valoir soit :
+** 	* une string
+**  * -1 si non rempli (lors de la création/ajout)
+**  * -2 si la chaine de char se trouve dans le prochain arg
+**  * -3 pour être indiqué comme rempli par l'utilisateur
+**
 ** hrdc_stdin (dont son adresse sera rentré dans **stdin) prend la valeur -1
 ** pour ne pas stopper la lecture de stdin et prendra la valeur rentré par user
 */
 
-void	shell_std_in(char **arg, char quote, char ***ptn_stdin,
-						char ***ptn_hrdc, char **hrdc_stdin)
+void	shell_std_in(char **arg, char quote, t_cmd *cmd)
 {
 	int		i;
 
-	complete_stdin(arg, quote, ptn_hrdc);
-	complete_stdin(arg, quote, ptn_stdin);
-	i = (quote == ' ') ? 0 : 1;
+	complete_stdin(arg, quote, &cmd->hrdc);
+	complete_stdin(arg, quote, &cmd->input);
+	i = (quote == ' ' || (*arg)[0] == '\0') ? 0 : 1;
 	while (*arg && (*arg)[i])
 	{
 		if ((*arg)[i] == '\\' && ft_strlen(*arg) >= (i + 2) && quote != '\'')
@@ -130,11 +151,11 @@ void	shell_std_in(char **arg, char quote, char ***ptn_stdin,
 			quote = ' ';
 		if ((*arg)[i] == '<' && (*arg)[i + 1] == '<' && quote == ' ')
 		{
-			*hrdc_stdin = (char *)-1;
-			i = shell_get_hrdc(ptn_hrdc, arg, i, ptn_stdin, hrdc_stdin);
+			(cmd->process).stdin_send = (char *)-1;
+			i = shell_get_hrdc(arg, i, cmd);
 		}
 		else if ((*arg)[i] == '<' && quote == ' ')
-			i = shell_get_stdin(ptn_stdin, arg, i);
+			i = shell_get_stdin(&cmd->input, arg, i);
 		else
 			i += ((*arg)[i]) ? 1 : 0;
 	}

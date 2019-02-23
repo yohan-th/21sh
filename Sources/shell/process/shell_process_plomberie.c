@@ -31,7 +31,6 @@ void	shell_pipe_stdin(char *send_stdin)
 
 void	shell_pipe_stdout(t_process process)
 {
-
 	if (process.fd_stdout[0] == '&' && process.fd_stdout[1] != '1')
 		dup2(ft_atoi(process.fd_stdout + 1), 1);
 	else if (process.fd_fileout != 0)
@@ -54,6 +53,6 @@ void	shell_plomberie(t_process process)
 {
 	if (process.stdin_send)
 		shell_pipe_stdin(process.stdin_send);
-	shell_pipe_stdout(process);
 	shell_pipe_stderr(process);
+	shell_pipe_stdout(process);
 }

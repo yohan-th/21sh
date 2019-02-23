@@ -92,9 +92,8 @@ char	*get_arg(char **str, t_cmd *cmd)
 		return (NULL);
 	quote = ft_strchr("'\"", (*str)[i]) ? (*str)[i] : (char)' ';
 	arg = ft_strsub(*str, i, len_arg(*str + i, quote));
-	shell_std_out(&arg, &cmd->output, quote);
-	shell_std_in(&arg, quote, &cmd->input, &cmd->hrdc,
-					&(cmd->process).stdin_send);
+	cmd->output = shell_std_out(&arg, &cmd->output, quote);
+	shell_std_in(&arg, quote, cmd);
 	*str = *str + i + len_arg(*str + i, quote);
 	return (arg);
 }
@@ -105,7 +104,6 @@ t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
 	int		nb_arg;
 	t_cmd	*cmd;
 
-	nb_arg = 0;
 	if (!(*line) || (*line)[0] == '\0' || !(nb_arg = get_nbarg(*line, prompt)))
 		return (NULL);
 	cmd = (t_cmd *)shl_mlc("cmd", 3, &line, envp, sizeof(t_cmd));

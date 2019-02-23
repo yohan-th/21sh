@@ -77,7 +77,7 @@ void	cd_clean_path(char *pwd)
 		if (pwd[i] == '/' && pwd[i + 1] == '/')
 			ft_strdelchar(&ptn, '/');
 		else if (pwd[i] == '/' && pwd[i + 1] == '.' && (i + 2) < ft_strlen(pwd)
-				 && pwd[i + 2] == '/')
+				&& pwd[i + 2] == '/')
 		{
 			ft_strdelchar(&ptn, '/');
 			ft_strdelchar(&ptn, '.');
@@ -90,7 +90,7 @@ void	cd_clean_path(char *pwd)
 		pwd[i--] = '\0';
 }
 
-char 	*cd_cur_dir(char **cmd, char ***envp, int *i)
+char	*cd_cur_dir(char **cmd, char ***envp, int *i)
 {
 	char	*cur_dir;
 
@@ -98,7 +98,7 @@ char 	*cd_cur_dir(char **cmd, char ***envp, int *i)
 	while (cmd[*i] != NULL && cmd[*i][0] == '-' && cmd[*i][1] != '\0')
 		(*i)++;
 	if ((cmd[(*i) - 1][0] == '-' &&
-		 cmd[(*i) - 1][ft_strlen(cmd[(*i) - 1]) - 1] == 'P') ||
+		cmd[(*i) - 1][ft_strlen(cmd[(*i) - 1]) - 1] == 'P') ||
 		get_envp(*envp, "PWD") == NULL)
 		cur_dir = get_cur_dir();
 	else

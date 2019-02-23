@@ -148,11 +148,11 @@ char		**append_key_env(char **envp, char *key, char *value);
 
 t_cmd		*shell_split(char *line, char **envp, e_prompt *prompt);
 t_cmd 		*get_args(char **line, char **envp, e_prompt *prompt);
-void		shell_envpsub(char **arg, char **envp);
+void		shell_envpsub(char **arg, char **envp, char **envl);
+int			shell_argsub_env(char **arg, int i, char **envp, char **envl);
 int 		shell_process(t_cmd **cmd, t_shell *shell);
 t_output	*shell_std_out(char **arg, t_output **first_redi, char quote);
-void		shell_std_in(char **arg, char quote, char ***ptn_stdin,
-							char ***ptn_hrdc, char **hrdc_stdin);
+void		shell_std_in(char **arg, char quote, t_cmd *cmd);
 
 BOOL		cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt);
 int			hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell,
@@ -163,16 +163,16 @@ void		clean_cmd(t_cmd **cmd);
 char		*shell_trim(char **str);
 int			check_last_quote(char *arg, char quote);
 BOOL		stdout_to(t_output *redis);
-int			len_stdout_to(char *str, char quote);
+int			len_stdout_to(char *str);
 t_output	*get_last_stdout(t_output *redi);
-char		*complete_stdout_to(char **arg, t_output *add_to, char quote);
+char		*complete_stdout_to(char **arg, t_output *add_to);
 void		complete_stdin(char **arg, char quote, char ***std_in);
 int			shell_stdin_sub(char **arg, int i, char ***std_in);
 char		**add_stdin(char **hrdc);
 int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd,
-							BOOL shl_str);
+							BOOL shl_str, BOOL hrdc_tmp);
 int			len_stdin(char *str, char quote);
-
+char		*get_stdout_to(char *redi, int pos);
 void		read_lexing(t_cmd *elem);
 
 
@@ -220,12 +220,12 @@ void		clean_shell(t_shell **shell);
 int			ft_isfile(char *file_path);
 int 		ft_isdir(char *path);
 char		*get_cur_dir(void);
-int			shell_argsub_env(char **arg, int i, char **envp);
 void		shl_quotesub(char *arg);
 void		*shl_mlc(char *type, int n, ...);
 int			shell_exit(t_cmd **cmd, t_shell **shell);
 void		shell_init(t_shell **shell, e_prompt *prompt, t_cmd **cmd,
 						char **env);
+char		*get_next_hrdc(char **hrdc);
 
 /*
 ** Hard test

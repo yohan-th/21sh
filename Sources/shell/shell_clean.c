@@ -5,8 +5,8 @@
 /*                                                 +:+:+   +:    +:  +:+:+    */
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2018/12/10 15:33:13 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/10 15:33:13 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Created: 2019/02/23 20:20:21 by ythollet     #+#   ##    ##    #+#       */
+/*   Updated: 2019/02/23 20:20:21 by ythollet    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -74,11 +74,14 @@ void	clean_cmd(t_cmd **cmd)
 	}
 }
 
-int 	shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str)
+int 	shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str,
+							BOOL hrdc_tmp)
 {
 	if (t_cmd)
 		clean_cmd(cmd);
 	if (shl_str)
 		ft_strdel(&shell->str);
+	if (hrdc_tmp)
+		ft_strdel(&shell->hrdc_tmp);
 	return (1);
 }

@@ -17,23 +17,23 @@ int		check_fd_output(char **ptn_output, t_shell *shell)
 {
 	int		fd;
 	int		i;
-	int		devNULL;
-	char 	*output;
+	int		devnull;
+	char	*output;
 
 	output = *ptn_output;
 	if (output[0] == '&')
 	{
-		devNULL = open("/dev/null", O_WRONLY);
-		shell_envpsub(ptn_output, shell->envp);
+		devnull = open("/dev/null", O_WRONLY);
+		shell_envpsub(ptn_output, shell->envp, shell->envl);
 		shl_quotesub(output);
-		check_fd_devnull(ptn_output, devNULL);
+		check_fd_devnull(ptn_output, devnull);
 		i = 1;
 		while (ft_isdigit(output[i]))
 			i++;
 		if (output[i] != '\0')
 			return (shell_error_prepare("ambiguous", output) - 1);
 		fd = ft_atoi(output + 1);
-		if ((fd < 0 || fd > 2) && fd != devNULL)
+		if ((fd < 0 || fd > 2) && fd != devnull)
 			return (shell_error_prepare("bad fd", output) - 1);
 		else
 			return (1);
@@ -49,10 +49,11 @@ int		is_recheable_output(t_output *output, t_shell *shell)
 	msg_err = ft_strdup(output->to);
 	complete_output_paths(&output->to, shell);
 	if (output->append)
-		fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND);
+		fd_open = open(output->to, O_WRONLY | O_CREAT | O_APPEND,
+						S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
 	else
 		fd_open = open(output->to, O_WRONLY | O_CREAT | O_TRUNC,
-					   S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
+						S_IRUSR | S_IRGRP | S_IWGRP | S_IWUSR);
 	if (fd_open < 0)
 	{
 		if (ft_isdir(output->to))
@@ -61,7 +62,8 @@ int		is_recheable_output(t_output *output, t_shell *shell)
 			return (shell_error_prepare("not found", msg_err));
 		else if (path_to_output_recheable(output->to) == -1)
 			return (shell_error_prepare("pathdenied", msg_err));
-		else if (access(output->to, F_OK) == 0 && access(output->to, W_OK) == -1)
+		else if (access(output->to, F_OK) == 0 &&
+					access(output->to, W_OK) == -1)
 			return (shell_error_prepare("denied", msg_err));
 	}
 	ft_strdel(&msg_err);
@@ -87,15 +89,27 @@ void	shell_set_output_fd(t_output *output, t_cmd *elem)
 	if (ft_atoi(output->to + 1) == 1 && output->from == 0)
 		(elem->process).fd_stdin = ft_strdup((elem->process).fd_stdout);
 	else if (ft_atoi(output->to + 1) == 1 && output->from == 1)
+	{
 		(elem->process).fd_stdout = ft_strdup((elem->process).fd_stdout);
+		(elem->process).fd_fileout = (elem->process).fd_fileout;
+	}
 	else if (ft_atoi(output->to + 1) == 1 && output->from == 2)
+	{
 		(elem->process).fd_stderr = ft_strdup((elem->process).fd_stdout);
+		(elem->process).fd_fileerr = (elem->process).fd_fileout;
+	}
 	if (ft_atoi(output->to + 1) == 2 && output->from == 0)
 		(elem->process).fd_stdin = ft_strdup((elem->process).fd_stderr);
 	else if (ft_atoi(output->to + 1) == 2 && output->from == 1)
+	{
 		(elem->process).fd_stdout = ft_strdup((elem->process).fd_stderr);
+		(elem->process).fd_fileout = (elem->process).fd_fileerr;
+	}
 	else if (ft_atoi(output->to + 1) == 2 && output->from == 2)
+	{
 		(elem->process).fd_stderr = ft_strdup((elem->process).fd_stderr);
+		(elem->process).fd_fileerr = (elem->process).fd_fileerr;
+	}
 }
 
 /*
