@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/22 13:12:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/23 15:39:57 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -84,8 +84,8 @@ int				display_prompt(e_prompt prompt, char **env)
 
 	if (prompt != PROMPT)
 		return (prompt_type(prompt));
-	if (((env && (user = ft_strdup(get_envp(env, "USER"))))
-	|| (user = get_user_name())))
+	if ((env && (user = ft_strdup(get_envp(env, "USER")))) ||
+	(user = get_user_name()))
 		len = ft_putstrlen(user);
 	else
 		len = 0;

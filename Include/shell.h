@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 16:53:36 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/22 13:26:40 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/23 17:46:49 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -128,6 +128,7 @@ int			builtin_get_options(char **options, char **args, char *possibility);
 int			builtin_type_check_builtin(char *d_name);
 void		builtin_type_display(char *d_name, char *bin, char *options, int mode);
 int 		builtin_alias(char ***alias, char **args);
+char		**builtin_alias_get_alias_from_file(char *file);
 int			check_executable_file(char *path);
 int			builtin_unalias(char ***alias, char **args);
 

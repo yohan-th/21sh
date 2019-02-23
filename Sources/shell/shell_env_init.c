@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/13 17:57:01 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/13 17:57:01 by ythollet    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/23 18:27:57 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -74,33 +74,28 @@ char	**init_env_path(char **envp)
 char	**init_env(char **envp)
 {
 	int		i;
-	char	**new_envp;
-	char	*var;
-	char	*ret;
 	int		j;
+	char	*var;
 
 	i = -1;
-	j = -1;
-	new_envp = NULL;
-	new_envp = ft_arrdup(envp);
-	if (!check_if_env_var_existing(new_envp, "PATH"))
-		new_envp = init_env_path(new_envp);
-	if (!check_if_env_var_existing(new_envp, "SHLVL"))
-		new_envp = append_key_env(new_envp, "SHLVL", "1");
-	else
-		while (new_envp[++i])
+	if (envp && !check_if_env_var_existing(envp, "PATH"))
+		envp = init_env_path(envp);
+	if (envp && !check_if_env_var_existing(envp, "SHLVL"))
+		envp = append_key_env(envp, "SHLVL", "1");
+	else if (envp)
+		while (envp[++i] && (j = -1) == -1)
 		{
-			var = get_var(new_envp[i]);
-			if (!(ft_strcmp(var, "SHLVL")))
+			if ((var = get_var(envp[i])) && !(ft_strcmp(var, "SHLVL")))
 			{
-				while (new_envp[i][++j] != '=')
+				while (envp[i][++j] != '=')
 					;
-				ret = ft_itoa(ft_atoi(new_envp[i] + j + 1) + 1);
-				ft_strdel(&new_envp[i]);
-				new_envp[i] = ft_strjoin_mltp(3, "SHLVL", "=", ret);
-				ft_strdel(&ret);
+				ft_strdel(&var);
+				var = ft_itoa(ft_atoi(envp[i] + j + 1) + 1);
+				ft_strdel(&envp[i]);
+				envp[i] = ft_strjoin_mltp(3, "SHLVL", "=", var);
+				break ;
 			}
 			ft_strdel(&var);
 		}
-	return (new_envp);
+	return (envp);
 }

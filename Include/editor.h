@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/22 12:41:01 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/23 15:37:24 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -166,7 +166,6 @@ void	reset_cursor_position_escape_sequence(char **cursor_position);
 void	add_paste_into_line(t_editor *ed);
 char	*cut_pwd_dir(char *pwd);
 int		display_prompt(e_prompt prompt, char **env);
-//int		get_stdin(t_shell *shell, e_prompt *prompt);
 void	myhandler_winsize_change(int signal);
 int		get_cursor_position(int mode);
 void	delete_from_cursor_to_end(t_editor *ed);
