@@ -54,8 +54,7 @@ void	clean_cmd(t_cmd **cmd)
 		prev = *cmd;
 		while ((*cmd = (*cmd)->next_cmd))
 		{
-			if ((*cmd)->args)
-				ft_arrdel(&(*cmd)->args);
+			ft_arrdel(&(*cmd)->args);
 			clean_arr_mlti((*cmd)->hrdc);
 			clean_arr_mlti((*cmd)->input);
 			ft_strdel(&(*cmd)->process.fd_stdin);
@@ -74,13 +73,10 @@ void	clean_cmd(t_cmd **cmd)
 	}
 }
 
-int 	shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd, BOOL shl_str,
-							BOOL hrdc_tmp)
+int		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL hrdc_tmp)
 {
-	if (t_cmd)
-		clean_cmd(cmd);
-	if (shl_str)
-		ft_strdel(&shell->str);
+	clean_cmd(cmd);
+	ft_strdel(&shell->str);
 	if (hrdc_tmp)
 		ft_strdel(&shell->hrdc_tmp);
 	return (1);

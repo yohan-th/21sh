@@ -13,6 +13,10 @@
 
 #include "../../../Include/shell.h"
 
+/*
+** redi_from peut être un fd sur plusieurs chiffre, on rev pour le atoi
+*/
+
 int			get_stdout_from(char *redi, int pos)
 {
 	char	*rev;
@@ -24,7 +28,7 @@ int			get_stdout_from(char *redi, int pos)
 	i = 0;
 	while (i < pos)
 	{
-		if (!(ft_isdigit(redi[--pos])))
+		if (!(ft_isdigit(redi[i++])))
 			return (1);
 	}
 	rev = ft_strrev(ft_strdup(redi));

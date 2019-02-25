@@ -58,7 +58,7 @@ int		check_shell_variable(char *arg)
 **  - 0 not builtin
 **  - 1 is builtin
 **  - -1 need exit
-** elem->val_ret contient 0 si builtin failed ou 1+ si succeeded
+** elem->ret contient 0 si builtin failed ou 1+ si succeeded ou -2 si exit fail
 */
 
 int		shell_builtin(t_cmd *elem, t_shell *shell)
@@ -82,10 +82,7 @@ int		shell_builtin(t_cmd *elem, t_shell *shell)
 	else if (elem->args[0] && ft_strcmp("unalias", elem->args[0]) == 0)
 		elem->ret = builtin_unalias(&shell->alias, elem->args + 1);
 	else if (elem->args[0] && ft_strcmp("exit", elem->args[0]) == 0)
-	{
-		if ((elem->ret = builtin_exit(elem->args)) >= 0)
-			return (-1);
-	}
+		return ((elem->ret = builtin_exit(elem->args)) == -2 ? 1 : -1);
 	else
 		return (0);
 	return (1);

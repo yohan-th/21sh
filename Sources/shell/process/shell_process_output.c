@@ -17,23 +17,20 @@ int		check_fd_output(char **ptn_output, t_shell *shell)
 {
 	int		fd;
 	int		i;
-	int		devnull;
 	char	*output;
 
 	output = *ptn_output;
 	if (output[0] == '&')
 	{
-		devnull = open("/dev/null", O_WRONLY);
 		shell_envpsub(ptn_output, shell->envp, shell->envl);
 		shl_quotesub(output);
-		check_fd_devnull(ptn_output, devnull);
 		i = 1;
 		while (ft_isdigit(output[i]))
 			i++;
-		if (output[i] != '\0')
+		if (output[i] != '\0' && output[1] != '-')
 			return (shell_error_prepare("ambiguous", output) - 1);
 		fd = ft_atoi(output + 1);
-		if ((fd < 0 || fd > 2) && fd != devnull)
+		if ((fd < 0 || fd > 2) && output[1] != '-')
 			return (shell_error_prepare("bad fd", output) - 1);
 		else
 			return (1);
@@ -110,6 +107,7 @@ void	shell_set_output_fd(t_output *output, t_cmd *elem)
 		(elem->process).fd_stderr = ft_strdup((elem->process).fd_stderr);
 		(elem->process).fd_fileerr = (elem->process).fd_fileerr;
 	}
+	shell_set_fd_null(output, elem);
 }
 
 /*

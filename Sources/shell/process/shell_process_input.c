@@ -96,7 +96,8 @@ int		shell_read_input(t_cmd *elem, t_shell *shell)
 		}
 		else if (!is_fd && check_input_file(&elem->input[i], shell))
 		{
-			if (i == ft_arrlen(elem->input) - 1 && (int)elem->input[i] != -3)
+			if (i == ft_arrlen(elem->input) - 1 && (int)elem->input[i] != -3
+					&& (int)elem->input[i] != -1)
 				ft_read_file(elem->input[i], &(elem->process).stdin_send);
 		}
 		else

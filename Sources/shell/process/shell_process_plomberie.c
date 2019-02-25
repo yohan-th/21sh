@@ -39,6 +39,7 @@ void	shell_pipe_stdout(t_process process)
 
 void	shell_pipe_stderr(t_process process)
 {
+
 	if (process.fd_stderr[0] == '&' && process.fd_stderr[1] != '2')
 		dup2(ft_atoi(process.fd_stderr + 1), 2);
 	else if (process.fd_fileerr != 0)

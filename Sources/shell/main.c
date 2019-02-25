@@ -95,7 +95,7 @@ int		main(void)
 				continue;
 			shell_save_histo(shl);
 			if (check_syntax_err(cmd))
-				shell_clean_data(&cmd, shl, 1, 1, 0);
+				shell_clean_data(&cmd, shl, 0);
 			else if (shell_process(&cmd, shl) == -1)
 				break ;
 		}

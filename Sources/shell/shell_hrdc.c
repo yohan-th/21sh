@@ -95,14 +95,14 @@ int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
 int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
-		return (shell_clean_data(cmd, shell, 1, 1, 0));
+		return (shell_clean_data(cmd, shell, 0));
 	if (*prompt == HRDC && ret == CTRLD && !shell->str)
 		return (hrdc_interrupt_ctrd(prompt, cmd));
 	else if (*prompt == HRDC && ret == CTRLC)
 	{
 		*prompt = PROMPT;
 		shell->hist->cmd = ft_strdup(shell->hrdc_tmp);
-		return (shell_clean_data(cmd, shell, 1, 1, 0));
+		return (shell_clean_data(cmd, shell, 0));
 	}
 	if (*prompt == HRDC && *cmd)
 	{

@@ -13,15 +13,19 @@
 
 #include "../../../Include/shell.h"
 
-void	check_fd_devnull(char **ptn_output, int fd_devnull)
+void	shell_set_fd_null(t_output *output, t_cmd *elem)
 {
+	int		devnull;
 	char	*tmp;
 
-	if (ft_strcmp(*ptn_output, "&-") == 0)
+	if (ft_strcmp((elem->output)->to, "&-") == 0)
 	{
-		ft_strdel(ptn_output);
-		tmp = ft_itoa(fd_devnull);
-		*ptn_output = ft_strjoin("&", tmp);
+		devnull = open("/dev/null", O_WRONLY);
+		tmp = ft_itoa(devnull);
+		if (output->from == 1)
+			elem->process.fd_stdout = ft_strjoin("&", tmp);
+		if (output->from == 2)
+			elem->process.fd_stderr = ft_strjoin("&", tmp);
 		ft_strdel(&tmp);
 	}
 }

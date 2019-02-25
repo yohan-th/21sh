@@ -30,6 +30,7 @@ int		shell_exec(t_cmd *elem, t_shell *shell)
 
 	if (!shell_read_input(elem, shell) || !shell_set_output(elem, shell))
 		return (1);
+	//read_lexing(elem);
 	shell_plomberie(elem->process);
 	is_builtin = shell_builtin(elem, shell);
 	if (!is_builtin && elem->exec &&
@@ -51,13 +52,28 @@ int		shell_exec(t_cmd *elem, t_shell *shell)
 	return (elem->ret);
 }
 
+/*
+** elem->ret se prend -2 si builtin exit fail, on le corrige pour 1
+** puis on rajoute elem->ret dans shell->envl
+*/
+
+void	shell_ret(t_cmd *elem, t_shell *shell)
+{
+	char *tmp;
+
+	elem->ret = (elem->ret == -2) ? 1 : elem->ret;
+	tmp = ft_itoa(elem->ret);
+	if (!(check_replace_env_variable(&shell->envl, "?", tmp)))
+		shell->envl = append_key_env(shell->envl, "?", tmp);
+	ft_strdel(&tmp);
+}
+
 int		shell_process(t_cmd **cmd, t_shell *shell)
 {
 	t_cmd	*elem;
 	int		fd[3];
 	int		exec;
 
-	//read_lexing((*cmd)->next_cmd);
 	shell_prepare(*cmd, shell);
 	shell_save_fd(fd);
 	signal(SIGINT, shell_prcs_sigint);
@@ -68,6 +84,7 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 			exec = shell_exec_pipes(&elem, shell);
 		else
 			exec = shell_exec(elem, shell);
+		shell_ret(elem, shell);
 		if (exec == -1)
 			return (-1);
 		else if ((exec == EXIT_SUCCESS && elem->sep == DBL_PIPE) ||
@@ -75,11 +92,11 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 			elem = elem->next_cmd;
 	}
 	shell_reinit_fd(fd);
-	shell_clean_data(cmd, shell, 1, 1, 1);
+	shell_clean_data(cmd, shell, 1);
 	return (1);
 }
 
-/*
+
 void	read_lexing(t_cmd *elem)
 {
 	t_output	*read;
@@ -141,4 +158,4 @@ void	read_lexing(t_cmd *elem)
 	ft_dprintf(2, "Et sep %d\n", elem->sep);
 	ft_dprintf(2, "-------------\n");
 }
-*/
+

@@ -21,21 +21,21 @@ int		shell_argsub_env(char **arg, int i, char **envp, char **envl)
 
 	tmp = *arg + i;
 	len = 1;
-	while (tmp[len] && (ft_isalnum(tmp[len]) || tmp[len] == '_'))
+	while (tmp[len] && (ft_isalnum(tmp[len]) || tmp[len] == '_' ||
+			tmp[len] == '?'))
 		len++;
 	if (len == 1)
 		return (i);
 	tmp[0] = '\0';
 	tmp = ft_strsub(tmp, 1, len - 1);
 	var = get_envp(envp, tmp) ? get_envp(envp, tmp) : get_envp(envl, tmp);
-	free(tmp);
+	ft_strdel(&tmp);
 	if (var == NULL)
 		tmp = ft_strjoin_mltp(2, *arg, *arg + i + len);
 	else
 		tmp = ft_strjoin_mltp(3, *arg, var, *arg + i + len);
-	free(*arg);
-	*arg = ft_strdup(tmp);
-	free(tmp);
+	ft_strdel(arg);
+	*arg = tmp;
 	if (var == NULL)
 		return (i - 1);
 	else

@@ -136,6 +136,7 @@ int			shell_builtin(t_cmd *elem, t_shell *shell);
 char		*get_envp(char **envp, char *var);
 char		*get_var(char *var_key);
 char		**append_key_env(char **envp, char *key, char *value);
+int			check_replace_env_variable(char ***env, char *var, char *value);
 
 
 
@@ -169,8 +170,7 @@ char		*complete_stdout_to(char **arg, t_output *add_to);
 void		complete_stdin(char **arg, char quote, char ***std_in);
 int			shell_stdin_sub(char **arg, int i, char ***std_in);
 char		**add_stdin(char **hrdc);
-int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL t_cmd,
-							BOOL shl_str, BOOL hrdc_tmp);
+int 		shell_clean_data(t_cmd **cmd, t_shell *shell, BOOL hrdc_tmp);
 int			len_stdin(char *str, char quote);
 char		*get_stdout_to(char *redi, int pos);
 void		read_lexing(t_cmd *elem);
@@ -203,7 +203,10 @@ void		shell_plomberie(t_process process);
 
 int			get_stdin(t_shell *shell, e_prompt *prompt);
 int			shell_exec_pipes(t_cmd **elem, t_shell *shell);
-void		check_fd_devnull(char **ptn_output, int fd_devnull);
+void		shell_set_fd_null(t_output *output, t_cmd *elem);
+
+int			get_nbarg(char *str, e_prompt *prompt);
+char		*get_arg(char **str, t_cmd *cmd);
 
 /*
 **┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -303,6 +306,8 @@ char		*get_next_hrdc(char **hrdc);
 ** exit 1 2 --> too many arg et pas d'exit
 ** exit t --> exit mais pas msg "numeric arg required"
 ** / --> "/ is directory"
+** test-123=123
+**
 */
 
 /*

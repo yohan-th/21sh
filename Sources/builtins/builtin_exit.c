@@ -29,7 +29,8 @@ int		is_only_digit(char *arg)
 }
 
 /*
-** return -1 si fail (pas d'exit) ou la valeur de retour
+** return -2 si fail (pas d'exit) ou la valeur de retour
+** -1 pour pas que shell_process return -1
 */
 
 int		builtin_exit(char **cmd)
@@ -46,7 +47,7 @@ int		builtin_exit(char **cmd)
 	else if (cmd[2] != NULL)
 	{
 		ft_dprintf(2, "21sh: exit: too many arguments\n");
-		return (-1);
+		return (-2);
 	}
 	else
 	{

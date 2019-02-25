@@ -76,7 +76,6 @@ int		get_nbarg(char *str, e_prompt *prompt)
 /*
 ** subtitue le premier {args_tab} de {str} et avance de {len} de {args_tab}.
 ** {arg} garde les quotes pour {shell_envsub} au moment du [process].
-** /!\ shell_redi n'est pas safe si son malloc fail
 */
 
 char	*get_arg(char **str, t_cmd *cmd)
