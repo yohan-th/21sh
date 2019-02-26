@@ -42,7 +42,7 @@ void	shell_prepare_alias(t_cmd *elem, char *alias_var)
 	elem->args = args;
 }
 
-BOOL	shell_hrdc_quotesub(t_cmd *cmd, t_shell *shell, e_prompt *prompt)
+BOOL	shell_hrdc_quotesub(t_cmd *cmd, t_shell *shell, t_prompt *prompt)
 {
 	int i;
 
@@ -62,7 +62,7 @@ BOOL	shell_hrdc_quotesub(t_cmd *cmd, t_shell *shell, e_prompt *prompt)
 ** On del shell->str car déjà exploité dans cmd->split
 */
 
-BOOL	cmd_check(t_cmd **cmd, t_shell *shell, e_prompt *prompt)
+BOOL	cmd_check(t_cmd **cmd, t_shell *shell, t_prompt *prompt)
 {
 	t_cmd	*next;
 

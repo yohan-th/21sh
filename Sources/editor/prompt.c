@@ -34,7 +34,7 @@ static int		ft_putstrlen(char *str)
 	return (write(1, str, ft_strlen(str)));
 }
 
-static int		prompt_type(e_prompt prompt)
+static int		prompt_type(t_prompt prompt)
 {
 	if (prompt == B_QUOTE)
 		return (ft_putstrlen("bquote>"));
@@ -76,7 +76,7 @@ char			*get_user_name(void)
 	return (0);
 }
 
-int				display_prompt(e_prompt prompt, char **env)
+int				display_prompt(t_prompt prompt, char **env)
 {
 	char			*user;
 	int				len;

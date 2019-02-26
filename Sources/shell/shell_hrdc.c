@@ -32,7 +32,7 @@ int		del_next_hrdc(char **hrdc)
 	return (1);
 }
 
-void	hrdc_match(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
+void	hrdc_match(t_prompt *prompt, t_cmd **cmd, t_shell *shell)
 {
 	int last;
 
@@ -49,7 +49,7 @@ void	hrdc_match(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 	}
 }
 
-void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
+void	hrdc_fill_stdin(t_prompt *prompt, t_cmd **cmd, t_shell *shell)
 {
 	char	*hrdc;
 
@@ -73,7 +73,7 @@ void	hrdc_fill_stdin(e_prompt *prompt, t_cmd **cmd, t_shell *shell)
 ** mais remet à NULL si rien
 */
 
-int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
+int		hrdc_interrupt_ctrd(t_prompt *prompt, t_cmd **cmd)
 {
 	ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
 				"end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
@@ -92,7 +92,7 @@ int		hrdc_interrupt_ctrd(e_prompt *prompt, t_cmd **cmd)
 ** La deuxième à un Ctrl-D (si cmd existe alors il attend des heredoc)
 */
 
-int		hrdc_fill(e_prompt *prompt, t_cmd **cmd, t_shell *shell, e_shortcut ret)
+int		hrdc_fill(t_prompt *prompt, t_cmd **cmd, t_shell *shell, t_shortcut ret)
 {
 	if (ret == CTRLC && *prompt == PROMPT && *cmd)
 		return (shell_clean_data(cmd, shell, 0));

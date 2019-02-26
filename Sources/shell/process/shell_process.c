@@ -30,7 +30,6 @@ int		shell_exec(t_cmd *elem, t_shell *shell)
 
 	if (!shell_read_input(elem, shell) || !shell_set_output(elem, shell))
 		return (1);
-	//read_lexing(elem);
 	shell_plomberie(elem->process);
 	is_builtin = shell_builtin(elem, shell);
 	if (!is_builtin && elem->exec &&
@@ -95,67 +94,3 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	shell_clean_data(cmd, shell, 1);
 	return (1);
 }
-
-
-void	read_lexing(t_cmd *elem)
-{
-	t_output	*read;
-	int 		i;
-	char 		*tmp;
-
-	ft_dprintf(2, "-------------\n");
-	ft_dprintf(2, "Read exec : %s\n", elem->exec);
-	i = 0;
-	ft_dprintf(2, "Read array : ");
-	while (elem->args && elem->args[i])
-	{
-		ft_dprintf(2, "arg[%i]=<%s> ", i, elem->args[i]);
-		i++;
-	}
-	ft_dprintf(2, "\nRead output : ");
-	read = elem->output;
-	if (read == NULL)
-		ft_dprintf(2, "(NULL)");
-	while (read != NULL)
-	{
-		tmp = ft_itoa(read->from);
-		ft_dprintf(2, "from <%s> to <%s> append=%d - ", tmp, read->to, read->append);
-		ft_strdel(&tmp);
-		read = read->next;
-	}
-
-	ft_dprintf(2, "\nRead input : ");
-	if (!elem->input)
-		ft_dprintf(2, "(NULL)");
-	i = 0;
-	while (elem->input && (elem->input)[i] != NULL)
-	{
-		if ((int)(elem->input)[i] <= -1 && (int)(elem->input)[i] >= -3)
-			ft_dprintf(2, "|%d| -", (int)(elem->input)[i++]);
-		else
-			ft_dprintf(2, "|%s| - ", (elem->input)[i++]);
-	}
-	ft_dprintf(2, "\nRead hrdc : ");
-	if (!elem->hrdc)
-		ft_dprintf(2, "(NULL)");
-	i = 0;
-	while (elem->hrdc && (elem->hrdc)[i] != NULL)
-	{
-		if ((int)(elem->hrdc)[i] <= -1 && (int)(elem->hrdc)[i] >= -3)
-			ft_dprintf(2, "|%d| -", (int)(elem->hrdc)[i++]);
-		else
-			ft_dprintf(2, "|%s| - ", (elem->hrdc)[i++]);
-	}
-	if ((int)(elem->process).stdin_send == -1)
-		ft_dprintf(2, "\nRead stdin : |%d|\n", (int)elem->process.stdin_send);
-	else
-		ft_dprintf(2, "\nRead stdin : |%s|\n", elem->process.stdin_send);
-	ft_dprintf(2, "Read fd stdin : |%s|\n", elem->process.fd_stdin);
-	ft_dprintf(2, "Read fd stdout : |%s|\n", elem->process.fd_stdout);
-	ft_dprintf(2, "Read fileout : |%d|\n", elem->process.fd_fileout);
-	ft_dprintf(2, "Read fd stderr : |%s|\n", elem->process.fd_stderr);
-	ft_dprintf(2, "Read fileerr : |%d|\n", elem->process.fd_fileerr);
-	ft_dprintf(2, "Et sep %d\n", elem->sep);
-	ft_dprintf(2, "-------------\n");
-}
-

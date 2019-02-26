@@ -42,7 +42,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	return (0);
 }
 
-BOOL	check_shrt(e_prompt *prompt, e_shortcut shortcut, t_shell *shl)
+BOOL	check_shrt(t_prompt *prompt, t_shortcut shortcut, t_shell *shl)
 {
 	char quote;
 
@@ -79,9 +79,9 @@ int		main(void)
 {
 	extern char **environ;
 	t_shell		*shl;
-	e_prompt	prmt;
+	t_prompt	prmt;
 	t_cmd		*cmd;
-	e_shortcut	ret;
+	t_shortcut	ret;
 
 	shell_init(&shl, &prmt, &cmd, environ);
 	while ((ret = get_stdin(shl, &prmt)) != -1)

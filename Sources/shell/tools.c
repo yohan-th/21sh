@@ -42,7 +42,7 @@ int			init_terminal_data(void)
 	return (0);
 }
 
-void		shell_init(t_shell **shell, e_prompt *prompt,
+void		shell_init(t_shell **shell, t_prompt *prompt,
 			t_cmd **cmd, char **env)
 {
 	if (init_terminal_data())

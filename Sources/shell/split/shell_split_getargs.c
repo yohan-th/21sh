@@ -46,7 +46,7 @@ size_t	len_arg(char *str, char quote)
 	return ((size_t)i);
 }
 
-int		get_nbarg(char *str, e_prompt *prompt)
+int		get_nbarg(char *str, t_prompt *prompt)
 {
 	char	quote;
 	int		nb_args;
@@ -97,7 +97,7 @@ char	*get_arg(char **str, t_cmd *cmd)
 	return (arg);
 }
 
-t_cmd	*get_args(char **line, char **envp, e_prompt *prompt)
+t_cmd	*get_args(char **line, char **envp, t_prompt *prompt)
 {
 	int		i;
 	int		nb_arg;

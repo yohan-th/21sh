@@ -61,7 +61,7 @@ BOOL	ft_isempty(char *str)
 ** Verifie si les quotes sont fermées et {\} en fin non présent
 */
 
-BOOL	iscomplet(char *str, e_prompt *prompt)
+BOOL	iscomplet(char *str, t_prompt *prompt)
 {
 	int		i;
 	char	quote;
@@ -93,7 +93,7 @@ BOOL	iscomplet(char *str, e_prompt *prompt)
 ** Le premier maillon start de {cmd} (pointé par tous les autres) est vide.
 */
 
-t_cmd	*shell_split(char *line, char **envp, e_prompt *prompt)
+t_cmd	*shell_split(char *line, char **envp, t_prompt *prompt)
 {
 	t_cmd	*cmd;
 
