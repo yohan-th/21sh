@@ -74,15 +74,16 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 	int		exec;
 
 	shell_prepare(*cmd, shell);
-	shell_save_fd(fd);
 	signal(SIGINT, shell_prcs_sigint);
 	elem = *cmd;
 	while (elem && (elem = elem->next_cmd))
 	{
+		shell_save_fd(fd);
 		if (elem->sep == SPL_PIPE)
 			exec = shell_exec_pipes(&elem, shell);
 		else
 			exec = shell_exec(elem, shell);
+		shell_reinit_fd(fd);
 		shell_ret(elem, shell);
 		if (exec == -1)
 			return (-1);
@@ -90,7 +91,6 @@ int		shell_process(t_cmd **cmd, t_shell *shell)
 			(exec > 0 && elem->sep == DBL_SPRLU))
 			elem = elem->next_cmd;
 	}
-	shell_reinit_fd(fd);
 	shell_clean_data(cmd, shell, 1);
 	return (1);
 }

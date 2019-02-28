@@ -81,7 +81,7 @@ char	*shell_getpathexec(char *exec, char **envp)
 	char	**all_path;
 	int		i;
 
-	if (exec == NULL)
+	if (exec == NULL || !ft_strcmp(".", exec) || !ft_strcmp("..", exec))
 		return (NULL);
 	all_path = ft_strsplit(get_envp(envp, "PATH"), ':');
 	exec_path = NULL;
