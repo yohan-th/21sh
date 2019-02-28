@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/20 08:09:25 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 14:57:06 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,7 @@ int			get_term_raw_mode(int mode)
 	return (0);
 }
 
-t_editor	*line_editor_init(char **line, e_prompt prompt, int prompt_size,
+t_editor	*line_editor_init(char **line, t_prompt prompt, int prompt_size,
 			t_data **hist)
 {
 	t_editor *ed;

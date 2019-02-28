@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/05 23:19:43 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/23 18:27:55 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 15:08:31 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -43,7 +43,7 @@ int			init_terminal_data(void)
 }
 
 void		shell_init(t_shell **shell, t_prompt *prompt,
-			t_cmd **cmd, char **env)
+		t_cmd **cmd, char **env)
 {
 	if (init_terminal_data())
 		exit(EXIT_FAILURE);
@@ -54,11 +54,15 @@ void		shell_init(t_shell **shell, t_prompt *prompt,
 
 int			shell_exit(t_cmd **cmd, t_shell **shell)
 {
-	int ret;
+	int		ret;
+	char	*hist_path;
 
 	clean_cmd(cmd);
 	if ((*shell)->hist)
-		fill_hist_file((*shell)->hist, ".21sh_history");
+		fill_hist_file((*shell)->hist,
+	(hist_path = build_full_path((*shell)->shell_path, ".21sh_history", NULL)));
+	ft_strdel(&hist_path);
+	ft_strdel(&(*shell)->shell_path);
 	if ((*shell)->alias)
 		ft_arrdel(&(*shell)->alias);
 	ret = (*shell)->ret;
@@ -83,6 +87,7 @@ t_shell		*init_shell(char **envp)
 	shell->hrdc_tmp = NULL;
 	shell->hist = init_hist(".21sh_history");
 	shell->alias = builtin_alias_get_alias_from_file(".21sh_alias");
+	shell->shell_path = get_cur_dir();
 	if (!(shell->envl = (char **)malloc(sizeof(char *))))
 		exit(EXIT_FAILURE);
 	shell->envl[0] = NULL;

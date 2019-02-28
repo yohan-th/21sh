@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/03 14:29:35 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/22 13:00:10 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 13:52:23 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -41,7 +41,7 @@ void		fill_hist_file(t_data *hist, char *file)
 	{
 		if (hist->cmd)
 		{
-			write(fd, hist->cmd, (size_t)ft_strlen(hist->cmd));
+			write(fd, hist->cmd, ft_strlen(hist->cmd));
 			ft_strdel(&hist->cmd);
 			write(fd, "\n", 1);
 		}

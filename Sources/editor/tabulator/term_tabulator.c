@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/07 16:25:14 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 21:39:30 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 14:58:54 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -66,7 +66,7 @@ int		tabulator_read(t_tab *tabu, t_editor *ed, int mode)
 	return (ret);
 }
 
-int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
+int		tabulator_put_row(t_editor *ed, t_tab *tabu, t_prompt *prompt)
 {
 	int		ret;
 
@@ -92,7 +92,7 @@ int		tabulator_put_row(t_editor *ed, t_tab *tabu, e_prompt *prompt)
 	return (ret);
 }
 
-int		term_tabulator(t_editor *ed, e_prompt *prompt, char **envp, char **envl)
+int		term_tabulator(t_editor *ed, t_prompt *prompt, char **envp, char **envl)
 {
 	t_tab	*tabu;
 	int		ret;

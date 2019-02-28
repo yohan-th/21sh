@@ -6,14 +6,14 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/16 15:01:15 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 21:38:56 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 14:58:02 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-int				clear_window(t_editor *ed, e_prompt prompt, char **env)
+int				clear_window(t_editor *ed, t_prompt prompt, char **env)
 {
 	int	cursor_str_pos_tmp;
 

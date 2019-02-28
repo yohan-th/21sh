@@ -6,14 +6,14 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/23 17:41:09 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 15:00:22 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt,
+static void		get_stdin_next(char **line, t_editor *ed, t_prompt *prompt,
 				t_data **hist)
 {
 	go_to_end_of_line(ed);
@@ -29,7 +29,7 @@ static void		get_stdin_next(char **line, t_editor *ed, e_prompt *prompt,
 		*hist = (*hist)->next;
 }
 
-static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p, char **env)
+static void		get_keyboard_key_ctrl(t_editor *ed, t_prompt *p, char **env)
 {
 	if (CTRL_D && !ed->hist->cmd)
 		ed->ret = -2;
@@ -48,7 +48,7 @@ static void		get_keyboard_key_ctrl(t_editor *ed, e_prompt *p, char **env)
 		paste_clipboard(ed);
 }
 
-static int		get_keyboard_key(t_editor *ed, e_prompt *prompt,
+static int		get_keyboard_key(t_editor *ed, t_prompt *prompt,
 				char **envp, char **envl)
 {
 	if (CTRL_D || CTRL_C || CTRL_L || CTRL_K || CTRL_P)
@@ -74,7 +74,7 @@ static int		get_keyboard_key(t_editor *ed, e_prompt *prompt,
 	return (EXIT_SUCCESS);
 }
 
-int				get_stdin(t_shell *shell, e_prompt *prompt)
+int				get_stdin(t_shell *shell, t_prompt *prompt)
 {
 	t_editor	*ed;
 

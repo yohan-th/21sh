@@ -6,7 +6,7 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/04 22:15:59 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/23 18:16:14 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/25 15:23:31 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -20,8 +20,8 @@ static int		builtin_alias_init(char **args, char **op)
 	i = 0;
 	if (args[0] && (i = builtin_get_options(&(*op), args, "p")) == -1)
 	{
-		ft_dprintf(2, "42sh: alias: -%s: invalid option\nalias: usage:\
-		alias[-p] [name[=value] ... ]\n", *op);
+		ft_dprintf(2, "42sh: alias: -%s: invalid option\nalias: usage:"
+		" alias [-p] [name[=value] ... ]\n", *op);
 		ft_strdel(op);
 		return (-1);
 	}

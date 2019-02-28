@@ -6,7 +6,7 @@
 /*   By: ythollet <ythollet@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 16:53:36 by ythollet     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/23 17:46:49 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 14:08:44 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -85,6 +85,7 @@ typedef struct		s_shell
 	char	**alias;
 	char	*str;
 	char	*hrdc_tmp;
+	char	*shell_path;
 	int		ret;
 	t_data	*hist;
 }					t_shell;

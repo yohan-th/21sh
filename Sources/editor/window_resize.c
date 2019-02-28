@@ -6,14 +6,14 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/06 21:40:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 21:38:23 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/02/28 14:57:35 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-void	window_resize(t_editor *ed, e_prompt *prompt, char **env)
+void	window_resize(t_editor *ed, t_prompt *prompt, char **env)
 {
 	int	cursor_str_pos_tmp;
 
