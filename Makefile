@@ -6,7 +6,7 @@
 #    By: ythollet <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2018/05/04 20:51:29 by ythollet     #+#   ##    ##    #+#        #
-#    Updated: 2019/02/23 17:57:21 by dewalter    ###    #+. /#+    ###.fr      #
+#    Updated: 2019/03/02 16:37:00 by dewalter    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -15,7 +15,7 @@
 
 CFLAGS = -g -Wall -Wextra -Werror
 
-NAME = 21sh
+NAME = 42sh
 
 DIR_LIB = ./Libft/
 DIR_INC = ./Include/
@@ -89,7 +89,8 @@ SRCS =  shell/main.c \
 		editor/tabulator/tabulator_check_if_var.c \
 		editor/tabulator/tabulator_tools.c \
 		editor/history/term_hist_recup_cmd.c \
-		editor/history/term_history.c
+		editor/history/term_history.c \
+		editor/history/term_history_incremental_search.c
 
 INCLUDES_FILE = shell.h
 

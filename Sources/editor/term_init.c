@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/28 14:57:06 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/02 17:59:52 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -59,6 +59,7 @@ t_editor	*line_editor_init(char **line, t_prompt prompt, int prompt_size,
 	ed->cursor_str_pos = 0;
 	ed->ws_row = 0;
 	ed->ws_col = 0;
+	ed->rev_hist = 0;
 	ed->first_row = ed->cur_row;
 	ed->last_row = ed->first_row;
 	ed->first_char = ed->cur_col;

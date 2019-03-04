@@ -6,34 +6,12 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:09:31 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 21:32:21 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 21:54:16 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
-
-char	*build_full_path(char *path, char *d_name, char **env)
-{
-	char *full_path;
-
-	if (path && path[0] == '~')
-	{
-		if (env && path[1] == '/')
-			full_path = ft_strdup(get_envp(env, "HOME"));
-		else
-			full_path = ft_strdup("/Users/");
-		if (!full_path)
-			return (NULL);
-		ft_strjoin_free(&full_path, path + 1);
-	}
-	else
-		full_path = ft_strdup(path);
-	if (full_path && full_path[ft_strlen(full_path) - 1] != '/')
-		ft_strjoin_free(&full_path, "/");
-	ft_strjoin_free(&full_path, d_name);
-	return (full_path);
-}
 
 void	tabulator_autocomplete(char **comp, char *d_name)
 {
@@ -74,7 +52,7 @@ void	tabulator_fill_list(t_tab *ta, struct dirent *dir,
 	if (!(new = malloc(sizeof(t_tab_elem))))
 		return ;
 	new->d_name = ft_strdup(dir->d_name);
-	new->path = build_full_path(bin ? bin : ta->path, dir->d_name, ta->env);
+	new->path = build_full_path(bin ? bin : ta->path, dir->d_name);
 	lstat(new->path, &buf);
 	new->st_mode = buf.st_mode;
 	new->d_namlen = dir->d_namlen;

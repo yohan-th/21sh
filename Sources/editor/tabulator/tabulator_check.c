@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/06 16:42:37 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/18 16:22:20 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 21:40:06 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -90,7 +90,7 @@ int		tabulator_check_executable(t_tab *tabu, t_dirent *dirent, char *bin)
 	int		is_dir;
 
 	is_dir = 0;
-	path = build_full_path(bin ? bin : tabu->path, dirent->d_name, tabu->env);
+	path = build_full_path(bin ? bin : tabu->path, dirent->d_name);
 	lstat(path, &buf);
 	if ((dir = opendir(path)) && !closedir(dir))
 		is_dir = 1;

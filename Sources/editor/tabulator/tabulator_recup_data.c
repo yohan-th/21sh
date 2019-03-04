@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/11/28 12:00:36 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/01/19 21:34:38 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 18:18:28 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -46,7 +46,7 @@ void	check_home(t_tab *tabu)
 	char *tmp;
 
 	if (tabu->path[1] == '/')
-		tabu->home = ft_strdup(get_envp(tabu->env, "HOME"));
+		tabu->home = get_user_name();
 	else
 		tabu->home = ft_strdup("/Users/");
 	if (tabu->home)

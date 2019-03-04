@@ -6,12 +6,34 @@
 /*   By: dewalter <dewalter@student.le-101.fr>      +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2019/02/01 23:43:13 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/01 23:43:13 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 21:54:51 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
+
+char	*build_full_path(char *path, char *d_name)
+{
+	char *full_path;
+
+	if (path && path[0] == '~')
+	{
+		if (path[1] == '/')
+			full_path = ft_strdup(get_user_name());
+		else
+			full_path = ft_strdup("/Users/");
+		if (!full_path)
+			return (NULL);
+		ft_strjoin_free(&full_path, path + 1);
+	}
+	else
+		full_path = ft_strdup(path);
+	if (full_path && full_path[ft_strlen(full_path) - 1] != '/')
+		ft_strjoin_free(&full_path, "/");
+	ft_strjoin_free(&full_path, d_name);
+	return (full_path);
+}
 
 void	free_tab(t_tab *tabu)
 {

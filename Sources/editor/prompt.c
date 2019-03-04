@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/13 23:22:07 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/23 15:39:57 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 21:55:20 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -37,7 +37,7 @@ static int		ft_putstrlen(char *str)
 static int		prompt_type(t_prompt prompt)
 {
 	if (prompt == B_QUOTE)
-		return (ft_putstrlen("bquote>"));
+		return (ft_putstrlen("bquote> "));
 	else if (prompt == S_QUOTE)
 		return (ft_putstrlen("quote> "));
 	else if (prompt == D_QUOTE)
@@ -60,15 +60,10 @@ char			*get_user_name(void)
 	{
 		while ((dirent = readdir(dir)))
 		{
-			full_path = build_full_path("/Users", dirent->d_name, NULL);
+			full_path = build_full_path("/Users", dirent->d_name);
 			if (full_path && !lstat(full_path, &buf)
-			&& buf.st_uid == uid)
-			{
-				ft_strdel(&full_path);
-				full_path = ft_strdup(dirent->d_name);
-				closedir(dir);
+			&& buf.st_uid == uid && !closedir(dir))
 				return (full_path);
-			}
 			ft_strdel(&full_path);
 		}
 		closedir(dir);
@@ -76,7 +71,7 @@ char			*get_user_name(void)
 	return (0);
 }
 
-int				display_prompt(t_prompt prompt, char **env)
+int				display_prompt(t_prompt prompt)
 {
 	char			*user;
 	int				len;
@@ -84,9 +79,8 @@ int				display_prompt(t_prompt prompt, char **env)
 
 	if (prompt != PROMPT)
 		return (prompt_type(prompt));
-	if ((env && (user = ft_strdup(get_envp(env, "USER")))) ||
-	(user = get_user_name()))
-		len = ft_putstrlen(user);
+	if ((user = get_user_name()))
+		len = ft_putstrlen(cut_pwd_dir(user));
 	else
 		len = 0;
 	if (!uname(&buf))

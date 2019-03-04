@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 17:43:05 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 17:43:21 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/02 17:59:53 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -23,7 +23,7 @@ void	move_cursor_left(t_editor *ed)
 		ed->cur_col--;
 		if (ed->cur_col == 0)
 		{
-			if (ed->hist->cmd[ed->cursor_str_pos] == '\n')
+			if (!ed->rev_hist && ed->hist->cmd[ed->cursor_str_pos] == '\n')
 			{
 				go_to_begin_of_line(ed);
 				while (ed->cursor_str_pos < tmp_pos)

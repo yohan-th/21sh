@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/28 14:55:22 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/02 16:25:17 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -49,6 +49,7 @@
 # define CTRL_U (ed->key[0] == 21 && ed->key[1] == 0)
 # define CTRL_W (ed->key[0] == 23 && ed->key[1] == 0)
 # define CTRL_P (ed->key[0] == 16 && ed->key[1] == 0)
+# define CTRL_R (ed->key[0] == 18 && ed->key[1] == 0)
 # define BACKSPACE (ed->key[0] == 127 && ed->key[1]  == 0)
 
 typedef struct winsize	t_sz;
@@ -123,6 +124,7 @@ typedef struct			s_editor
 	int				last_char;
 	int				cursor_str_pos;
 	int				prompt_size;
+	int				rev_hist;
 	char			*clipboard;
 	char			*key;
 	struct termios	term_default;
@@ -151,8 +153,7 @@ int						backspace(t_editor *ed);
 *******************************************************************************
 */
 
-int						clear_window(t_editor *ed, t_prompt prompt,
-										char **env);
+int						clear_window(t_editor *ed, t_prompt prompt);
 void					myhandler_interrupt(int signal);
 
 /*
@@ -168,13 +169,14 @@ void					reset_cursor_position_escape_sequence(
 
 void					add_paste_into_line(t_editor *ed);
 char					*cut_pwd_dir(char *pwd);
-int						display_prompt(t_prompt prompt, char **env);
+int						display_prompt(t_prompt prompt);
 void					myhandler_winsize_change(int signal);
 int						get_cursor_position(int mode);
 void					delete_from_cursor_to_end(t_editor *ed);
 void					paste_clipboard(t_editor *ed);
 void					save_ed(t_editor *ed, int mode);
 void					term_history(t_editor *ed);
+int						term_history_incremental_search(t_editor *ed);
 int						term_reinit(struct termios *raw_mode);
 int						get_term_raw_mode(int mode);
 char					*find_env_var(char **env, char *var, int mode);
@@ -193,8 +195,7 @@ t_editor				*line_editor_init(char **line, t_prompt prompt,
 int						line_editor_delete(t_editor *ed, t_data **hist);
 void					init_t_tab(t_editor *ed);
 int						term_size(t_editor *ed);
-void					window_resize(t_editor *ed, t_prompt *prompt,
-										char **env);
+void					window_resize(t_editor *ed, t_prompt *prompt);
 int						print_key(t_editor *ed);
 
 void					del_lines(int nb_line);
@@ -233,7 +234,7 @@ int						check_if_new_line_in_line(t_editor *ed);
 int						get_read_key(int fd, char **key);
 int						enough_space_on_screen(t_editor *ed);
 void					calculate_first_and_last_row(t_editor *ed);
-char					*build_full_path(char *path, char *d_name, char **env);
+char					*build_full_path(char *path, char *d_name);
 int						tabulator_check_executable(t_tab *tabu,
 												t_dirent *dirent, char *bin);
 int						tabulator_check_if_var(t_tab *tabu);

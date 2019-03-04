@@ -6,20 +6,20 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/10/16 15:01:15 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/28 14:58:02 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/01 20:53:19 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "shell.h"
 
-int				clear_window(t_editor *ed, t_prompt prompt, char **env)
+int				clear_window(t_editor *ed, t_prompt prompt)
 {
 	int	cursor_str_pos_tmp;
 
 	cursor_str_pos_tmp = ed->cursor_str_pos;
 	tputs(tgetstr("cl", NULL), 1, ft_putchar);
-	display_prompt(prompt, env);
+	display_prompt(prompt);
 	ed->first_row = get_cursor_position(1);
 	ed->first_char = get_cursor_position(0);
 	if (ed->hist->cmd)
