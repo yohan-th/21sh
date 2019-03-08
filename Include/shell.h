@@ -232,4 +232,96 @@ void				shell_init(t_shell **shell, t_prompt *prompt, t_cmd **cmd,
 						char **env);
 char				*get_next_hrdc(char **hrdc);
 
+/*
+** Hard test
+** <  echo ~ ~te~st" ~ '$USER  \""+\\$USER+$US\ER~$USERS' ~ t"e$USER \'~'' ""'`' ""' \' ""'" \'>
+** <echo "test>
+** <echo test\ {ENTER} ' {ENTER} test {ENTER} '>
+** <echo 'test\'
+** echo tes't $USER te'st
+** echo tes"t $USER te"st
+** lancer minishell et <cd -> bash: cd: OLDPWD not set
+** path qui contient un lien et <cd -L -L -P -L .> && <cd -L -P .>
+** <mkdir test1> && <chmod 666 test1> && <cd test> --> Fail
+** <mkdir test2> && <chmod 111 test2> && <cd test2> --> OK
+** mkdir folder && cd folder && cd .. && rm -rf folder && cd -
+** <cd \./> && pwd --> PWD et OLDPWD devrait avoir la meme valeur
+** <cd \/.///> && env PWD && cd ..
+** <cd ~///./folder//.//>
+** cd ~bocal/Public --> {~} correspond à /Users et {~/} correpond à /Users/ythollete
+** echo ~root
+** cat * | ./minishell <-- pas a executer mais a protéger
+** env -i ./minishell && unsetenv PATH && echo $HOME && cd ~
+** ./minishell && unsetenv HOME && cd $random --> HOME not set
+** ./minishell < "n'importe quel fichier"
+** </> && <~> && </Users>
+** ./minishell && ./minishell && ./minishell && CtrC && CtrlD && exit
+** echo `ls\` --> ` && echo `ls\``
+** echo "text" > file ; < file cat
+** {echo test 1>/dev/ttys001 1>&2} --> la derniere redi est prit en compte et print test
+** {cat missing 2>&1 1>/dev/ttys001} --> les redis sont save
+** cat << EOF {ENTER} word1 {ENTER} word2 EOF {ENTER} EOF {ENTER}
+** cat << EOF existing_file {ENTER} word1 {ENTER} EOF {ENTER}
+** echo test >'&2'
+** echo file > '&'
+** {export tty=/dev/ttys001} {echo test > $tty} et car ttys001 recoit
+** {echo test > "/dev/ttys001\\"} --> error avec {/dev/ttys001\\}
+** echo test > file > /dev/ttys001 (le dernier est prit en compte mais file est créé)
+** echo test > glob"{\n}file"
+** echo test > file1>file2
+** echo test > file1\>file2
+** echo test > file1\\>file2
+** echo test && {ENTER} \ {ENTER} \\ {ENTER} puis flèche du haut et histo == {echo test && \\}
+** ; puis ;; (pas le meme msg d'erreur)
+** {t &&} --> prompt
+** >>>
+** <!<
+** ls\ --> saut de ligne puis ls exec --> pas de saut de ligne dans l'histo
+** mkdir ~/folder && cd ~/folder && chmod 111 ~/folder && ~/21sh/./21sh && echo file_not_found > file
+** << EOF cat nofile ;; --> les EOF puis ;; puis erreur de cat
+** ;; "test {ENTER} " --> les fermetures des quotes sont prio face au ;;
+** echo test \1>/dev/ttys00\2 '1>/dev/ttys003'
+** echo test > file && cat < file>>file2
+** a=5 b=3 echo $a (variable local ignoré)
+** echo test << "1" && test ; <<\2
+** cat << "EO {ENTER} F" {ENTER} puis essayer de fermer
+** heredoc puis Cltr-c et Ctrl-v
+** cat <<t {ENTER} test {Ctrl-D} ->> heredoc stop mais test dans cat
+** << \'"test"\\
+** >oui<<EOF
+** <<EOF<file_stdin
+** <<EOF>file_stdout
+** {test && w} et {test || w}
+** env -i env
+** exit | ls --> ne doit pas exit
+** setenv VAR file && echo no_var>'$VAR' && echo var>$VAR
+** setenv VAR ambiguous_redirect > $VAR
+** export VAR file && echo test >~/$VAR
+** unsetenv $HOME && echo "pwd.h get the *pw_name" >~/file
+** echo file_line > file && cat << EOF1 < file << EOF2 puis line1 \n EOF1 \n line2 \n EOF2 --> dernier element avec bash et en suivant l'ordre pour zsh
+** exit 1arg 2arg --> no exit
+** cat <&\2
+** echo test >folder/unfind_folder/file
+** echo test >&0
+** echo test > file | cat -->stdou prio sur pipe
+** echo test | cat < file --> file écrase le pipe
+** exit 2>file
+** exit | test
+** exit 1 2 --> too many arg et pas d'exit
+** exit t --> exit mais pas msg "numeric arg required"
+** / et /tmp --> "Is directory"
+** auteur
+**
+*/
+
+/*
+** HARD TEST (et inutile)
+** exit 2>file
+*/
+
 #endif
+
+// Question :
+//lors d'un output vers un tty quelle test faire pour check si tty ouvert
+//Quelle logique dans "echo test 0>fichier" ?
+//PATH=~/21sh --> foncitonnalité de TAB

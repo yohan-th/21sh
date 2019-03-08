@@ -13,7 +13,7 @@
 
 #include "../../Include/shell.h"
 
-int		shell_argsub_env(char **arg, int i, char **envp, char **envl)
+int				shell_argsub_env(char **arg, int i, char **envp, char **envl)
 {
 	char	*tmp;
 	char	*var;
@@ -42,22 +42,43 @@ int		shell_argsub_env(char **arg, int i, char **envp, char **envl)
 		return (i + ft_strlen(var) - 1);
 }
 
-void	shell_check_tilde(char **arg, char **envp)
+struct passwd	*shell_struct_user(char **arg)
 {
-	char	*tmp;
+	char			*tmp;
+	char 			*name;
+	struct passwd	*user;
+	uid_t			uid;
 
-	if ((*arg)[0] == '~' && !get_envp(envp, "HOME"))
-		return ;
-	if ((*arg)[0] == '~' && (*arg)[1] == '\0')
+	if ((*arg)[1] == '/' || (*arg)[1] == '\0')
 	{
-		ft_strdel(arg);
-		*arg = ft_strdup(get_envp(envp, "HOME"));
+		uid = getuid();
+		user = getpwuid(uid);
 	}
-	else if ((*arg)[0] == '~' && (*arg)[1] == '/')
+	else
 	{
-		tmp = *arg;
-		*arg = ft_strjoin_mltp(3, get_envp(envp, "HOME"), "/", *arg + 2);
-		ft_strdel(&tmp);
+		name = ft_strdup(*arg + 1);
+		if ((tmp = ft_strchr(name, '/')))
+			tmp[0] = '\0';
+		user = getpwnam(name);
+		ft_strdel(&name);
+	}
+	return (user);
+}
+
+void			shell_check_tilde(char **arg)
+{
+	char			*tmp;
+	struct passwd	*user;
+
+	user = shell_struct_user(arg);
+	if (user)
+	{
+		if ((tmp = ft_strchr(*arg, '/')))
+			tmp = ft_strjoin(user->pw_dir, tmp);
+		else
+			tmp = ft_strdup(user->pw_dir);
+		ft_strdel(arg);
+		*arg = tmp;
 	}
 }
 
@@ -66,12 +87,13 @@ void	shell_check_tilde(char **arg, char **envp)
 ** Remplace les var d'environnements
 */
 
-void	shell_envpsub(char **arg, char **envp, char **envl)
+void			shell_envpsub(char **arg, char **envp, char **envl)
 {
 	int		i;
 	char	quote;
 
-	shell_check_tilde(arg, envp);
+	if ((*arg)[0] == '~')
+		shell_check_tilde(arg);
 	quote = *arg && ft_strchr("\"'", *arg[0]) ? (char)*arg[0] : (char)' ';
 	i = (quote == ' ') ? 0 : 1;
 	while (*arg && (*arg)[i])

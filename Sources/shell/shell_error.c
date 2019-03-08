@@ -16,31 +16,30 @@
 int		shell_error_prepare(char *msg, char *elem)
 {
 	if (ft_strcmp(msg, "Is directory") == 0)
-		ft_dprintf(2, "21sh: %s: : Is a directory\n", elem);
+		ft_dprintf(2, "42sh: %s: : Is a directory\n", elem);
 	else if (ft_strcmp(msg, "denied") == 0 || !ft_strcmp(msg, "pathdenied"))
-		ft_dprintf(2, "21sh: %s: Permission denied\n", elem);
+		ft_dprintf(2, "42sh: %s: Permission denied\n", elem);
 	else if (ft_strcmp(msg, "not found") == 0)
-		ft_dprintf(2, "21sh: %s: No such file or directory\n", elem);
+		ft_dprintf(2, "42sh: %s: No such file or directory\n", elem);
 	else if (ft_strcmp(msg, "bad fd") == 0)
-		ft_dprintf(2, "21sh: %s: Bad file descriptor\n", elem + 1);
+		ft_dprintf(2, "42sh: %s: Bad file descriptor\n", elem + 1);
 	else if (ft_strcmp(msg, "ambiguous") == 0)
-		ft_dprintf(2, "21sh: %s: ambiguous redirect\n", elem + 1);
-	ft_strdel(&elem);
+		ft_dprintf(2, "42sh: %s: ambiguous redirect\n", elem + 1);
 	return (0);
 }
 
 int		shell_error_env(char *msg)
 {
 	if (ft_strcmp(msg, "env set usage") == 0)
-		ft_dprintf(2, "21sh: setenv: invalid argument\n"
+		ft_dprintf(2, "42sh: setenv: invalid argument\n"
 						"usage: setenv VAR VALUE\n");
 	else if (ft_strcmp(msg, "env unset usage") == 0)
-		ft_dprintf(2, "21sh: unsetenv: invalid argument\n"
+		ft_dprintf(2, "42sh: unsetenv: invalid argument\n"
 						"usage: unsetenv VAR\n");
 	else if (ft_strcmp(msg, "env usage") == 0)
-		ft_dprintf(2, "21sh: env: invalid argument\nusage: env VAR\n");
+		ft_dprintf(2, "42sh: env: invalid argument\nusage: env VAR\n");
 	else if (ft_strcmp(msg, "env $HOME not set") == 0)
-		ft_dprintf(2, "21sh: $HOME env not set\n");
+		ft_dprintf(2, "42sh: $HOME env not set\n");
 	else
 		ft_dprintf(2, "Error ENV : unknown msg type <%s>\n", msg);
 	return (0);

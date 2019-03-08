@@ -80,7 +80,7 @@ BOOL	cmd_check(t_cmd **cmd, t_shell *shell, t_prompt *prompt)
 			(next->hrdc && (int)next->hrdc[0] == -2)) &&
 			next->next_cmd == NULL))
 		{
-			write(2, "21sh: syntax error near unexpected token `newline'\n",
+			write(2, "42sh: syntax error near unexpected token `newline'\n",
 					51);
 			ft_strdel(&shell->str);
 			clean_cmd(cmd);

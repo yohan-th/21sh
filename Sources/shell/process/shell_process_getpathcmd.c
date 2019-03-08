@@ -46,26 +46,35 @@ char	*get_envp(char **envp, char *var)
 	return (ft_strchr(*envp, '=') + 1);
 }
 
-int		is_directory(char *path)
-{
-	struct stat statbuf;
-
-	if (stat(path, &statbuf) != 0)
-		return (0);
-	return (S_ISDIR(statbuf.st_mode));
-}
+/*
+** si l'executable est dans exec (=args[0]) il doit commencer par '/'
+** ret :
+**  path si exec found
+**  -1 si directory
+**  -2 si no such file or directory
+**  -3 file or path not allowed
+*/
 
 char	*check_path_cmd(char *exec_path, char *exec)
 {
-	char *ret;
+	char		*ret;
+	struct stat	buffer;
 
 	ret = NULL;
-	if ((exec_path && access(exec_path, X_OK) != -1))
+	if (exec_path && access(exec_path, X_OK) != -1)
 		ret = ft_strdup(exec_path);
-	else if (!ft_isdir(exec) && access(exec, X_OK) != -1)
-		ret = ft_strdup(exec);
+	else if (exec_path && stat(exec, &buffer) == 0 &&
+				access(exec_path, X_OK) == -1)
+		ret = (char *)-3;
 	else if (exec && ft_isdir(exec))
 		ret = (char *)-1;
+	else if (exec  && exec[0] == '/' && access(exec, X_OK) != -1)
+		ret = ft_strdup(exec);
+	else if (exec && exec[0] == '/' && stat(exec, &buffer) == 0 &&
+				access(exec, X_OK) == -1)
+		ret = (char *)-3;
+	else if (exec && ft_strchr(exec, '/'))
+		ret = (char *)-2;
 	ft_strdel(&exec_path);
 	return (ret);
 }
@@ -73,13 +82,14 @@ char	*check_path_cmd(char *exec_path, char *exec)
 /*
 ** Recherche le bon path de {cmd} dans les differents path de {envp PATH}
 ** si non trouvé ou PATH inexistant on retourne {cmd}
+** /!\ Si un PATH n'a pas les droits mauvais message d'erreur
 */
 
 char	*shell_getpathexec(char *exec, char **envp)
 {
-	char	*exec_path;
-	char	**all_path;
-	int		i;
+	char		*exec_path;
+	char		**all_path;
+	int			i;
 
 	if (exec == NULL || !ft_strcmp(".", exec) || !ft_strcmp("..", exec))
 		return (NULL);

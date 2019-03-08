@@ -41,12 +41,12 @@ int		builtin_exit(char **cmd)
 		return (0);
 	else if (!is_only_digit(cmd[1]))
 	{
-		ft_dprintf(2, "21sh: exit: %s: numeric argument required\n", cmd[1]);
+		ft_dprintf(2, "42sh: exit: %s: numeric argument required\n", cmd[1]);
 		return (2);
 	}
 	else if (cmd[2] != NULL)
 	{
-		ft_dprintf(2, "21sh: exit: too many arguments\n");
+		ft_dprintf(2, "42sh: exit: too many arguments\n");
 		return (-2);
 	}
 	else

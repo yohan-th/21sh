@@ -49,6 +49,10 @@ void	shell_prepare_args(t_cmd *elem, t_shell *shell)
 				elem->exec = ft_strdup("not found");
 			else if ((int)elem->exec == -1)
 				elem->exec = ft_strdup("directory");
+			else if ((int)elem->exec == -2)
+				elem->exec = ft_strdup("file or directory");
+			else if ((int)elem->exec == -3)
+				elem->exec = ft_strdup("no allowed");
 		}
 		i++;
 	}

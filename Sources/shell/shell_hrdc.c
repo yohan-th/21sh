@@ -75,7 +75,7 @@ void	hrdc_fill_stdin(t_prompt *prompt, t_cmd **cmd, t_shell *shell)
 
 int		hrdc_interrupt_ctrd(t_prompt *prompt, t_cmd **cmd)
 {
-	ft_dprintf(2, "21sh: warning: here-document at line 84 delimited by "
+	ft_dprintf(2, "42sh: warning: here-document at line 84 delimited by "
 				"end-of-file (wanted `%s')\n", get_next_hrdc((*cmd)->hrdc));
 	while (get_next_hrdc((*cmd)->hrdc))
 		del_next_hrdc((*cmd)->hrdc);

@@ -130,5 +130,5 @@ void	builtin_env(char **envp, char *key)
 		i++;
 	}
 	if (key != NULL && found == 0)
-		ft_dprintf(2, "21sh: env: %s not found\n", key);
+		ft_dprintf(2, "42sh: env: %s not found\n", key);
 }

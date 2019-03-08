@@ -22,7 +22,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 	{
 		if (!ft_strlen(next->args[0]) && next->sep)
 		{
-			write(2, "21sh: syntax error near unexpected token `", 42);
+			write(2, "42sh: syntax error near unexpected token `", 42);
 			if (next->sep == 1)
 				write(2, "|'\n", 3);
 			else if (next->sep == 2)
@@ -35,7 +35,7 @@ BOOL	check_syntax_err(t_cmd *cmd)
 		}
 		if (!stdout_to(next->output))
 		{
-			write(2, "21sh: syntax error near unexpected token `>'\n", 45);
+			write(2, "42sh: syntax error near unexpected token `>'\n", 45);
 			return (1);
 		}
 	}
@@ -55,10 +55,8 @@ BOOL	check_shrt(t_prompt *prompt, t_shortcut shortcut, t_shell *shl)
 	else if (shortcut == CTRLD && *prompt != PROMPT)
 	{
 		quote = (*prompt == S_QUOTE) ? (char)'\'' : (char)'"';
-		write(2, "bash: unexpected EOF while looking for matching `", 50);
-		write(2, &quote, 1);
-		write(2, "'\n", 2);
-		write(2, "bash: syntax error: unexpected end of file\n", 43);
+		ft_dprintf(2, "42sh: unexpected EOF while looking for matching `%c'\n"
+				"42sh: syntax error: unexpected end of file\n", quote);
 		*prompt = PROMPT;
 	}
 	return (1);

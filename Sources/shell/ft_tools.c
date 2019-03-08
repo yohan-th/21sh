@@ -27,7 +27,8 @@ int		ft_isdir(char *path)
 {
 	struct stat		t_stat;
 
-	if (lstat(path, &t_stat) != -1 && S_ISDIR(t_stat.st_mode))
+	if (lstat(path, &t_stat) != -1 && (S_ISDIR(t_stat.st_mode) ||
+										S_ISLNK(t_stat.st_mode)))
 		return (1);
 	else
 		return (0);
