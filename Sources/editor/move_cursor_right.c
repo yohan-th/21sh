@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/12/17 17:43:44 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2018/12/17 17:43:54 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/04 16:30:26 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -17,7 +17,7 @@ void	move_cursor_right(t_editor *ed)
 {
 	if ((int)ed->cursor_str_pos < ft_strlen(ed->hist->cmd))
 	{
-		if (ed->hist->cmd[ed->cursor_str_pos] == '\n' ||
+		if ((!ed->rev_hist && ed->hist->cmd[ed->cursor_str_pos] == '\n') ||
 		ed->cur_col == ed->ws_col)
 		{
 			ed->cur_col = 0;

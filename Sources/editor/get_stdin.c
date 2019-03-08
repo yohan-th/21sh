@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/05/12 00:01:33 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/03/02 17:59:53 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/07 18:08:10 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -72,7 +72,8 @@ static int		get_keyboard_key(t_editor *ed, t_prompt *prompt,
 	else if ((UP_KEY || DOWN_KEY))
 		term_history(ed);
 	else if (CTRL_R)
-		ed->ret = term_history_incremental_search(ed);
+		if ((ed->ret = term_history_incremental_search(ed, *prompt)))
+			get_keyboard_key(ed, prompt, envp, envl);
 	return (EXIT_SUCCESS);
 }
 
@@ -84,10 +85,9 @@ int				get_stdin(t_shell *shell, t_prompt *prompt)
 	if (!(ed = line_editor_init(&shell->str, *prompt,
 			display_prompt(*prompt), &shell->hist)))
 		return (-2);
-	term_size(ed);
-	while (isatty(STDIN_FILENO) && ed->ret != -1)
+	while (isatty(STDIN_FILENO) &&
+	(ed->ret = get_read_key(STDIN_FILENO, &ed->key)) != - 1)
 	{
-		ed->ret = get_read_key(STDIN_FILENO, &ed->key);
 		tputs(tgetstr("vi", NULL), 1, ft_putchar);
 		if (term_size(ed) == EXIT_SUCCESS)
 			window_resize(ed, prompt);

@@ -6,7 +6,7 @@
 /*   By: dzonda <marvin@le-101.fr>                  +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/09/10 00:46:23 by dzonda       #+#   ##    ##    #+#       */
-/*   Updated: 2019/03/02 16:25:17 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/07 17:52:38 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -127,6 +127,8 @@ typedef struct			s_editor
 	int				rev_hist;
 	char			*clipboard;
 	char			*key;
+	char			*hris;
+	char			*h_needle;
 	struct termios	term_default;
 	t_data			*hist;
 }						t_editor;
@@ -176,7 +178,7 @@ void					delete_from_cursor_to_end(t_editor *ed);
 void					paste_clipboard(t_editor *ed);
 void					save_ed(t_editor *ed, int mode);
 void					term_history(t_editor *ed);
-int						term_history_incremental_search(t_editor *ed);
+int						term_history_incremental_search(t_editor *ed, t_prompt prompt);
 int						term_reinit(struct termios *raw_mode);
 int						get_term_raw_mode(int mode);
 char					*find_env_var(char **env, char *var, int mode);

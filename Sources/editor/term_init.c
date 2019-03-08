@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/08/10 02:51:08 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/03/02 17:59:52 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/06 18:47:13 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -53,21 +53,16 @@ t_editor	*line_editor_init(char **line, t_prompt prompt, int prompt_size,
 
 	if (!(ed = (t_editor *)malloc(sizeof(t_editor))))
 		return (NULL);
-	ed->ret = 0;
+	ft_bzero(ed, sizeof(*ed));
 	ed->cur_col = get_cursor_position(0);
 	ed->cur_row = get_cursor_position(1);
-	ed->cursor_str_pos = 0;
-	ed->ws_row = 0;
-	ed->ws_col = 0;
-	ed->rev_hist = 0;
 	ed->first_row = ed->cur_row;
 	ed->last_row = ed->first_row;
 	ed->first_char = ed->cur_col;
 	ed->last_char = ed->first_char;
 	ed->prompt_size = prompt_size;
-	ed->clipboard = NULL;
-	ed->key = NULL;
 	ed->hist = *hist && (*hist)->cmd ? hist_add(*hist) : *hist;
+	term_size(ed);
 	if (*line && prompt != PROMPT)
 		ft_strjoin_free(line, "\n");
 	return (ed);

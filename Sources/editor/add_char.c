@@ -6,7 +6,7 @@
 /*   By: dewalter <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/06/19 10:42:22 by dewalter     #+#   ##    ##    #+#       */
-/*   Updated: 2019/02/16 08:23:20 by dewalter    ###    #+. /#+    ###.fr     */
+/*   Updated: 2019/03/04 17:13:29 by dewalter    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -55,7 +55,6 @@ static void		add_char_into_line_2(t_editor *ed)
 
 void			add_char_into_line(t_editor *ed, int pos)
 {
-	(void)pos;
 	if (pos == ed->ws_col ||
 	(pos == -1 && ed->last_row == ed->ws_row && ed->last_char == ed->ws_col))
 	{
